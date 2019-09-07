@@ -17,10 +17,18 @@ namespace Mocker
         }
         private static void SendData()
         {
+            // TODO: Make asynchronous.
             while (true)
             {
                 Console.WriteLine("Request: ");
                 string req = Console.ReadLine();
+
+                if (req == "c") {
+                    _clientSocket.Close();
+                    Console.WriteLine("Connection closed.");
+                    return;
+                }
+
                 byte[] buffer = Encoding.ASCII.GetBytes(req);
                 _clientSocket.Send(buffer);
 
@@ -46,7 +54,7 @@ namespace Mocker
                 catch (SocketException)
                 {
                     Console.Clear();
-                    Console.WriteLine($"Conection attempted: {connectionAttempts}");
+                    Console.WriteLine($"Conections attempted: {connectionAttempts}.");
                 }
 
             }

@@ -17,7 +17,9 @@ namespace Server.Core
         public void Dump()
         {
             foreach (KeyValuePair<string, object> keyValuePair in Data)
+            {
                 Console.WriteLine($"'{keyValuePair.Key}': '{keyValuePair.Value}'");
+            }
         }
     }
 }

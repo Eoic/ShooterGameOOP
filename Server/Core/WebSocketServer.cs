@@ -4,7 +4,6 @@ using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Text;
 using System.Dynamic;
-using static System.Console;
 
 namespace Server.Core
 {
@@ -31,15 +30,15 @@ namespace Server.Core
             _backlog = backlog;
         }
 
-        // Listen ongiven or default port.
+        // Listen on given or default port.
         public void Listen(int port = ServerConstants.Port)
         {
             _socketServer.Bind(new IPEndPoint(IPAddress.Any, port));
             _socketServer.Listen(_backlog);
             _socketServer.BeginAccept(new AsyncCallback(AcceptCallback), null);
-            dynamic data = new ExpandoObject();
-            data.Port = port;
-            Open(new ServerEventArgs(data));
+            dynamic args = new ExpandoObject();
+            args.Port = port;
+            Open(new ServerEventArgs(args));
         }
 
         // Accept client connection.
@@ -53,32 +52,27 @@ namespace Server.Core
         }
 
         // Receive data.
-        private static void ReceiveCallback(IAsyncResult result)
+        private void ReceiveCallback(IAsyncResult result)
         {
             var socket = (Socket)result.AsyncState;
             var received = socket.EndReceive(result);
             var dataBuffer = new byte[received];
             Array.Copy(_buffer, dataBuffer, received);
-            var text = Encoding.ASCII.GetString(dataBuffer);
-            Console.WriteLine("Received: " + text);
-
-            var response = string.Empty;
-
-            if (text.ToLower() != "get time")
-            {
-                response = "Invalid request";
-            }
-            else
-            {
-                response = DateTime.Now.ToLongTimeString();
-            }
-
-            var data = Encoding.ASCII.GetBytes(response);
-            socket.BeginSend(data, 0, data.Length, SocketFlags.None, new AsyncCallback(SendCallback), socket);
-            socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveCallback), socket);
+            var message = Encoding.ASCII.GetString(dataBuffer);
+            dynamic args = new ExpandoObject();
+            args.Message = message;
+            args.Client = socket;
+            Message(new ServerEventArgs(args));
         }
 
         // Send data.
+        public void SendData(string data, Socket client)
+        {
+            var dataBytes = Encoding.ASCII.GetBytes(data);
+            client.BeginSend(dataBytes, 0, dataBytes.Length, SocketFlags.None, new AsyncCallback(SendCallback), client);
+            client.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveCallback), client);
+        }
+
         private static void SendCallback(IAsyncResult result)
         {
             var socket = (Socket)result.AsyncState;

@@ -12,12 +12,23 @@ namespace Server
 
             server.OnOpen += (object sender, ServerEventArgs arguments) =>
             {
-                Console.WriteLine($"Server is running on port {arguments.Data.Port}.");
+                WriteLine($"Server is running on port {arguments.Data.Port}.");
             };
 
             server.OnConnection += (object sender, ServerEventArgs arguments) =>
             {
-                WriteLine("Client connected");
+                WriteLine("Client connected.");
+            };
+
+            server.OnMessage += (object sender, ServerEventArgs arguments) =>
+            {
+                WriteLine($"Received: {arguments.Data.Message}");
+                // server.SendData("hi", arguments.Data.Client);
+            };
+
+            server.OnClose += (object sender, ServerEventArgs arguments) =>
+            {
+                WriteLine("Client disconnected.");
             };
 
             server.Listen();
