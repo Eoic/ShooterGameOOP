@@ -10,12 +10,12 @@ namespace Server
         {
             var server = new WebSocketServer();
 
-            server.OnOpen += (object sender, EventArgs arguments) =>
+            server.OnOpen += (object sender, ServerEventArgs arguments) =>
             {
-                Console.WriteLine("Server is running.");
+                Console.WriteLine($"Server is running on port {arguments.Data.Port}.");
             };
 
-            server.OnConnection += (object sender, EventArgs arguments) =>
+            server.OnConnection += (object sender, ServerEventArgs arguments) =>
             {
                 WriteLine("Client connected");
             };

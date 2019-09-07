@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Text;
+using System.Dynamic;
 using static System.Console;
 
 namespace Server.Core
@@ -16,10 +17,10 @@ namespace Server.Core
         private int _bufferSize;
 
         // Events
-        public event EventHandler OnOpen;
-        public event EventHandler OnClose;
-        public event EventHandler OnConnection;
-        public event EventHandler OnMessage;
+        public event EventHandler<ServerEventArgs> OnOpen;
+        public event EventHandler<ServerEventArgs> OnClose;
+        public event EventHandler<ServerEventArgs> OnConnection;
+        public event EventHandler<ServerEventArgs> OnMessage;
 
         public WebSocketServer(int backlog = ServerConstants.Backlog, int bufferSize = ServerConstants.BufferSize)
         {
@@ -36,7 +37,9 @@ namespace Server.Core
             _socketServer.Bind(new IPEndPoint(IPAddress.Any, port));
             _socketServer.Listen(_backlog);
             _socketServer.BeginAccept(new AsyncCallback(AcceptCallback), null);
-            Open();
+            dynamic data = new ExpandoObject();
+            data.Port = port;
+            Open(new ServerEventArgs(data));
         }
 
         // Accept client connection.
@@ -46,7 +49,7 @@ namespace Server.Core
             _clients.Add(socket);
             socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveCallback), socket);
             _socketServer.BeginAccept(new AsyncCallback(AcceptCallback), null);
-            Connection();
+            Connection(ServerEventArgs.Empty);
         }
 
         // Receive data.
@@ -83,15 +86,15 @@ namespace Server.Core
         }
 
         // Events.
-        private void Open() => InvokeEvent(OnOpen);
-        private void Close() => InvokeEvent(OnClose);
-        private void Connection() => InvokeEvent(OnConnection);
-        private void Message() => InvokeEvent(OnMessage);
+        private void Open(ServerEventArgs arguments) => InvokeEvent(OnOpen, arguments);
+        private void Close(ServerEventArgs arguments) => InvokeEvent(OnClose, arguments);
+        private void Connection(ServerEventArgs arguments) => InvokeEvent(OnConnection, arguments);
+        private void Message(ServerEventArgs arguments) => InvokeEvent(OnMessage, arguments);
 
-        private void InvokeEvent(EventHandler serverEvent)
+        private void InvokeEvent(EventHandler<ServerEventArgs> serverEvent, ServerEventArgs arguments)
         {
             if (serverEvent != null)
-                serverEvent(this, EventArgs.Empty);
+                serverEvent(this, arguments);
         }
     }
 }
