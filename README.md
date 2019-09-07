@@ -1,2 +1,5 @@
 # DesignPatterns
-T120B516 Objektinis programų projektavimas
+### Run project
+```
+dotnet run --project Server
+```
