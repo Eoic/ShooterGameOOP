@@ -1,38 +1,37 @@
-﻿using System;
-using Server.Core;
+﻿using Server.Core;
 using static System.Console;
 
 namespace Server
 {
-    class Program
+    internal static class Program
     {
-        static void Main(string[] args)
+        private static void Main()
         {
             var server = new WebSocketServer();
 
-            server.OnOpen += (object sender, ServerEventArgs arguments) =>
+            server.OnOpen += (sender, arguments) =>
             {
                 WriteLine($"Server is running on port {arguments.Data.Port}.");
             };
 
-            server.OnConnection += (object sender, ServerEventArgs arguments) =>
+            server.OnConnection += (sender, arguments) =>
             {
                 WriteLine("Client connected.");
             };
 
-            server.OnMessage += (object sender, ServerEventArgs arguments) =>
+            server.OnMessage += (sender, arguments) =>
             {
                 WriteLine($"Received: {arguments.Data.Message}");
                 // server.SendData("hi", arguments.Data.Client);
             };
 
-            server.OnClose += (object sender, ServerEventArgs arguments) =>
+            server.OnClose += (sender, arguments) =>
             {
                 WriteLine("Client disconnected.");
             };
 
             server.Listen();
-            Console.ReadLine();
+            ReadLine();
         }
     }
 }

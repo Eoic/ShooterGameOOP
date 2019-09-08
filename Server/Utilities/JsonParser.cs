@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace Server.Utilities
 {
-    class JsonParser
+    internal class JsonParser
     {
         public JsonParser()
         {

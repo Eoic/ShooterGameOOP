@@ -4,16 +4,16 @@ using System.Collections.Generic;
 
 namespace Server.Core
 {
-    class ServerEventArgs : EventArgs
+    internal class ServerEventArgs : EventArgs
     {
-        public static readonly new ServerEventArgs Empty = new ServerEventArgs();
-        public dynamic Data;
+        public new static readonly ServerEventArgs Empty = new ServerEventArgs();
+        public readonly dynamic Data;
 
-        public ServerEventArgs() { }
+        private ServerEventArgs() { }
 
         public ServerEventArgs(ExpandoObject data) => Data = data;
 
-        // Prints fields and values of Data object.
+        // Prints all fields and values of Data object.
         public void Dump()
         {
             foreach (KeyValuePair<string, object> keyValuePair in Data)

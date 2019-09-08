@@ -7,13 +7,13 @@ using System.Dynamic;
 
 namespace Server.Core
 {
-    class WebSocketServer
+    internal class WebSocketServer
     {
         private static Socket _socketServer;
         private static List<Socket> _clients;
         private static byte[] _buffer;
-        private int _backlog;
-        private int _bufferSize;
+        private readonly int _backlog;
+        private readonly int _bufferSize;
 
         // Events
         public event EventHandler<ServerEventArgs> OnOpen;
@@ -25,8 +25,8 @@ namespace Server.Core
         {
             _socketServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _clients = new List<Socket>();
-            _buffer = new byte[bufferSize];
             _bufferSize = bufferSize;
+            _buffer = new byte[_bufferSize];
             _backlog = backlog;
         }
 
@@ -35,7 +35,7 @@ namespace Server.Core
         {
             _socketServer.Bind(new IPEndPoint(IPAddress.Any, port));
             _socketServer.Listen(_backlog);
-            _socketServer.BeginAccept(new AsyncCallback(AcceptCallback), null);
+            _socketServer.BeginAccept(AcceptCallback, null);
             dynamic args = new ExpandoObject();
             args.Port = port;
             Open(new ServerEventArgs(args));
@@ -46,8 +46,8 @@ namespace Server.Core
         {
             var socket = _socketServer.EndAccept(result);
             _clients.Add(socket);
-            socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveCallback), socket);
-            _socketServer.BeginAccept(new AsyncCallback(AcceptCallback), null);
+            socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, ReceiveCallback, socket);
+            _socketServer.BeginAccept(AcceptCallback, null);
             Connection(ServerEventArgs.Empty);
         }
 
@@ -69,8 +69,8 @@ namespace Server.Core
         public void SendData(string data, Socket client)
         {
             var dataBytes = Encoding.ASCII.GetBytes(data);
-            client.BeginSend(dataBytes, 0, dataBytes.Length, SocketFlags.None, new AsyncCallback(SendCallback), client);
-            client.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveCallback), client);
+            client.BeginSend(dataBytes, 0, dataBytes.Length, SocketFlags.None, SendCallback, client);
+            client.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, ReceiveCallback, client);
         }
 
         private static void SendCallback(IAsyncResult result)
@@ -85,10 +85,7 @@ namespace Server.Core
         private void Connection(ServerEventArgs arguments) => InvokeEvent(OnConnection, arguments);
         private void Message(ServerEventArgs arguments) => InvokeEvent(OnMessage, arguments);
 
-        private void InvokeEvent(EventHandler<ServerEventArgs> serverEvent, ServerEventArgs arguments)
-        {
-            if (serverEvent != null)
-                serverEvent(this, arguments);
-        }
+        private void InvokeEvent(EventHandler<ServerEventArgs> serverEvent, ServerEventArgs arguments) =>
+            serverEvent?.Invoke(this, arguments);
     }
 }
