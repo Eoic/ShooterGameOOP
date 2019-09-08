@@ -8,11 +8,14 @@ namespace Mocker
     class Program
     {
         private static Socket _clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
+        private const int MaxAttempts = 5;
+        
         static void Main(string[] args)
         {
-            Connect();
-            SendData();
+            if (Connect()) {
+                SendData();
+            }
+            
             Console.ReadLine();
         }
         private static void SendData()
@@ -40,27 +43,36 @@ namespace Mocker
             }
         }
 
-        private static void Connect()
+        private static bool Connect()
         {
-            int connectionAttempts = 0;
+            var connectionAttempts = 0;
 
             while (!_clientSocket.Connected)
             {
                 try
                 {
-                    connectionAttempts++;
-                    _clientSocket.Connect(IPAddress.Loopback, 8000);
+                    if (connectionAttempts < MaxAttempts)
+                    {
+                        connectionAttempts++;
+                        _clientSocket.Connect(IPAddress.Loopback, 8000);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Could not connect to server. Exiting.");
+                        return false;
+                    }
                 }
                 catch (SocketException)
                 {
-                    Console.Clear();
-                    Console.WriteLine($"Conections attempted: {connectionAttempts}.");
+                    Console.WriteLine($"Connections attempted: {connectionAttempts}.");
+                    return false;
                 }
 
             }
 
             Console.Clear();
             Console.WriteLine("Connected.");
+            return true;
         }
     }
 }

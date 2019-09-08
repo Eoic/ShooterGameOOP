@@ -1,4 +1,7 @@
-﻿using Server.Core;
+﻿using System.Collections.Generic;
+using System.Dynamic;
+using Server.Core;
+using Server.Utilities;
 using static System.Console;
 
 namespace Server
@@ -30,7 +33,30 @@ namespace Server
                 WriteLine("Client disconnected.");
             };
 
-            server.Listen();
+            var parser = new JsonParser();
+            dynamic obj = new ExpandoObject();
+            obj.message = "Hello";
+            obj.number = 42;
+            obj.position = new ExpandoObject();
+            obj.position.x = 0;
+            
+            dynamic a = new ExpandoObject();
+            a.y = 54;
+
+            obj.positionN = a;
+
+            WriteLine("Serializing.");
+            var result = parser.Serialize(obj);
+            WriteLine(result);
+            
+            WriteLine("Deserializing");
+            var resultObj = parser.Deserialize(result);
+            WriteLine(resultObj.message);
+            WriteLine(resultObj.number);
+            WriteLine(resultObj.position[0]);
+            var s = resultObj.positionN[0];
+
+            //server.Listen();
             ReadLine();
         }
     }
