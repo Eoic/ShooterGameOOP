@@ -1,0 +1,6 @@
+enemy
+friendly
+player
+darkTile
+lightTile
+normalTile
