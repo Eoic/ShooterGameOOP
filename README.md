@@ -3,6 +3,10 @@
 T120B516 Objektinis programų projektavimas
 
 ### Testing server with Postman
-Set SSL verification to *OFF* 
-
+Set SSL verification to *OFF* <br>
 `File -> Settings -> General -> SSL certificate verification`
+
+### WebSocket
+#### Connection string
+`wss://localhost:{port}/api/messages`<br>
+`{port}` - server port (e.g. 44327)
