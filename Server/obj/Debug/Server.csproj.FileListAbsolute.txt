@@ -100,3 +100,4 @@ C:\Users\Karolis\Desktop\Projects\DesignPatterns\Server\bin\System.Numerics.Vect
 C:\Users\Karolis\Desktop\Projects\DesignPatterns\Server\bin\System.Runtime.CompilerServices.Unsafe.xml
 C:\Users\Karolis\Desktop\Projects\DesignPatterns\Server\bin\System.Text.Encodings.Web.xml
 C:\Users\Karolis\Desktop\Projects\DesignPatterns\Server\bin\System.Web.Http.Cors.xml
+C:\Users\Karolis\Desktop\Projects\DesignPatterns\Server\bin\Microsoft.WebSockets.dll
