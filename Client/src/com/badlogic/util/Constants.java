@@ -5,7 +5,8 @@ public class Constants {
     public static final String SPRITE_SHEET = "spritesheet.png",
             TEXTURES = "/textures",
             TITLE = "BadLogic",
-            SPRITE_SHEET_INFO = "/textures/spritesheet.txt";
+            SPRITE_SHEET_INFO = "/textures/spritesheet.txt",
+            SOCKET_CONNECTION_STRING = "wss://localhost:44327/api/messages";
     public static final int WIDTH = 800,
             HEIGHT = 600,
             BUFFER_COUNT = 3,
