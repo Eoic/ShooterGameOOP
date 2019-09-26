@@ -2,6 +2,7 @@ package com.badlogic.gfx;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class Window extends JFrame {
     private int width;
@@ -13,12 +14,14 @@ public class Window extends JFrame {
         this.height = height;
         this.setSize(width, height);
         this.setVisible(true);
+        // this.setFocusable(true);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.canvas = new Canvas();
         this.canvas.setPreferredSize(new Dimension(width, height));
         this.canvas.setMaximumSize(new Dimension(width, height));
         this.canvas.setMinimumSize(new Dimension(width, height));
+        this.canvas.setFocusable(false);
         this.add(canvas);
         this.pack();
     }

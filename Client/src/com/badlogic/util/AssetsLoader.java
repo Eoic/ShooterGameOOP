@@ -1,15 +1,15 @@
 package com.badlogic.util;
-
-import com.badlogic.gfx.Sprite;
 import com.badlogic.gfx.SpriteSheet;
 
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AssetsLoader {
-    public static ArrayList<Sprite> load(SpriteSheet spriteSheet, String spriteSheetDataPath, int width, int height) {
-        var sprites = new ArrayList<Sprite>();
+    public static HashMap<String, BufferedImage> load(SpriteSheet spriteSheet, String spriteSheetDataPath, int width, int height) {
+        var textureMap = new HashMap<String, BufferedImage>();
         var spriteLabels = readSpriteSheetData(spriteSheetDataPath);
         var sheetSize = spriteSheet.getRows() * spriteSheet.getColumns();
 
@@ -21,11 +21,12 @@ public class AssetsLoader {
         for (int i = 0; i < spriteSheet.getRows(); i++) {
             for (int j = 0; j < spriteSheet.getColumns(); j++) {
                 var texture = spriteSheet.parseSpriteSheet(j * width, i * height, width, height);
-                sprites.add(new Sprite(spriteLabels.get(i * spriteSheet.getColumns() + j), texture));
+                var textureName = spriteLabels.get(i * spriteSheet.getColumns() + j);
+                textureMap.put(textureName, texture);
             }
         }
 
-        return sprites;
+        return textureMap;
     }
 
     private static ArrayList<String> readSpriteSheetData(String path) {

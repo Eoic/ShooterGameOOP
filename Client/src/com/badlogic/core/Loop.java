@@ -6,23 +6,27 @@ import com.badlogic.gfx.Window;
 import com.badlogic.util.AssetsLoader;
 import com.badlogic.util.Constants;
 import com.badlogic.util.ImageLoader;
+import javafx.scene.input.KeyCode;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Loop {
     private static final long timeStep = 1000 / Constants.FPS;
+    private HashMap<String, BufferedImage> sprites;
     private ScheduledExecutorService executor;
     private boolean isRunning = false;
-    private ArrayList<Sprite> sprites; // temporary.
     private Window window;
     private long lastTime;
-
-    private int ii = 0;
+    long delta = 0;
 
     public void start() {
         if (isRunning)
@@ -60,7 +64,7 @@ public class Loop {
     private void render() {
         var bufferStrategy = window.getCanvas().getBufferStrategy();
         long currentTime = System.currentTimeMillis();
-        long delta = (currentTime - lastTime);
+        delta = (currentTime - lastTime);
 
         if (bufferStrategy == null) {
             window.getCanvas().createBufferStrategy(Constants.BUFFER_COUNT);
@@ -70,9 +74,7 @@ public class Loop {
         var graphics = bufferStrategy.getDrawGraphics();
         graphics.clearRect(0, 0, window.getWidth(), window.getHeight());
         // Start rendering
-        System.out.println(delta);
-        ii += 0.2 * delta;
-        graphics.drawImage(sprites.get(0).getTexture(), 128 + ii, 0, null);
+        // Example: graphics.drawImage(sprites.get("friendly"), positionX, positionY, null);
         // Stop rendering
         bufferStrategy.show();
         graphics.dispose();
