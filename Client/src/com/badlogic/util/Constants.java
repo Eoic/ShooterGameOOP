@@ -6,7 +6,7 @@ public class Constants {
             TEXTURES = "/textures",
             TITLE = "BadLogic",
             SPRITE_SHEET_INFO = "/textures/spritesheet.txt",
-            SOCKET_CONNECTION_STRING = "wss://localhost:44327/api/messages";
+            SOCKET_CONNECTION_STRING = "ws://localhost:44327/api/messages";
     public static final int WIDTH = 800,
             HEIGHT = 600,
             BUFFER_COUNT = 3,
