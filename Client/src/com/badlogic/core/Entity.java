@@ -2,10 +2,11 @@ package com.badlogic.core;
 
 import com.badlogic.util.Vector;
 
-public class Entity {
-    private Vector position = Vector.ZERO;
+import java.awt.*;
 
-    public Vector getPosition() {
-        return position;
-    }
+public interface Entity {
+    Vector position = Vector.ZERO;
+    Vector getPosition();
+    void render(Graphics graphics);
+    void update(int delta);
 }

@@ -1,32 +1,26 @@
 package com.badlogic.core;
 
-import com.badlogic.gfx.Sprite;
-import com.badlogic.gfx.SpriteSheet;
+import com.badlogic.game.Player;
+import com.badlogic.gfx.Assets;
 import com.badlogic.gfx.Window;
-import com.badlogic.util.AssetsLoader;
+import com.badlogic.input.InputManager;
 import com.badlogic.util.Constants;
-import com.badlogic.util.ImageLoader;
-import javafx.scene.input.KeyCode;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Loop {
     private static final long timeStep = 1000 / Constants.FPS;
-    private HashMap<String, BufferedImage> sprites;
+    private InputManager inputManager = new InputManager();
     private ScheduledExecutorService executor;
     private boolean isRunning = false;
     private Window window;
     private long lastTime;
-    long delta = 0;
+    private long delta = 0;
+
+    // Game entities
+    private Player player = new Player(inputManager);
 
     public void start() {
         if (isRunning)
@@ -51,14 +45,15 @@ public class Loop {
     }
 
     private void initialize() {
+        Assets.load();
         window = new Window(Constants.WIDTH, Constants.HEIGHT, Constants.TITLE, Constants.IS_RESIZEABLE);
-        var spriteSheet = new SpriteSheet(ImageLoader.loadImage(Constants.TEXTURES + "/" + Constants.SPRITE_SHEET),
-                                          Constants.SHEET_ROWS, Constants.SHEET_COLUMNS);
-        sprites = AssetsLoader.load(spriteSheet, Constants.SPRITE_SHEET_INFO, Constants.SPRITE_WIDTH, Constants.SPRITE_HEIGHT);
+        window.addKeyListener(inputManager);
+        window.getCanvas().addMouseListener(inputManager);
     }
 
     private void update() {
-        // Update entities before rendering step
+        inputManager.tick();
+        player.update((int)delta);
     }
 
     private void render() {
@@ -74,7 +69,7 @@ public class Loop {
         var graphics = bufferStrategy.getDrawGraphics();
         graphics.clearRect(0, 0, window.getWidth(), window.getHeight());
         // Start rendering
-        // Example: graphics.drawImage(sprites.get("friendly"), positionX, positionY, null);
+        player.render(graphics);
         // Stop rendering
         bufferStrategy.show();
         graphics.dispose();

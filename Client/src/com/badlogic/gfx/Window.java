@@ -2,9 +2,10 @@ package com.badlogic.gfx;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
-public class Window extends JFrame {
+public class Window extends JFrame implements ComponentListener {
     private int width;
     private int height;
     private Canvas canvas;
@@ -14,9 +15,9 @@ public class Window extends JFrame {
         this.height = height;
         this.setSize(width, height);
         this.setVisible(true);
-        // this.setFocusable(true);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.getContentPane().addComponentListener(this);
         this.canvas = new Canvas();
         this.canvas.setPreferredSize(new Dimension(width, height));
         this.canvas.setMaximumSize(new Dimension(width, height));
@@ -46,5 +47,23 @@ public class Window extends JFrame {
 
     public Canvas getCanvas() {
         return canvas;
+    }
+
+    @Override
+    public void componentResized(ComponentEvent componentEvent) {
+        this.width = componentEvent.getComponent().getWidth();
+        this.height = componentEvent.getComponent().getHeight();
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent componentEvent) {
+    }
+
+    @Override
+    public void componentShown(ComponentEvent componentEvent) {
+    }
+
+    @Override
+    public void componentHidden(ComponentEvent componentEvent) {
     }
 }

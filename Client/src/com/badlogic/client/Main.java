@@ -1,17 +1,11 @@
 package com.badlogic.client;
 
-import com.badlogic.network.Connector;
-import com.badlogic.util.Constants;
-
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.WebSocket;
-import java.util.concurrent.CountDownLatch;
+import com.badlogic.core.Loop;
 
 public class Main {
-    public static void main(String[] args) throws InterruptedException {
-        // new Loop().start();
-        // TODO: Ignore SSL.
+    public static void main(String[] args)  {
+        new Loop().start();
+        /*
         CountDownLatch latch = new CountDownLatch(1);
         Connector connector = new Connector(latch);
         WebSocket webSocket = HttpClient.newHttpClient()
@@ -20,5 +14,6 @@ public class Main {
                                         .join();
         webSocket.sendText("Hello", true);
         latch.await();
+         */
     }
 }
