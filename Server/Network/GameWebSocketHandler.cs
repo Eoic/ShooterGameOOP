@@ -1,6 +1,8 @@
 ﻿using Microsoft.Web.WebSockets;
+using Server.Game;
+using Server.Utilities;
 
-namespace Server.Net
+namespace Server.Network
 {
     public class GameWebSocketHandler : WebSocketHandler
     {
@@ -15,7 +17,10 @@ namespace Server.Net
         // Called on message received from client
         public override void OnMessage(string message)
         {
-            Send($"Echo: {message}.");
+            // JSON message test
+            var vector = new Vector(0, 0);
+            string vectorString = JsonParser.Serialize(vector);
+            Send(vectorString);
         }
 
         // Called if client disconnects
