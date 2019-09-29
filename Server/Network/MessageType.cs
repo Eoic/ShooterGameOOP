@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Server.Network
+﻿namespace Server.Network
 {
     // Event types received from client 
     // through web socket connection
