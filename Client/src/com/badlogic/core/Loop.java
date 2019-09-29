@@ -58,7 +58,7 @@ public class Loop implements Observer {
         gameManager = new GameManager();
         player = new Player(gameManager);
         messageEmitter = new MessageEmitter();
-        map = new Map(10, 10, gameManager.getCamera());
+        map = new Map(10, 10, gameManager);
         messageEmitter.addListener(this);
     }
 
@@ -66,7 +66,6 @@ public class Loop implements Observer {
     private void update() {
         gameManager.getInputManager().tick();
         player.update((int)delta);
-        // messageEmitter.send("Hello");
     }
 
     // Renders game objects

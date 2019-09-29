@@ -152,6 +152,8 @@
     <Compile Include="Controllers\MessageController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Game\Constants.cs" />
+    <Compile Include="Game\Entities\Character.cs" />
+    <Compile Include="Game\Entities\Wall.cs" />
     <Compile Include="Game\Loop.cs" />
     <Compile Include="Game\Vector.cs" />
     <Compile Include="Global.asax.cs">
