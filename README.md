@@ -8,5 +8,5 @@ Set SSL verification to *OFF* <br>
 
 ### WebSocket
 #### Connection string
-`wss://localhost:{port}/api/messages`<br>
+`ws://localhost:{port}/api/messages`<br>
 `{port}` - server port (e.g. 44327)
