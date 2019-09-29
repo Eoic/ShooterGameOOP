@@ -1,9 +1,9 @@
 package com.badlogic.core;
 
+import com.badlogic.game.GameManager;
 import com.badlogic.game.Player;
 import com.badlogic.gfx.Assets;
-import com.badlogic.gfx.Window;
-import com.badlogic.input.InputManager;
+import com.badlogic.gfx.Map;
 import com.badlogic.util.Constants;
 
 import java.util.concurrent.Executors;
@@ -11,17 +11,19 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Loop {
+    // Game loop
     private static final long timeStep = 1000 / Constants.FPS;
-    private InputManager inputManager = new InputManager();
     private ScheduledExecutorService executor;
     private boolean isRunning = false;
-    private Window window;
     private long lastTime;
     private long delta = 0;
 
     // Game entities
-    private Player player = new Player(inputManager);
+    private GameManager gameManager;
+    private Player player;
+    private Map map;
 
+    // Starts game loop
     public void start() {
         if (isRunning)
             return;
@@ -36,6 +38,7 @@ public class Loop {
         }, 0, timeStep, TimeUnit.MILLISECONDS);
     }
 
+    // Stops game loop
     public void stop() {
         if (!isRunning)
             return;
@@ -44,31 +47,35 @@ public class Loop {
         executor.shutdown();
     }
 
+    // Initializes game resources
     private void initialize() {
         Assets.load();
-        window = new Window(Constants.WIDTH, Constants.HEIGHT, Constants.TITLE, Constants.IS_RESIZEABLE);
-        window.addKeyListener(inputManager);
-        window.getCanvas().addMouseListener(inputManager);
+        gameManager = new GameManager();
+        player = new Player(gameManager);
+        map = new Map(10, 10, gameManager.getCamera());
     }
 
+    // Updates game entities (e.g. position)
     private void update() {
-        inputManager.tick();
+        gameManager.getInputManager().tick();
         player.update((int)delta);
     }
 
+    // Renders game objects
     private void render() {
-        var bufferStrategy = window.getCanvas().getBufferStrategy();
+        var bufferStrategy = gameManager.getWindow().getCanvas().getBufferStrategy();
         long currentTime = System.currentTimeMillis();
         delta = (currentTime - lastTime);
 
         if (bufferStrategy == null) {
-            window.getCanvas().createBufferStrategy(Constants.BUFFER_COUNT);
+            gameManager.getWindow().getCanvas().createBufferStrategy(Constants.BUFFER_COUNT);
             return;
         }
 
         var graphics = bufferStrategy.getDrawGraphics();
-        graphics.clearRect(0, 0, window.getWidth(), window.getHeight());
+        graphics.clearRect(0, 0, gameManager.getWindow().getWidth(), gameManager.getWindow().getHeight());
         // Start rendering
+        map.render(Assets.getSprite("normalTile"), graphics);
         player.render(graphics);
         // Stop rendering
         bufferStrategy.show();

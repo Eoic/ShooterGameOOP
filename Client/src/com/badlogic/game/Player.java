@@ -2,37 +2,52 @@ package com.badlogic.game;
 
 import com.badlogic.core.Entity;
 import com.badlogic.gfx.Assets;
-import com.badlogic.input.InputManager;
+import com.badlogic.util.Constants;
 import com.badlogic.util.Vector;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Player implements Entity {
-    private InputManager inputManager;
+    private GameManager gameManager;
+    private BufferedImage sprite;
 
-    public Player(InputManager inputManager) {
-        this.inputManager = inputManager;
+    public Player(GameManager gameManager) {
+        this.gameManager = gameManager;
+        this.sprite = Assets.getSprite("player");
     }
 
     @Override
     public Vector getPosition() {
-        return null;
+        return position;
     }
 
     @Override
     public void render(Graphics graphics) {
-        graphics.drawImage(Assets.getSprite("player"), position.getX(), position.getY(), null);
+        var camOffset = gameManager.getCamera().getOffset();
+        var windowSize = gameManager.getWindow().getSize();
+        int posX = ((int)position.getX() - (int)camOffset.getX()) + (windowSize.width / 2 - Constants.SPRITE_WIDTH / 2);
+        int posY = ((int)position.getY() - (int)camOffset.getY()) + (windowSize.height / 2 - Constants.SPRITE_HEIGHT / 2);
+        graphics.drawImage(sprite, posX, posY, null);
     }
 
     @Override
     public void update(int delta) {
-        if (inputManager.left)
-            position.add(-1 * delta, 0);
-        if (inputManager.right)
-            position.add(1 * delta, 0);
-        if (inputManager.up)
-            position.add(0, -1 * delta);
-        if (inputManager.down)
-            position.add(0, 1 * delta);
+        if (gameManager.getInputManager().left) {
+            gameManager.getCamera().getOffset().add(-1, 0);
+            position.add(-delta, 0);
+        }
+        if (gameManager.getInputManager().right) {
+            gameManager.getCamera().getOffset().add(1, 0);
+            position.add(delta, 0);
+        }
+        if (gameManager.getInputManager().up) {
+            gameManager.getCamera().getOffset().add(0, -1);
+            position.add(0, -delta);
+        }
+        if (gameManager.getInputManager().down) {
+            gameManager.getCamera().getOffset().add(0, 1);
+            position.add(0, delta);
+        }
     }
 }
