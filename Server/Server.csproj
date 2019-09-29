@@ -151,13 +151,20 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\MessageController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Game\Constants.cs" />
+    <Compile Include="Game\Loop.cs" />
     <Compile Include="Game\Vector.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Weapon.cs" />
+    <Compile Include="Network\ConnectionsPool.cs" />
+    <Compile Include="Network\MessageType.cs" />
     <Compile Include="Network\GameWebSocketHandler.cs" />
+    <Compile Include="Network\Message.cs" />
+    <Compile Include="Network\IObserver.cs" />
+    <Compile Include="Network\ISubject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\JsonParser.cs" />
   </ItemGroup>

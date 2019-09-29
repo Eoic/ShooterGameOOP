@@ -1,4 +1,5 @@
-﻿using Server.Network;
+﻿using Server.Game;
+using Server.Network;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -13,6 +14,12 @@ namespace Server.Controllers
     [RoutePrefix("api/messages")]
     public class MessageController : ApiController
     {
+        /// <summary>
+        /// Create only one instance of game loop and add attach it 
+        /// each web socket client instance.
+        /// </summary>
+        private Loop gameLoop = new Loop();
+
         // Upgrade connection from HTTP to WebSocket on connection request.
         [Route("")]
         public HttpResponseMessage Get()
@@ -29,6 +36,7 @@ namespace Server.Controllers
         private Task ProcessWebSocketSession(AspNetWebSocketContext context)
         {
             var handler = new GameWebSocketHandler();
+            handler.Attach(gameLoop);
             var processTask = handler.ProcessWebSocketRequestAsync(context);
             return processTask;
         }

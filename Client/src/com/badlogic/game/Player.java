@@ -17,13 +17,13 @@ public class Player extends Entity {
         this.sprite = Assets.getSprite("player");
     }
 
-    public Player(GameManager gameManager, String name) {
-        this(gameManager);
-        this.name = name;
-    }
-
     public Vector getPosition() {
         return position;
+    }
+
+    @Override
+    public String getId() {
+        return id;
     }
 
     public void render(Graphics graphics) {

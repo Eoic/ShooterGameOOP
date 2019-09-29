@@ -1,17 +1,13 @@
 package com.badlogic.client;
 
-import com.badlogic.core.factory.Factory;
-import com.badlogic.core.factory.FactoryProvider;
-import com.badlogic.core.factory.bonuses.Bonus;
-import com.badlogic.core.factory.bonuses.BonusType;
-import com.badlogic.core.factory.weapons.Weapon;
-import com.badlogic.core.factory.weapons.WeaponType;
+import com.badlogic.core.Loop;
 
 public class Main {
     public static void main(String[] args)  {
-        // new Loop().start();
+        new Loop().start();
 
         // Weapon factory
+        /*
         var weaponFactory = FactoryProvider.getFactory(Factory.WEAPON);
         var pistol = (Weapon)weaponFactory.create(WeaponType.PISTOL);
         var rifle = (Weapon)weaponFactory.create(WeaponType.RIFLE);
@@ -28,6 +24,14 @@ public class Main {
         ammoBonus.applyBonus(null);
         healthBonus.applyBonus(null);
         speedBonus.applyBonus(null);
+        */
+
+        // Connection handling
+        /*
+        var connectionSubject = new ConnectionSubject<>();
+        var connectionObserver = new ConnectionObserver<>();
+        connectionSubject.attach(connectionObserver);*/
+        // connectionSubject.detach(connectionObserver);
 
         /*
         CountDownLatch latch = new CountDownLatch(1);
