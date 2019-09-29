@@ -14,7 +14,9 @@ namespace Server.Models
 
         public class Builder
         {
-            private static Builder builder;
+            private static volatile Builder instance;
+            private static object syncRoot = new object();
+
 
             private const int DEFAULT_AMMO = 100;
             private const int DEFAULT_OWNER = 0;
@@ -26,12 +28,16 @@ namespace Server.Models
 
             public static Builder GetInstance()
             {
-                if (builder == null)
+                if (instance == null)
                 {
-                    builder = new Builder();
+                    lock (syncRoot)
+                    {
+                        if (instance == null)
+                            instance = new Builder();
+                    }
                 }
 
-                return builder;
+                return instance;
             }
 
             public Builder()
