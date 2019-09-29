@@ -8,7 +8,7 @@ import com.badlogic.util.Vector;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Player implements Entity {
+public class Player extends Entity {
     private GameManager gameManager;
     private BufferedImage sprite;
 
@@ -17,12 +17,15 @@ public class Player implements Entity {
         this.sprite = Assets.getSprite("player");
     }
 
-    @Override
+    public Player(GameManager gameManager, String name) {
+        this(gameManager);
+        this.name = name;
+    }
+
     public Vector getPosition() {
         return position;
     }
 
-    @Override
     public void render(Graphics graphics) {
         var camOffset = gameManager.getCamera().getOffset();
         var windowSize = gameManager.getWindow().getSize();
@@ -31,7 +34,6 @@ public class Player implements Entity {
         graphics.drawImage(sprite, posX, posY, null);
     }
 
-    @Override
     public void update(int delta) {
         if (gameManager.getInputManager().left) {
             gameManager.getCamera().getOffset().add(-1, 0);
