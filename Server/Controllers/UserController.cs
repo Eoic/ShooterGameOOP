@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Server.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -25,6 +26,14 @@ namespace Server.Controllers
         public void Post([FromBody]string value)
         {
 
+        }
+
+        [HttpGet]
+        public Weapon GetPistol()
+        {
+            return Weapon.Builder.GetInstance()
+                .setName("TestPistol")
+                .build();
         }
     }
 }
