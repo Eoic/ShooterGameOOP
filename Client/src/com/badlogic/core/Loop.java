@@ -39,8 +39,6 @@ public class Loop implements Observer {
             update();
             render();
         }, 0, timeStep, TimeUnit.MILLISECONDS);
-
-        messageEmitter.send("Hello there");
     }
 
     // Stops game loop

@@ -6,6 +6,7 @@ import com.badlogic.util.Constants;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.CountDownLatch;
 
 public class MessageEmitter {
@@ -16,10 +17,15 @@ public class MessageEmitter {
     public MessageEmitter() {
         latch = new CountDownLatch(Constants.COUNTDOWN_LATCH_COUNT);
         connector = new Connector(latch);
-        webSocket = HttpClient.newHttpClient()
-                              .newWebSocketBuilder()
-                              .buildAsync(URI.create(Constants.SOCKET_CONNECTION_STRING), connector)
-                              .join();
+
+        try {
+            webSocket = HttpClient.newHttpClient()
+                    .newWebSocketBuilder()
+                    .buildAsync(URI.create(Constants.SOCKET_CONNECTION_STRING), connector)
+                    .join();
+        } catch (CompletionException ex) {
+            ex.printStackTrace();
+        }
     }
 
     // TODO: Make async.
