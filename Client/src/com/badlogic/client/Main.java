@@ -1,10 +1,22 @@
 package com.badlogic.client;
 
-import com.badlogic.core.Loop;
+import com.badlogic.util.JsonParser;
+import com.badlogic.util.Point;
+
+import java.io.IOException;
 
 public class Main {
-    public static void main(String[] args)  {
-        new Loop().start();
+    public static void main(String[] args) throws IOException {
+        //new Loop().start();
+
+        // JSON parsing
+        var position = new Point(0, 0);
+        var parser = new JsonParser();
+        var positionString = parser.serialize(position);
+        System.out.println(positionString);
+
+        Point posFromString = parser.deserialize(positionString, Point.class);
+        System.out.println(posFromString.getX());
 
         // Weapon factory
         /*

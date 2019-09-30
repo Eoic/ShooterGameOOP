@@ -28,7 +28,7 @@ public class MessageEmitter {
         }
     }
 
-    // TODO: Make async.
+    // TODO: Make async?
     // TODO: Check if connection was made before sending
     public void send(String message) {
         webSocket.sendText(message, true);
