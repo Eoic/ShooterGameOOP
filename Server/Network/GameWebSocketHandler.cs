@@ -1,50 +1,82 @@
 ﻿using Microsoft.Web.WebSockets;
 using System.Collections.Generic;
+using System.Diagnostics;
+using Server.Utilities;
 
 namespace Server.Network
 {
     public class GameWebSocketHandler : WebSocketHandler, ISubject<Message>
     {
-        private readonly List<IObserver<Message>> observers = new List<IObserver<Message>>();
+        private readonly List<IObserver<Message>> _observers = new List<IObserver<Message>>();
 
-        // Add new client to client connections list
+        /// <summary>
+        /// Notifies observers when connection with
+        /// client has been opened.
+        /// </summary>
         public override void OnOpen()
         {
             ConnectionsPool.GetInstance().Clients.Add(this);
-            int count = ConnectionsPool.GetInstance().Clients.Count;
-            NotifyAllObservers(new Message(MessageType.CLIENT_CONNECTED, $"New client connected. Current count: {count}."));
+            var count = ConnectionsPool.GetInstance().Clients.Count;
+            NotifyAllObservers(new Message(EventType.ClientConnected, $"New client connected. Current count: {count}."));
         }
 
-        // Called on message received from client
+        /// <summary>
+        /// Passes received message to all observers.
+        /// </summary>
+        /// <param name="message"></param>
         public override void OnMessage(string message)
         {
-            NotifyAllObservers(new Message(MessageType.RECEIVED_MESSAGE, message));
-        }
+            var messageObj = JsonParser.Deserialize<Message>(message);
 
-        // Called if client disconnects
+            if (messageObj == null || messageObj.Type == EventType.Invalid)
+            {
+                Debug.WriteLine("Malformed message.");
+                return;
+            }
+            
+            NotifyAllObservers(messageObj);
+        }
+        
+        /// <summary>
+        /// Notifies all observers when connection with client
+        /// is lost and removes client instance from connections list.
+        /// </summary>
         public override void OnClose()
         {
             ConnectionsPool.GetInstance().Clients.Remove(this);
-            int count = ConnectionsPool.GetInstance().Clients.Count;
-            NotifyAllObservers(new Message(MessageType.CLIENT_DISCONNECTED, $"Client has disconnected. Current count: {count}."));
+            var count = ConnectionsPool.GetInstance().Clients.Count;
+            NotifyAllObservers(new Message(EventType.ClientDisconnected, $"Client has disconnected. Current count: {count}."));
         }
 
-        // An error occoured
+        /// <summary>
+        /// Notifies all observers on connection error with client
+        /// and removes client instance from connections list.
+        /// </summary>
         public override void OnError()
         {
-            NotifyAllObservers(new Message(MessageType.ERROR, "An error occoured"));
+            ConnectionsPool.GetInstance().Clients.Remove(this);
+            NotifyAllObservers(new Message(EventType.ErrorOccured, "An error occured"));
         }
 
-        // Attach an observer to this client
+        /// <summary>
+        /// Adds given observer to observers list.
+        /// </summary>
+        /// <param name="observer"></param>
         public void Attach(IObserver<Message> observer) =>
-            observers.Add(observer);
+            _observers.Add(observer);
 
-        // Detach an observer from this client
+        /// <summary>
+        /// Removes given observer from observers list.
+        /// </summary>
+        /// <param name="observer"></param>
         public void Detach(IObserver<Message> observer) =>
-            observers.Remove(observer);
+            _observers.Remove(observer);
 
-        // Send messages to all attached observers
+        /// <summary>
+        /// Sends data to all observers.
+        /// </summary>
+        /// <param name="data"></param>
         public void NotifyAllObservers(Message data) => 
-            observers.ForEach(observer => observer.Update(data));
+            _observers.ForEach(observer => observer.Update(data));
     }
 }

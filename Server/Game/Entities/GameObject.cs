@@ -5,12 +5,18 @@ namespace Server.Game.Entities
     public class GameObject
     {
         public Guid Id { get; }
-        public Vector Position { get; private set; }
+        public string Name { get; }
+        public Vector Position { get; set; }
 
         public GameObject()
         {
             Id = Guid.NewGuid();
-            Position = new Vector(0, 0);
+            Position = new Vector();
+        }
+
+        public GameObject(string name) : this()
+        {
+            Name = name;
         }
     }
 }

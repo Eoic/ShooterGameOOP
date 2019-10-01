@@ -18,7 +18,7 @@ namespace Server.Controllers
         /// Create only one instance of game loop and add attach it 
         /// each web socket client instance.
         /// </summary>
-        private Loop gameLoop = new Loop();
+        private readonly GameManager _gameManager = new GameManager();
 
         // Upgrade connection from HTTP to WebSocket on connection request.
         [Route("")]
@@ -36,7 +36,7 @@ namespace Server.Controllers
         private Task ProcessWebSocketSession(AspNetWebSocketContext context)
         {
             var handler = new GameWebSocketHandler();
-            handler.Attach(gameLoop);
+            handler.Attach(_gameManager);
             var processTask = handler.ProcessWebSocketRequestAsync(context);
             return processTask;
         }

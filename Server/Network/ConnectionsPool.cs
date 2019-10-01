@@ -1,23 +1,16 @@
 ﻿using Microsoft.Web.WebSockets;
 
-// For holding all client connections.
 namespace Server.Network
 {
+    /// <summary>
+    /// Holds all client connections.
+    /// </summary>
     public class ConnectionsPool
     {
-        private static ConnectionsPool instance;
-        public readonly WebSocketCollection Clients;
+        public readonly WebSocketCollection Clients = new WebSocketCollection();
+        private static ConnectionsPool _instance;
 
-        private ConnectionsPool()
-        {
-            Clients = new WebSocketCollection();
-        }
-
-        public static ConnectionsPool GetInstance()
-        {
-            if (instance == null)
-                instance = new ConnectionsPool();
-            return instance;
-        }
+        public static ConnectionsPool GetInstance() =>
+            _instance ?? (_instance = new ConnectionsPool());
     }
 }
