@@ -6,15 +6,21 @@
     /// </summary>
     public enum EventType
     {
-        // Events
-        Invalid, // If serialization goes wrong
+        // SERVER EVENTS
+        Invalid,
         ClientConnected,
         ClientDisconnected,
         ErrorOccured,
         
-        // Client request types
+        // CLIENT REQUEST TYPES
+        // Game session
         CreateGame,
         StartGame,
         EndGame,
+
+        // Actions
+        StartMoving,
+        StopMoving,
+        Shoot,
     }
 }

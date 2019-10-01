@@ -1,4 +1,5 @@
-﻿using Microsoft.Web.WebSockets;
+﻿using System;
+using Microsoft.Web.WebSockets;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Server.Utilities;
@@ -7,6 +8,7 @@ namespace Server.Network
 {
     public class GameWebSocketHandler : WebSocketHandler, ISubject<Message>
     {
+        public readonly Guid Id = Guid.NewGuid();
         private readonly List<IObserver<Message>> _observers = new List<IObserver<Message>>();
 
         /// <summary>

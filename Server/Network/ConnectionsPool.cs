@@ -1,4 +1,6 @@
-﻿using Microsoft.Web.WebSockets;
+﻿using System;
+using System.Linq;
+using Microsoft.Web.WebSockets;
 
 namespace Server.Network
 {
@@ -12,5 +14,8 @@ namespace Server.Network
 
         public static ConnectionsPool GetInstance() =>
             _instance ?? (_instance = new ConnectionsPool());
+
+        public GameWebSocketHandler GetClient(Guid id) =>
+            (GameWebSocketHandler) Clients.SingleOrDefault(client => ((GameWebSocketHandler) client).Id == id);
     }
 }

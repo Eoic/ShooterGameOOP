@@ -14,12 +14,6 @@ namespace Server.Controllers
     [RoutePrefix("api/messages")]
     public class MessageController : ApiController
     {
-        /// <summary>
-        /// Create only one instance of game loop and add attach it 
-        /// each web socket client instance.
-        /// </summary>
-        private readonly GameManager _gameManager = new GameManager();
-
         // Upgrade connection from HTTP to WebSocket on connection request.
         [Route("")]
         public HttpResponseMessage Get()
@@ -36,7 +30,7 @@ namespace Server.Controllers
         private Task ProcessWebSocketSession(AspNetWebSocketContext context)
         {
             var handler = new GameWebSocketHandler();
-            handler.Attach(_gameManager);
+            handler.Attach(GameManagerWrapper.GetInstance().GetGameManager());
             var processTask = handler.ProcessWebSocketRequestAsync(context);
             return processTask;
         }

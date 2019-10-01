@@ -154,6 +154,7 @@
     <Compile Include="Game\Constants.cs" />
     <Compile Include="Game\Entities\Player.cs" />
     <Compile Include="Game\Entities\GameObject.cs" />
+    <Compile Include="Game\GameManagerWrapper.cs" />
     <Compile Include="Game\GameRoom.cs" />
     <Compile Include="Game\GameManager.cs" />
     <Compile Include="Game\Vector.cs" />

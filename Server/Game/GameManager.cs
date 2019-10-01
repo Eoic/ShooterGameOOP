@@ -1,6 +1,8 @@
-﻿using Server.Network;
+﻿using System.Collections.Generic;
+using Server.Network;
 using System.Diagnostics;
 using System.Threading;
+using Server.Game.Entities;
 
 // TODO: calculate delta (time between frames)
 
@@ -8,15 +10,24 @@ namespace Server.Game
 {
     public class GameManager : IObserver<Message>
     {
+        // Loop
         private readonly long _frameTime = 1_000_000_000 / Constants.Fps;
-        private readonly Stopwatch _timer = new Stopwatch();
+        private readonly Stopwatch _timer;
+        private readonly Thread _runner;
         private long _updateTime;
         private bool _isRunning;
-        private Thread _runner;
         private long _waitTime;
+        private long delta;
         private long _now;
-        // private long lastTime;
-        // private long delta;
+        
+        // Game session
+        private List<GameRoom> _games = new List<GameRoom>();
+
+        public GameManager()
+        {
+            _runner = new Thread(Tick);
+            _timer = new Stopwatch();
+        }
 
         /// <summary>
         /// Ends game loop
@@ -26,9 +37,8 @@ namespace Server.Game
             if (_isRunning)
                 return;
 
-            _timer.Start();
             _isRunning = true;
-            _runner = new Thread(Tick);
+            _timer.Start();
             _runner.Start();
         }
 
@@ -42,6 +52,7 @@ namespace Server.Game
 
             _isRunning = false;
             _timer.Stop();
+            _runner.Join();
         }
 
         /// <summary>
@@ -52,11 +63,11 @@ namespace Server.Game
         {
             switch (data.Type)
             {
+                case EventType.ClientConnected:
+                case EventType.ClientDisconnected:
+                    break;
                 case EventType.CreateGame:
-                    break;
-                case EventType.StartGame:
-                    break;
-                case EventType.EndGame:
+                    // TODO: Create new game room and and player instance
                     break;
                 default:
                     Debug.WriteLine("Received message with unknown type.");
@@ -74,10 +85,17 @@ namespace Server.Game
             while (_isRunning)
             {
                 _now = _timer.ElapsedMilliseconds * 1_000_000;
-                // Execute game logic here
+                // Game logic here
+                
+                // ---------------
                 _updateTime = _timer.ElapsedMilliseconds * 1_000_000 - _now;
                 _waitTime = (_frameTime - _updateTime) / 1_000_000;
+
+                if (_waitTime < 0)
+                    _waitTime = 0;
+
                 Thread.Sleep((int)_waitTime);
+                delta = (_timer.ElapsedMilliseconds * 1_000_000 - _now) / 1_000_000;
             }
         }
     }
