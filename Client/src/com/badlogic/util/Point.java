@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Point {
+    @JsonProperty("X")
     private double x;
+    @JsonProperty("Y")
     private double y;
 
     @JsonCreator
-    public Point(@JsonProperty("x") int x, @JsonProperty("y") int y) {
+    public Point(@JsonProperty("X") int x, @JsonProperty("Y") int y) {
         this.x = x;
         this.y = y;
     }
@@ -21,3 +23,4 @@ public class Point {
         return y;
     }
 }
+

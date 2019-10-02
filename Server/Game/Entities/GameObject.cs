@@ -4,13 +4,12 @@ namespace Server.Game.Entities
 {
     public class GameObject
     {
-        public Guid Id { get; }
+        public Guid Id { get; protected set; }
         public string Name { get; }
         public Vector Position { get; set; }
 
         public GameObject()
         {
-            Id = Guid.NewGuid();
             Position = new Vector();
         }
 

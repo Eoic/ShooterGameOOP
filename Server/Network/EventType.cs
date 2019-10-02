@@ -1,26 +1,32 @@
 ﻿namespace Server.Network
 {
     /// <summary>
-    /// Event types received from client 
+    /// Events received from client 
     /// through web socket connection
+    /// In short: What is received from client
     /// </summary>
-    public enum EventType
+    public static class EventType
     {
         // SERVER EVENTS
-        Invalid,
-        ClientConnected,
-        ClientDisconnected,
-        ErrorOccured,
-        
-        // CLIENT REQUEST TYPES
-        // Game session
-        CreateGame,
-        StartGame,
-        EndGame,
+        public const int
+            Invalid = 0,
+            ClientConnected = 1,
+            ClientDisconnected = 2,
+            ErrorOccured = 3,
 
-        // Actions
-        StartMoving,
-        StopMoving,
-        Shoot,
+            // CLIENT REQUEST TYPES
+            // Game session
+            CreateGame = 4,
+            StartGame = 5,
+            EndGame = 6,
+
+            // Actions
+            StartMoving = 7,
+            StopMoving = 8,
+            Shoot = 9,
+
+            // RESPONSE TO CLIENT
+            GameCreated = 10,
+            PositionUpdate = 11;
     }
 }

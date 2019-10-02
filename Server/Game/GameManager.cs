@@ -3,8 +3,7 @@ using Server.Network;
 using System.Diagnostics;
 using System.Threading;
 using Server.Game.Entities;
-
-// TODO: calculate delta (time between frames)
+using Server.Utilities;
 
 namespace Server.Game
 {
@@ -17,7 +16,7 @@ namespace Server.Game
         private long _updateTime;
         private bool _isRunning;
         private long _waitTime;
-        private long delta;
+        private long _delta;
         private long _now;
         
         // Game session
@@ -64,10 +63,31 @@ namespace Server.Game
             switch (data.Type)
             {
                 case EventType.ClientConnected:
+                    Debug.WriteLine(data.Payload);
+                    break;
                 case EventType.ClientDisconnected:
+                    Debug.WriteLine(data.Payload);
+                    break;
+                case EventType.ErrorOccured:
+                    Debug.WriteLine(data.Payload);
+                    Debug.WriteLine("Error");
                     break;
                 case EventType.CreateGame:
-                    // TODO: Create new game room and and player instance
+                    // Creates new game and adds player itself
+                    var gameRoom = new GameRoom();
+                    var player = new Player(data.ClientId);
+                    gameRoom.AddPlayer(player);
+
+                    // Finally, send initial position (test)
+                    var newPos = new Vector(200, 200);
+                    var newPosString = JsonParser.Serialize(newPos);
+                    var message = new Message(EventType.GameCreated, newPosString);
+                    var messageStr = JsonParser.Serialize(message);
+
+                    // Broadcast position update to all players in GameRoom
+                    // TODO...
+
+                    ConnectionsPool.GetInstance().GetClient(data.ClientId).Send(messageStr);
                     break;
                 default:
                     Debug.WriteLine("Received message with unknown type.");
@@ -85,9 +105,9 @@ namespace Server.Game
             while (_isRunning)
             {
                 _now = _timer.ElapsedMilliseconds * 1_000_000;
-                // Game logic here
-                
-                // ---------------
+                // --- Game logic here ---
+                // * Loop goes through all created GameRooms and updates players
+                // -----------------------
                 _updateTime = _timer.ElapsedMilliseconds * 1_000_000 - _now;
                 _waitTime = (_frameTime - _updateTime) / 1_000_000;
 
@@ -95,7 +115,7 @@ namespace Server.Game
                     _waitTime = 0;
 
                 Thread.Sleep((int)_waitTime);
-                delta = (_timer.ElapsedMilliseconds * 1_000_000 - _now) / 1_000_000;
+                _delta = (_timer.ElapsedMilliseconds * 1_000_000 - _now) / 1_000_000;
             }
         }
     }

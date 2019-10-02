@@ -30,12 +30,15 @@ namespace Server.Network
         {
             var messageObj = JsonParser.Deserialize<Message>(message);
 
+            Debug.WriteLine(messageObj);
+
             if (messageObj == null || messageObj.Type == EventType.Invalid)
             {
                 Debug.WriteLine("Malformed message.");
                 return;
             }
-            
+
+            messageObj.ClientId = Id;
             NotifyAllObservers(messageObj);
         }
         

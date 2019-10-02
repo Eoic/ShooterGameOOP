@@ -5,8 +5,11 @@ import com.badlogic.game.GameManager;
 import com.badlogic.game.Player;
 import com.badlogic.gfx.Assets;
 import com.badlogic.gfx.Map;
+import com.badlogic.network.Message;
 import com.badlogic.network.MessageEmitter;
 import com.badlogic.util.Constants;
+import com.badlogic.util.JsonParser;
+import com.badlogic.util.Point;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -18,6 +21,7 @@ public class Loop implements Observer {
     private ScheduledExecutorService executor;
     private MessageEmitter messageEmitter;
     private boolean isRunning = false;
+    private JsonParser jsonParser;
     private long lastTime;
     private long delta = 0;
 
@@ -39,6 +43,11 @@ public class Loop implements Observer {
             update();
             render();
         }, 0, timeStep, TimeUnit.MILLISECONDS);
+
+        // Send message to server (temporary)
+        var message = new Message(4, "Create game pls.");
+        System.out.println(jsonParser.serialize(message));
+        messageEmitter.send(jsonParser.serialize(message));
     }
 
     // Stops game loop
@@ -58,6 +67,7 @@ public class Loop implements Observer {
         messageEmitter = new MessageEmitter();
         map = new Map(10, 10, gameManager);
         messageEmitter.addListener(this);
+        jsonParser = new JsonParser();
     }
 
     // Updates game entities (e.g. position)
@@ -91,6 +101,14 @@ public class Loop implements Observer {
     // Received from server.
     @Override
     public void update(Object data) {
-        System.out.println("Received: " + data);
+        var message = jsonParser.deserialize(data.toString(), Message.class);
+        var position = jsonParser.deserialize(message.getPayload(), Point.class);
+        player.position.setX(position.getX());
+        player.position.setY(position.getY());
+        System.out.println(position.getX());
+
+        // TODO: Movement. Send velocity vector once on key press,
+        //                 Send again key release,
+        //
     }
 }
