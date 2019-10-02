@@ -21,8 +21,7 @@
             EndGame = 6,
 
             // Actions
-            StartMoving = 7,
-            StopMoving = 8,
+            DirectionUpdate = 8,
             Shoot = 9,
 
             // RESPONSE TO CLIENT

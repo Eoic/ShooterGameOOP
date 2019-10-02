@@ -63,7 +63,7 @@ namespace Server.Game
             switch (data.Type)
             {
                 case EventType.ClientConnected:
-                    Debug.WriteLine(data.Payload);
+                    _games.ForEach(game => game.RemovePlayer(data.ClientId));
                     break;
                 case EventType.ClientDisconnected:
                     Debug.WriteLine(data.Payload);
@@ -75,11 +75,11 @@ namespace Server.Game
                 case EventType.CreateGame:
                     // Creates new game and adds player itself
                     var gameRoom = new GameRoom();
-                    var player = new Player(data.ClientId);
+                    var player = new Player(data.ClientId, gameRoom.RoomId);
                     gameRoom.AddPlayer(player);
-
+                    _games.Add(gameRoom);
                     // Finally, send initial position (test)
-                    var newPos = new Vector(200, 200);
+                    var newPos = new Vector(0, 0);
                     var newPosString = JsonParser.Serialize(newPos);
                     var message = new Message(EventType.GameCreated, newPosString);
                     var messageStr = JsonParser.Serialize(message);
@@ -88,6 +88,17 @@ namespace Server.Game
                     // TODO...
 
                     ConnectionsPool.GetInstance().GetClient(data.ClientId).Send(messageStr);
+                    break;
+                case EventType.DirectionUpdate:
+                    _games.ForEach(game =>
+                    {
+                        var playerObj = game.GetPlayer(data.ClientId);
+                        if (playerObj == null)
+                            return;
+
+                        var direction = JsonParser.Deserialize<Vector>(data.Payload);
+                        game.GetPlayer(data.ClientId).Direction = direction;
+                    });
                     break;
                 default:
                     Debug.WriteLine("Received message with unknown type.");
@@ -105,9 +116,25 @@ namespace Server.Game
             while (_isRunning)
             {
                 _now = _timer.ElapsedMilliseconds * 1_000_000;
+
                 // --- Game logic here ---
-                // * Loop goes through all created GameRooms and updates players
+                _games.ForEach(game =>
+                {
+                    foreach (var keyValuePair in game.Players)
+                    {
+                        var player = keyValuePair.Value;
+                        player.Update(_delta);
+
+                        if (player.TimeTillClientUpdate != 0) continue;
+                        var client = ConnectionsPool.GetInstance().GetClient(keyValuePair.Key);
+
+                        if (client == null) continue;
+                        var message = new Message(EventType.PositionUpdate, JsonParser.Serialize(player.Position));
+                        client.Send(JsonParser.Serialize(message));
+                    }
+                });
                 // -----------------------
+
                 _updateTime = _timer.ElapsedMilliseconds * 1_000_000 - _now;
                 _waitTime = (_frameTime - _updateTime) / 1_000_000;
 

@@ -8,17 +8,18 @@ namespace Server.Game
 {
     public class GameRoom
     {
+        public Dictionary<Guid, Player> Players { get; } = new Dictionary<Guid, Player>();
         public Guid RoomId { get; } = Guid.NewGuid();
-        private readonly Dictionary<Guid, Player> _players = new Dictionary<Guid, Player>();
 
         public void AddPlayer(Player player)
         {
-            _players.Add(player.Id, player);
+            Players.Add(player.Id, player);
         }
 
-        public Player GetPlayer(Guid id)
-        {
-            return _players[id];
-        }
+        public Player GetPlayer(Guid id) =>
+            Players[id];
+
+        public void RemovePlayer(Guid id) =>
+            Players.Remove(id);
     }
 }
