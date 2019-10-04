@@ -1,5 +1,10 @@
 package com.badlogic.core;
 
+import com.badlogic.core.factory.Factory;
+import com.badlogic.core.factory.FactoryProvider;
+import com.badlogic.core.factory.bonuses.Bonus;
+import com.badlogic.core.factory.bonuses.BonusType;
+import com.badlogic.core.factory.bonuses.HealthBonus;
 import com.badlogic.core.observer.Observer;
 import com.badlogic.game.GameManager;
 import com.badlogic.game.Player;
@@ -14,6 +19,7 @@ import com.badlogic.util.JsonParser;
 import com.badlogic.util.Point;
 import com.badlogic.util.Vector;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -31,6 +37,7 @@ public class Loop implements Observer {
     private long delta = 0;
 
     // Game entities
+    private ArrayList<Bonus> bonuses;
     private GameManager gameManager;
     private Player player;
     private Map map;
@@ -66,16 +73,17 @@ public class Loop implements Observer {
         messageEmitter = new MessageEmitter();
         messageEmitter.addListener(this);
         gameManager = new GameManager();
-        map = new Map(10, 10, gameManager);
+        map = new Map(20, 10, gameManager);
         jsonParser = new JsonParser();
         player = new Player(gameManager, messageEmitter);
 
         // Set UI events
         gameManager.getWindow().setCreateGameBtnEvent(actionEvent -> {
             var message = new Message(MessageType.CreateGame, "Create game pls.");
-            System.out.println(jsonParser.serialize(message));
             messageEmitter.send(jsonParser.serialize(message));
         });
+
+        bonuses = createBonuses();
     }
 
     // Updates game entities (e.g. position)
@@ -97,10 +105,13 @@ public class Loop implements Observer {
 
         var graphics = bufferStrategy.getDrawGraphics();
         graphics.clearRect(0, 0, gameManager.getWindow().getWidth(), gameManager.getWindow().getHeight());
+
         // Start rendering
         map.render(Assets.getSprite("normalTile"), graphics);
-        gameRoom.getPlayers().forEach(player -> player.render(graphics));
+        bonuses.forEach(bonus -> bonus.render(graphics));
+        gameRoom.getPlayers().forEach(player -> player.render(graphics));;
         // Stop rendering
+
         bufferStrategy.show();
         graphics.dispose();
         lastTime = currentTime;
@@ -117,8 +128,32 @@ public class Loop implements Observer {
             player.position.set(new Vector(position.getX(), position.getY()));
             gameRoom.addPlayer(player);
         } else if (message.getType() == MessageType.PositionUpdate) {
-            var position = jsonParser.deserialize(message.getPayload(), Point.class);
-            gameRoom.getPlayers().get(0).position.set(new Vector(position.getX(), position.getY()));
+            // var position = jsonParser.deserialize(message.getPayload(), Point.class);
+            // gameRoom.getPlayers().get(0).position.set(new Vector(position.getX(), position.getY()));
         }
+    }
+
+    // --- TESTING ---
+    private ArrayList<Bonus> createBonuses() {
+        var bonuses = new ArrayList<Bonus>();
+
+        var healthBonus = (Bonus)FactoryProvider
+                                    .getFactory(Factory.BONUS)
+                                    .create(BonusType.HEALTH, gameManager, Assets.getSprite("healthBonus"));
+        var ammoBonus = (Bonus)FactoryProvider
+                                    .getFactory(Factory.BONUS)
+                                    .create(BonusType.AMMO, gameManager, Assets.getSprite("ammoBonus"));
+        var speedBonus = (Bonus)FactoryProvider
+                                    .getFactory(Factory.BONUS)
+                                    .create(BonusType.SPEED, gameManager, Assets.getSprite("speedBonus"));
+
+        healthBonus.position.set(new Vector(100, 100));
+        ammoBonus.position.set(new Vector(500, 800));
+        speedBonus.position.set(new Vector(1000, 300));
+
+        bonuses.add(healthBonus);
+        bonuses.add(ammoBonus);
+        bonuses.add(speedBonus);
+        return bonuses;
     }
 }

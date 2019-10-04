@@ -1,6 +1,6 @@
 package com.badlogic.game;
 
-import com.badlogic.core.Entity;
+import com.badlogic.core.GameObject;
 import com.badlogic.gfx.Assets;
 import com.badlogic.network.Message;
 import com.badlogic.network.MessageEmitter;
@@ -12,23 +12,25 @@ import com.badlogic.util.Vector;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Player extends Entity {
+public class Player extends GameObject {
+    private BufferedImage sprite;
     private MessageEmitter messageEmitter;
     private JsonParser jsonParser;
-    private GameManager gameManager;
-    private BufferedImage sprite;
     private Vector direction;
     private int speed;
+    int i = 0;
 
     public Player(GameManager gameManager, MessageEmitter messageEmitter) {
         this.jsonParser = new JsonParser();
         this.messageEmitter = messageEmitter;
         this.direction = new Vector(0, 0);
+        this.position = new Vector(0, 0);
         this.gameManager = gameManager;
         this.sprite = Assets.getSprite("player");
         this.speed = 1;
     }
 
+    @Override
     public Vector getPosition() {
         return position;
     }
@@ -38,14 +40,7 @@ public class Player extends Entity {
         return id;
     }
 
-    public void render(Graphics graphics) {
-        var camOffset = gameManager.getCamera().getOffset();
-        var windowSize = gameManager.getWindow().getSize();
-        int posX = ((int)position.getX() - (int)camOffset.getX()) + (windowSize.width / 2 - Constants.SPRITE_WIDTH / 2);
-        int posY = ((int)position.getY() - (int)camOffset.getY()) + (windowSize.height / 2 - Constants.SPRITE_HEIGHT / 2);
-        graphics.drawImage(sprite, posX, posY, null);
-    }
-
+    @Override
     public void update(int delta) {
         var newDirection = new Vector(0, 0);
 
@@ -69,7 +64,17 @@ public class Player extends Entity {
             direction.set(newDirection);
         }
 
-        gameManager.getCamera().getOffset().add(direction);
-        position.add(direction.multiply(delta * speed));
+        var change = direction.multiply(delta * speed);
+        gameManager.getCamera().getOffset().add(change);
+        position.add(change);
+    }
+
+    @Override
+    public void render(Graphics graphics) {
+        var camOffset = gameManager.getCamera().getOffset();
+        var windowSize = gameManager.getWindow().getSize();
+        int posX = ((int)position.getX() + (windowSize.width / 2 - Constants.SPRITE_WIDTH / 2));
+        int posY = ((int)position.getY() + (windowSize.height / 2 - Constants.SPRITE_HEIGHT / 2));
+        graphics.drawImage(sprite, posX, posY, null);
     }
 }

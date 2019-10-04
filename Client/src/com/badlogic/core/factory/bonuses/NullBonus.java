@@ -1,8 +1,15 @@
 package com.badlogic.core.factory.bonuses;
 
+import com.badlogic.game.GameManager;
 import com.badlogic.game.Player;
 
+import java.awt.image.BufferedImage;
+
 public class NullBonus extends Bonus {
+    public NullBonus(GameManager gameManager, BufferedImage sprite) {
+        super(gameManager, sprite);
+    }
+
     @Override
     public void applyBonus(Player player) {
 
@@ -25,6 +32,11 @@ public class NullBonus extends Bonus {
 
     @Override
     public void setBonusAmount(int bonusAmount) {
+
+    }
+
+    @Override
+    public void update(int delta) {
 
     }
 }

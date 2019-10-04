@@ -63,14 +63,12 @@ namespace Server.Game
             switch (data.Type)
             {
                 case EventType.ClientConnected:
-                    _games.ForEach(game => game.RemovePlayer(data.ClientId));
                     break;
                 case EventType.ClientDisconnected:
-                    Debug.WriteLine(data.Payload);
+                    _games.ForEach(game => game.RemovePlayer(data.ClientId));
                     break;
                 case EventType.ErrorOccured:
                     Debug.WriteLine(data.Payload);
-                    Debug.WriteLine("Error");
                     break;
                 case EventType.CreateGame:
                     // Creates new game and adds player itself
@@ -123,12 +121,20 @@ namespace Server.Game
                     foreach (var keyValuePair in game.Players)
                     {
                         var player = keyValuePair.Value;
+
+                        if (player == null)
+                            continue;
+
                         player.Update(_delta);
 
-                        if (player.TimeTillClientUpdate != 0) continue;
+                        if (player.TimeTillClientUpdate != 0) 
+                            continue;
+                        
                         var client = ConnectionsPool.GetInstance().GetClient(keyValuePair.Key);
 
-                        if (client == null) continue;
+                        if (client == null) 
+                            continue;
+
                         var message = new Message(EventType.PositionUpdate, JsonParser.Serialize(player.Position));
                         client.Send(JsonParser.Serialize(message));
                     }

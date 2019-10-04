@@ -7,7 +7,6 @@ namespace Server.Game.Entities
         public Guid RoomId { get; set; }
         public int Health { get; private set; }
         public bool ShouldUpdate => Math.Abs(Direction.X) < 0.01 && Math.Abs(Direction.Y) < 0.01;
-
         public Vector Direction { get; set; }
         public int Speed { get; set; }
         public int TimeTillClientUpdate = Constants.PlayerUpdateInterval;
@@ -16,8 +15,8 @@ namespace Server.Game.Entities
         {
             Id = id;
             RoomId = roomId;
-            Direction = new Vector(0, 0);
             Speed = 1;
+            Direction = new Vector(0, 0);
         }
 
         public void TakeDamage(int damage)

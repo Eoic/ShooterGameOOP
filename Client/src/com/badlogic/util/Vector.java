@@ -1,8 +1,6 @@
 package com.badlogic.util;
 
 public class Vector {
-    public static final Vector ZERO = new Vector(0, 0);
-    public static final Vector ONE = new Vector(1, 1);
     private double x;
     private double y;
 

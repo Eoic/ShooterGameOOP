@@ -1,8 +1,16 @@
 package com.badlogic.core.factory.bonuses;
 
+import com.badlogic.game.GameManager;
 import com.badlogic.game.Player;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
 public class HealthBonus extends Bonus {
+    public HealthBonus(GameManager gameManager, BufferedImage sprite) {
+        super(gameManager, sprite);
+    }
+
     @Override
     public void applyBonus(Player player) {
         System.out.println("Adding " + this.bonusAmount + " health to player.");
@@ -26,5 +34,10 @@ public class HealthBonus extends Bonus {
     @Override
     public void setBonusAmount(int bonusAmount) {
         this.bonusAmount = bonusAmount;
+    }
+
+    @Override
+    public void update(int delta) {
+
     }
 }

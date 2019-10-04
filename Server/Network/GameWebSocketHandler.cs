@@ -25,7 +25,7 @@ namespace Server.Network
         /// <summary>
         /// Passes received message to all observers.
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message"></param>s
         public override void OnMessage(string message)
         {
             var messageObj = JsonParser.Deserialize<Message>(message);
@@ -60,7 +60,7 @@ namespace Server.Network
         public override void OnError()
         {
             ConnectionsPool.GetInstance().Clients.Remove(this);
-            NotifyAllObservers(new Message(EventType.ErrorOccured, "An error occured"));
+            NotifyAllObservers(new Message(EventType.ErrorOccured, "Connection with client lost."));
         }
 
         /// <summary>
