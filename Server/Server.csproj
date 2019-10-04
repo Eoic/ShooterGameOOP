@@ -149,11 +149,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\BonusController.cs" />
+    <Compile Include="Controllers\GameObjectController.cs" />
     <Compile Include="Controllers\MessageController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Game\Constants.cs" />
-    <Compile Include="Game\Entities\Player.cs" />
-    <Compile Include="Game\Entities\GameObject.cs" />
+    <Compile Include="Game\Entities\GameObjects\Player.cs" />
+    <Compile Include="Game\Entities\GameObjects\GameObject.cs" />
     <Compile Include="Game\GameManagerWrapper.cs" />
     <Compile Include="Game\GameRoom.cs" />
     <Compile Include="Game\GameManager.cs" />
