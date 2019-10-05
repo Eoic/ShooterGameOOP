@@ -12,7 +12,8 @@ namespace Server.Game
 
         public void AddPlayer(Player player)
         {
-            Players.Add(player.Id, player);
+            if(Players.Count >= Constants.MaxPlayerCount)
+                Players.Add(player.Id, player);
         }
 
         public Player GetPlayer(Guid id)

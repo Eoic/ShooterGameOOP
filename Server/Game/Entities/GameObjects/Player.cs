@@ -15,16 +15,25 @@ namespace Server.Game.Entities
         {
             Id = id;
             RoomId = roomId;
-            Speed = 1;
+            Speed = Constants.DefaultSpeed;
             Direction = new Vector(0, 0);
+            Health = Constants.MaxHP;
         }
 
         public void TakeDamage(int damage)
         {
             Health -= damage;
 
-            if (Health < 0)
-                Health = 0;
+            if (Health < Constants.MinHP)
+                Health = Constants.MinHP;
+        }
+
+        public void TakeBonus()
+        {
+            Health += Constants.BonusHP;
+
+            if (Health >= Constants.MaxHP)
+                Health = Constants.MaxHP;
         }
 
         public void Update(long delta)
