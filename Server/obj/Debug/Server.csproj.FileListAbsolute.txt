@@ -404,8 +404,8 @@ C:\Users\Mantvydas\Desktop\KTU\7 semestras\Objektinis programų projektavimas\De
 C:\Users\Mantvydas\Desktop\KTU\7 semestras\Objektinis programų projektavimas\DesignPatterns\Server\bin\System.Web.Http.xml
 C:\Users\Mantvydas\Desktop\KTU\7 semestras\Objektinis programų projektavimas\DesignPatterns\Server\bin\System.Web.Http.Cors.xml
 C:\Users\Mantvydas\Desktop\KTU\7 semestras\Objektinis programų projektavimas\DesignPatterns\Server\bin\System.Web.Http.WebHost.xml
-C:\Users\Mantvydas\Desktop\KTU\7 semestras\Objektinis programų projektavimas\DesignPatterns\Server\obj\Debug\Server.csprojAssemblyReference.cache
 C:\Users\Mantvydas\Desktop\KTU\7 semestras\Objektinis programų projektavimas\DesignPatterns\Server\obj\Debug\Server.csproj.CoreCompileInputs.cache
 C:\Users\Mantvydas\Desktop\KTU\7 semestras\Objektinis programų projektavimas\DesignPatterns\Server\obj\Debug\Server.csproj.CopyComplete
 C:\Users\Mantvydas\Desktop\KTU\7 semestras\Objektinis programų projektavimas\DesignPatterns\Server\obj\Debug\Server.dll
 C:\Users\Mantvydas\Desktop\KTU\7 semestras\Objektinis programų projektavimas\DesignPatterns\Server\obj\Debug\Server.pdb
+C:\Users\Mantvydas\Desktop\KTU\7 semestras\Objektinis programų projektavimas\DesignPatterns\Server\obj\Debug\Server.csprojAssemblyReference.cache

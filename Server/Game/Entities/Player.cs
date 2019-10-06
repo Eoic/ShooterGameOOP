@@ -17,23 +17,23 @@ namespace Server.Game.Entities
             RoomId = roomId;
             Speed = Constants.DefaultSpeed;
             Direction = new Vector(0, 0);
-            Health = Constants.MaxHP;
+            Health = Constants.MaxHealth;
         }
 
         public void TakeDamage(int damage)
         {
             Health -= damage;
 
-            if (Health < Constants.MinHP)
-                Health = Constants.MinHP;
+            if (Health < Constants.MinHealth)
+                Health = Constants.MinHealth;
         }
 
         public void TakeBonus()
         {
-            Health += Constants.BonusHP;
+            Health += Constants.BonusHealth;
 
-            if (Health >= Constants.MaxHP)
-                Health = Constants.MaxHP;
+            if (Health >= Constants.MaxHealth)
+                Health = Constants.MaxHealth;
         }
 
         public override void Update(long delta)
