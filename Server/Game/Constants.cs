@@ -9,12 +9,12 @@
 
             //Players
             MaxPlayerCount = 10,
-            MaxPlayerPerTeam = MaxPlayerCount / 2,
+            MaxPlayersPerTeam = MaxPlayerCount / 2,
             DefaultSpeed = 1,
 
-            //Healt Points
-            BonusHP = 30,
-            MaxHP = 100,
-            MinHP = 0;
+            //Health Points
+            BonusHealth = 30,
+            MaxHealth = 100,
+            MinHealth = 0;
     }
 }

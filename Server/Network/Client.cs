@@ -6,7 +6,7 @@ using Server.Utilities;
 
 namespace Server.Network
 {
-    public class GameWebSocketHandler : WebSocketHandler, ISubject<Message>
+    public class Client : WebSocketHandler, ISubject<Message>
     {
         public readonly Guid Id = Guid.NewGuid();
         private readonly List<IObserver<Message>> _observers = new List<IObserver<Message>>();
