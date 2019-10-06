@@ -12,7 +12,6 @@
             private static volatile Builder instance;
             private static object syncRoot = new object();
 
-
             private const int DEFAULT_AMMO = 100;
             private const int DEFAULT_OWNER = 0;
 

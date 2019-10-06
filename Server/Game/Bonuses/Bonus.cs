@@ -8,8 +8,8 @@ namespace Server.Game.Bonuses
 {
     public abstract class Bonus : GameObject
     {
-        public int Lifespan { get; private set; }
-        public int BonusAmount { get; private set; }
+        public int Lifespan { get; }
+        public int BonusAmount { get; }
 
         public Bonus() { }
 

@@ -9,7 +9,7 @@ namespace Server.Network
     public class Client : WebSocketHandler, ISubject<Message>
     {
         public readonly Guid Id = Guid.NewGuid();
-        private readonly List<IObserver<Message>> _observers = new List<IObserver<Message>>();
+        public List<IObserver<Message>> Observers { get; } = new List<IObserver<Message>>();
 
         /// <summary>
         /// Notifies observers when connection with
@@ -68,20 +68,20 @@ namespace Server.Network
         /// </summary>
         /// <param name="observer"></param>
         public void Attach(IObserver<Message> observer) =>
-            _observers.Add(observer);
+            Observers.Add(observer);
 
         /// <summary>
         /// Removes given observer from observers list.
         /// </summary>
         /// <param name="observer"></param>
         public void Detach(IObserver<Message> observer) =>
-            _observers.Remove(observer);
+            Observers.Remove(observer);
 
         /// <summary>
         /// Sends data to all observers.
         /// </summary>
         /// <param name="data"></param>
         public void NotifyAllObservers(Message data) => 
-            _observers.ForEach(observer => observer.Update(data));
+            Observers.ForEach(observer => observer.Update(data));
     }
 }
