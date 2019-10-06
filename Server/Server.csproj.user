@@ -25,7 +25,7 @@
     <GoogleComputeEnginePublishInstanceName>aspnet-1</GoogleComputeEnginePublishInstanceName>
     <GoogleComputeEnginePublishInstanceZone>us-central1-f</GoogleComputeEnginePublishInstanceZone>
     <GoogleComputeEnginePublishInstanceUserName>karolis</GoogleComputeEnginePublishInstanceUserName>
-    <GoogleComputeEnginePublishOpenWebsite>True</GoogleComputeEnginePublishOpenWebsite>
+    <GoogleComputeEnginePublishOpenWebsite>False</GoogleComputeEnginePublishOpenWebsite>
     <GoogleComputeEnginePublishLaunchRemoteDebugger>False</GoogleComputeEnginePublishLaunchRemoteDebugger>
     <GoogleComputeEnginePublishSiteName>Default Web Site</GoogleComputeEnginePublishSiteName>
   </PropertyGroup>

@@ -15,7 +15,12 @@ namespace Server.Network
         public static ConnectionsPool GetInstance() =>
             _instance ?? (_instance = new ConnectionsPool());
 
-        public GameWebSocketHandler GetClient(Guid id) =>
-            (GameWebSocketHandler) Clients.SingleOrDefault(client => ((GameWebSocketHandler) client).Id == id);
+        public Client GetClient(Guid id) =>
+            (Client) Clients.SingleOrDefault(client => ((Client) client).Id == id);
+
+        public void RemoveClient(Guid id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

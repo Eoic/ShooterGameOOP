@@ -172,7 +172,7 @@
     <Compile Include="Models\Weapon.cs" />
     <Compile Include="Network\ConnectionsPool.cs" />
     <Compile Include="Network\EventType.cs" />
-    <Compile Include="Network\GameWebSocketHandler.cs" />
+    <Compile Include="Network\Client.cs" />
     <Compile Include="Network\Message.cs" />
     <Compile Include="Network\IObserver.cs" />
     <Compile Include="Network\ISubject.cs" />

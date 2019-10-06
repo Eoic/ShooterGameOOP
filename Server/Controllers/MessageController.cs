@@ -29,7 +29,7 @@ namespace Server.Controllers
         // Create and return web socket connections handler.
         private Task ProcessWebSocketSession(AspNetWebSocketContext context)
         {
-            var handler = new GameWebSocketHandler();
+            var handler = new Client();
             handler.Attach(GameManagerWrapper.GetInstance().GetGameManager());
             var processTask = handler.ProcessWebSocketRequestAsync(context);
             return processTask;
