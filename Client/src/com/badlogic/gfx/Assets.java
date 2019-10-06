@@ -11,7 +11,7 @@ public class Assets {
     private static HashMap<String, BufferedImage> sprites = new HashMap<>();
 
     public static void load() {
-        var spriteSheet = new SpriteSheet(ImageLoader.loadImage(Constants.SPRITE_SHEET_PATH), Constants.SHEET_ROWS, Constants.SHEET_COLUMNS);
+        SpriteSheet spriteSheet = new SpriteSheet(ImageLoader.loadImage(Constants.SPRITE_SHEET_PATH), Constants.SHEET_ROWS, Constants.SHEET_COLUMNS);
         sprites = AssetsLoader.load(spriteSheet, Constants.SPRITE_SHEET_INFO, Constants.SPRITE_WIDTH, Constants.SPRITE_HEIGHT);
     }
 

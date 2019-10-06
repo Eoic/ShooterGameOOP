@@ -4,3 +4,6 @@ player
 darkTile
 lightTile
 normalTile
+ammoBonus
+healthBonus
+speedBonus

@@ -1,4 +1,5 @@
-﻿using Server.Network;
+﻿using Server.Game;
+using Server.Network;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -29,6 +30,7 @@ namespace Server.Controllers
         private Task ProcessWebSocketSession(AspNetWebSocketContext context)
         {
             var handler = new GameWebSocketHandler();
+            handler.Attach(GameManagerWrapper.GetInstance().GetGameManager());
             var processTask = handler.ProcessWebSocketRequestAsync(context);
             return processTask;
         }

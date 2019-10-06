@@ -1,38 +1,87 @@
-﻿using Server.Game;
-using Server.Utilities;
+﻿using System;
 using Microsoft.Web.WebSockets;
+using System.Collections.Generic;
+using System.Diagnostics;
+using Server.Utilities;
 
 namespace Server.Network
 {
-    public class GameWebSocketHandler : WebSocketHandler
+    public class GameWebSocketHandler : WebSocketHandler, ISubject<Message>
     {
-        private static readonly WebSocketCollection clients = new WebSocketCollection();
+        public readonly Guid Id = Guid.NewGuid();
+        private readonly List<IObserver<Message>> _observers = new List<IObserver<Message>>();
 
-        // Add new client to client connections list
+        /// <summary>
+        /// Notifies observers when connection with
+        /// client has been opened.
+        /// </summary>
         public override void OnOpen()
         {
-            clients.Add(this);
+            ConnectionsPool.GetInstance().Clients.Add(this);
+            var count = ConnectionsPool.GetInstance().Clients.Count;
+            NotifyAllObservers(new Message(EventType.ClientConnected, $"New client connected. Current count: {count}."));
         }
 
-        // Called on message received from client
+        /// <summary>
+        /// Passes received message to all observers.
+        /// </summary>
+        /// <param name="message"></param>s
         public override void OnMessage(string message)
         {
-            // JSON message test
-            var vector = new Vector(0, 0);
-            string vectorString = JsonParser.Serialize(vector);
-            Send(vectorString);
-        }
+            var messageObj = JsonParser.Deserialize<Message>(message);
 
-        // Called if client disconnects
+            Debug.WriteLine(messageObj);
+
+            if (messageObj == null || messageObj.Type == EventType.Invalid)
+            {
+                Debug.WriteLine("Malformed message.");
+                return;
+            }
+
+            messageObj.ClientId = Id;
+            NotifyAllObservers(messageObj);
+        }
+        
+        /// <summary>
+        /// Notifies all observers when connection with client
+        /// is lost and removes client instance from connections list.
+        /// </summary>
         public override void OnClose()
         {
-            base.OnClose();
+            ConnectionsPool.GetInstance().Clients.Remove(this);
+            var count = ConnectionsPool.GetInstance().Clients.Count;
+            NotifyAllObservers(new Message(EventType.ClientDisconnected, $"Client has disconnected. Current count: {count}."));
         }
 
-        // An error occoured
+        /// <summary>
+        /// Notifies all observers on connection error with client
+        /// and removes client instance from connections list.
+        /// </summary>
         public override void OnError()
         {
-            base.OnError();
+            ConnectionsPool.GetInstance().Clients.Remove(this);
+            NotifyAllObservers(new Message(EventType.ErrorOccured, "Connection with client lost."));
         }
+
+        /// <summary>
+        /// Adds given observer to observers list.
+        /// </summary>
+        /// <param name="observer"></param>
+        public void Attach(IObserver<Message> observer) =>
+            _observers.Add(observer);
+
+        /// <summary>
+        /// Removes given observer from observers list.
+        /// </summary>
+        /// <param name="observer"></param>
+        public void Detach(IObserver<Message> observer) =>
+            _observers.Remove(observer);
+
+        /// <summary>
+        /// Sends data to all observers.
+        /// </summary>
+        /// <param name="data"></param>
+        public void NotifyAllObservers(Message data) => 
+            _observers.ForEach(observer => observer.Update(data));
     }
 }

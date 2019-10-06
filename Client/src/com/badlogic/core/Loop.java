@@ -1,24 +1,43 @@
 package com.badlogic.core;
 
+import com.badlogic.core.factory.Factory;
+import com.badlogic.core.factory.FactoryProvider;
+import com.badlogic.core.factory.bonuses.Bonus;
+import com.badlogic.core.factory.bonuses.BonusType;
+import com.badlogic.core.factory.bonuses.HealthBonus;
+import com.badlogic.core.observer.Observer;
 import com.badlogic.game.GameManager;
 import com.badlogic.game.Player;
 import com.badlogic.gfx.Assets;
 import com.badlogic.gfx.Map;
+import com.badlogic.network.GameRoom;
+import com.badlogic.network.Message;
+import com.badlogic.network.MessageEmitter;
+import com.badlogic.network.MessageType;
 import com.badlogic.util.Constants;
+import com.badlogic.util.JsonParser;
+import com.badlogic.util.Point;
+import com.badlogic.util.Vector;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class Loop {
+public class Loop implements Observer {
     // Game loop
     private static final long timeStep = 1000 / Constants.FPS;
     private ScheduledExecutorService executor;
+    private MessageEmitter messageEmitter;
     private boolean isRunning = false;
+    private JsonParser jsonParser;
+    private GameRoom gameRoom;
     private long lastTime;
     private long delta = 0;
 
     // Game entities
+    private ArrayList<Bonus> bonuses;
     private GameManager gameManager;
     private Player player;
     private Map map;
@@ -50,9 +69,21 @@ public class Loop {
     // Initializes game resources
     private void initialize() {
         Assets.load();
+        gameRoom = new GameRoom();
+        messageEmitter = new MessageEmitter();
+        messageEmitter.addListener(this);
         gameManager = new GameManager();
-        player = new Player(gameManager);
-        map = new Map(10, 10, gameManager.getCamera());
+        map = new Map(20, 10, gameManager);
+        jsonParser = new JsonParser();
+        player = new Player(gameManager, messageEmitter);
+
+        // Set UI events
+        gameManager.getWindow().setCreateGameBtnEvent(actionEvent -> {
+            var message = new Message(MessageType.CreateGame, "Create game pls.");
+            messageEmitter.send(jsonParser.serialize(message));
+        });
+
+        bonuses = createBonuses();
     }
 
     // Updates game entities (e.g. position)
@@ -74,12 +105,55 @@ public class Loop {
 
         var graphics = bufferStrategy.getDrawGraphics();
         graphics.clearRect(0, 0, gameManager.getWindow().getWidth(), gameManager.getWindow().getHeight());
+
         // Start rendering
         map.render(Assets.getSprite("normalTile"), graphics);
-        player.render(graphics);
+        bonuses.forEach(bonus -> bonus.render(graphics));
+        gameRoom.getPlayers().forEach(player -> player.render(graphics));;
         // Stop rendering
+
         bufferStrategy.show();
         graphics.dispose();
         lastTime = currentTime;
+    }
+
+    // Handle messages received from server.
+    @Override
+    public void update(Object data) {
+        var message = jsonParser.deserialize(data.toString(), Message.class);
+
+        if (message.getType() == MessageType.GameCreated) {
+            var position = jsonParser.deserialize(message.getPayload(), Point.class);
+            var player = new Player(gameManager, messageEmitter);
+            player.position.set(new Vector(position.getX(), position.getY()));
+            gameRoom.addPlayer(player);
+        } else if (message.getType() == MessageType.PositionUpdate) {
+            // var position = jsonParser.deserialize(message.getPayload(), Point.class);
+            // gameRoom.getPlayers().get(0).position.set(new Vector(position.getX(), position.getY()));
+        }
+    }
+
+    // --- TESTING ---
+    private ArrayList<Bonus> createBonuses() {
+        var bonuses = new ArrayList<Bonus>();
+
+        var healthBonus = (Bonus)FactoryProvider
+                                    .getFactory(Factory.BONUS)
+                                    .create(BonusType.HEALTH, gameManager, Assets.getSprite("healthBonus"));
+        var ammoBonus = (Bonus)FactoryProvider
+                                    .getFactory(Factory.BONUS)
+                                    .create(BonusType.AMMO, gameManager, Assets.getSprite("ammoBonus"));
+        var speedBonus = (Bonus)FactoryProvider
+                                    .getFactory(Factory.BONUS)
+                                    .create(BonusType.SPEED, gameManager, Assets.getSprite("speedBonus"));
+
+        healthBonus.position.set(new Vector(100, 100));
+        ammoBonus.position.set(new Vector(500, 800));
+        speedBonus.position.set(new Vector(1000, 300));
+
+        bonuses.add(healthBonus);
+        bonuses.add(ammoBonus);
+        bonuses.add(speedBonus);
+        return bonuses;
     }
 }

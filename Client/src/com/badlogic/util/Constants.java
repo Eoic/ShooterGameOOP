@@ -13,7 +13,8 @@ public class Constants {
             BUFFER_COUNT = 3,
             SPRITE_WIDTH = 128,
             SPRITE_HEIGHT = 128,
-            SHEET_ROWS = 2,
+            SHEET_ROWS = 3,
             SHEET_COLUMNS = 3,
-            FPS = 60;
+            FPS = 60,
+            COUNTDOWN_LATCH_COUNT = 1;
 }

@@ -2,6 +2,7 @@ package com.badlogic.gfx;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
@@ -9,6 +10,7 @@ public class Window extends JFrame implements ComponentListener {
     private int width;
     private int height;
     private Canvas canvas;
+    private JButton createGameBtn;
 
     private Window(int width, int height) {
         this.width = width;
@@ -23,6 +25,7 @@ public class Window extends JFrame implements ComponentListener {
         this.canvas.setMaximumSize(new Dimension(width, height));
         this.canvas.setMinimumSize(new Dimension(width, height));
         this.canvas.setFocusable(false);
+        this.createInterface();
         this.add(canvas);
         this.pack();
     }
@@ -48,6 +51,21 @@ public class Window extends JFrame implements ComponentListener {
     public Canvas getCanvas() {
         return canvas;
     }
+
+    // -- UI --
+    private void createInterface() {
+        createGameBtn = new JButton();
+        createGameBtn.setBounds(10, 10, 150, 35);
+        createGameBtn.setText("Create game");
+        createGameBtn.setFocusable(false);
+        this.add(createGameBtn);
+    }
+
+    public void setCreateGameBtnEvent(ActionListener actionListener) {
+        createGameBtn.addActionListener(actionListener);
+    }
+
+    // --------
 
     @Override
     public void componentResized(ComponentEvent componentEvent) {
