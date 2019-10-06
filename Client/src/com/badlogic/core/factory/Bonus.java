@@ -1,4 +1,4 @@
-package com.badlogic.core.factory.bonuses;
+package com.badlogic.core.factory;
 
 import com.badlogic.core.GameObject;
 import com.badlogic.game.GameManager;

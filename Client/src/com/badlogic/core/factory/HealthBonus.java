@@ -1,18 +1,18 @@
-package com.badlogic.core.factory.bonuses;
+package com.badlogic.core.factory;
 
 import com.badlogic.game.GameManager;
 import com.badlogic.game.Player;
 
 import java.awt.image.BufferedImage;
 
-public class AmmoBonus extends Bonus {
-    public AmmoBonus(GameManager gameManager, BufferedImage sprite) {
+public class HealthBonus extends Bonus {
+    public HealthBonus(GameManager gameManager, BufferedImage sprite) {
         super(gameManager, sprite);
     }
 
     @Override
     public void applyBonus(Player player) {
-        System.out.println("Adding " + this.bonusAmount + " ammo to player.");
+        System.out.println("Adding " + this.bonusAmount + " health to player.");
     }
 
     @Override

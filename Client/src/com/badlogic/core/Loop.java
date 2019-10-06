@@ -1,10 +1,8 @@
 package com.badlogic.core;
 
-import com.badlogic.core.factory.Factory;
-import com.badlogic.core.factory.FactoryProvider;
-import com.badlogic.core.factory.bonuses.Bonus;
-import com.badlogic.core.factory.bonuses.BonusType;
-import com.badlogic.core.factory.bonuses.HealthBonus;
+import com.badlogic.core.factory.Bonus;
+import com.badlogic.core.factory.BonusFactory;
+import com.badlogic.core.factory.BonusType;
 import com.badlogic.core.observer.Observer;
 import com.badlogic.game.GameManager;
 import com.badlogic.game.Player;
@@ -19,7 +17,6 @@ import com.badlogic.util.JsonParser;
 import com.badlogic.util.Point;
 import com.badlogic.util.Vector;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -137,15 +134,9 @@ public class Loop implements Observer {
     private ArrayList<Bonus> createBonuses() {
         var bonuses = new ArrayList<Bonus>();
 
-        var healthBonus = (Bonus)FactoryProvider
-                                    .getFactory(Factory.BONUS)
-                                    .create(BonusType.HEALTH, gameManager, Assets.getSprite("healthBonus"));
-        var ammoBonus = (Bonus)FactoryProvider
-                                    .getFactory(Factory.BONUS)
-                                    .create(BonusType.AMMO, gameManager, Assets.getSprite("ammoBonus"));
-        var speedBonus = (Bonus)FactoryProvider
-                                    .getFactory(Factory.BONUS)
-                                    .create(BonusType.SPEED, gameManager, Assets.getSprite("speedBonus"));
+        var healthBonus = BonusFactory.create(BonusType.HEALTH, gameManager, Assets.getSprite("healthBonus"));
+        var ammoBonus = BonusFactory.create(BonusType.AMMO, gameManager, Assets.getSprite("ammoBonus"));
+        var speedBonus = BonusFactory.create(BonusType.SPEED, gameManager, Assets.getSprite("speedBonus"));
 
         healthBonus.position.set(new Vector(100, 100));
         ammoBonus.position.set(new Vector(500, 800));

@@ -1,4 +1,4 @@
-package com.badlogic.core.factory.bonuses;
+package com.badlogic.core.factory;
 
 public class BonusType {
     public static final String HEALTH = "BonusType.HEALTH";

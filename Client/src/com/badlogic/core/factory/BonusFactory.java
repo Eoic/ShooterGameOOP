@@ -1,13 +1,11 @@
-package com.badlogic.core.factory.bonuses;
+package com.badlogic.core.factory;
 
-import com.badlogic.core.factory.AbstractFactory;
 import com.badlogic.game.GameManager;
 
 import java.awt.image.BufferedImage;
 
-public class BonusFactory implements AbstractFactory<Bonus> {
-    @Override
-    public Bonus create(String bonusType, GameManager gameManager, BufferedImage sprite) {
+public class BonusFactory {
+    public static Bonus create(String bonusType, GameManager gameManager, BufferedImage sprite) {
         switch (bonusType) {
             case BonusType.AMMO:
                 return new AmmoBonus(gameManager, sprite);
