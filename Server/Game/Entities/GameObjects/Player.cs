@@ -36,7 +36,7 @@ namespace Server.Game.Entities
                 Health = Constants.MaxHP;
         }
 
-        public void Update(long delta)
+        public override void Update(long delta)
         {
             Position.Add(Direction * Speed * delta);
 

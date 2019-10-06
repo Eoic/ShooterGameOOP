@@ -150,9 +150,14 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BonusController.cs" />
-    <Compile Include="Controllers\GameObjectController.cs" />
     <Compile Include="Controllers\MessageController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Game\Bonuses\AmmoBonus.cs" />
+    <Compile Include="Game\Bonuses\Bonus.cs" />
+    <Compile Include="Game\Bonuses\BonusFactory.cs" />
+    <Compile Include="Game\Bonuses\BonusType.cs" />
+    <Compile Include="Game\Bonuses\HealthBonus.cs" />
+    <Compile Include="Game\Bonuses\SpeedBonus.cs" />
     <Compile Include="Game\Constants.cs" />
     <Compile Include="Game\Entities\GameObjects\Player.cs" />
     <Compile Include="Game\Entities\GameObjects\GameObject.cs" />
