@@ -12,21 +12,14 @@ namespace Server.Game
 
         public void AddPlayer(Player player)
         {
-            if(Players.Count >= Constants.MaxPlayerCount)
+            if(Players.Count < Constants.MaxPlayerCount)
                 Players.Add(player.Id, player);
         }
 
-        public Player GetPlayer(Guid id)
-        {
-            if (Players.ContainsKey(id))
-                return Players[id];
+        public Player GetPlayer(Guid id) =>
+            Players.ContainsKey(id) ? Players[id] : null;
 
-            return null;
-        }
-
-        public void RemovePlayer(Guid id)
-        {
+        public void RemovePlayer(Guid id) =>
             Players.Remove(id);
-        }
     }
 }

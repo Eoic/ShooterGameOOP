@@ -24,6 +24,19 @@ public class Vector {
         this.y = vector.getY();
     }
 
+    public void set(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public Vector sum(Vector vector) {
+        return new Vector(this.x + vector.x, this.y + vector.y);
+    }
+
+    public Vector difference(Vector vector) {
+        return new Vector(this.x - vector.getX(), this.y - vector.getY());
+    }
+
     public void add(double x, double y) {
         this.x += x;
         this.y += y;
@@ -36,6 +49,10 @@ public class Vector {
 
     public Vector multiply(double scalar) {
         return new Vector(this.x * scalar, this.y * scalar);
+    }
+
+    public Vector multiply(Vector vector) {
+        return new Vector(this.x * vector.getX(), this.y * vector.getY());
     }
 
     public double getMagnitude() {

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Point {
     @JsonProperty("X")
     private double x;
+
     @JsonProperty("Y")
     private double y;
 

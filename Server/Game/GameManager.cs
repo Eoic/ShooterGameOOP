@@ -1,15 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Server.Network;
 using System.Diagnostics;
 using System.Threading;
+using Server.Game.Bonuses;
 using Server.Game.Entities;
 using Server.Utilities;
 
 namespace Server.Game
 {
-    public class GameManager : IObserver<Message>
+    public class GameManager : Network.IObserver<Message>
     {
-        // Loop
+        private List<GameRoom> _games = new List<GameRoom>();
+        private readonly BonusFactory _bonusFactory;
         private readonly long _frameTime = 1_000_000_000 / Constants.Fps;
         private readonly Stopwatch _timer;
         private readonly Thread _runner;
@@ -19,11 +22,9 @@ namespace Server.Game
         private long _delta;
         private long _now;
         
-        // Game session
-        private List<GameRoom> _games = new List<GameRoom>();
-
         public GameManager()
         {
+            _bonusFactory = new BonusFactory();
             _runner = new Thread(Tick);
             _timer = new Stopwatch();
         }
@@ -71,25 +72,32 @@ namespace Server.Game
                     Debug.WriteLine(data.Payload);
                     break;
                 case EventType.CreateGame:
-                    // Creates new game and adds player itself
+                    // Create new game room and add player.
+                    var initialPosition = new Vector(Map.CenterX, Map.CenterY);
+                    var bonuses = CreateBonuses();
                     var gameRoom = new GameRoom();
                     var player = new Player(data.ClientId, gameRoom.RoomId);
+                    player.Position = initialPosition;
                     gameRoom.AddPlayer(player);
                     _games.Add(gameRoom);
+
                     // Finally, send initial position (test)
-                    var newPos = new Vector(0, 0);
-                    var newPosString = JsonParser.Serialize(newPos);
-                    var message = new Message(EventType.GameCreated, newPosString);
-                    var messageStr = JsonParser.Serialize(message);
+                    var gameCreationMessage = new Message(EventType.GameCreated, JsonParser.Serialize(initialPosition));
+                    var bonusesMessage = new Message(EventType.InstantiateBonuses, JsonParser.Serialize(bonuses));
+                    var gameCreationString = JsonParser.Serialize(gameCreationMessage);
+                    var bonusesString = JsonParser.Serialize(bonusesMessage);
 
-                    // Broadcast position update to all players in GameRoom
-                    // TODO...
+                    // TODO: Broadcast position update to all players in the game room.
 
-                    ConnectionsPool.GetInstance().GetClient(data.ClientId).Send(messageStr);
+                    // Send update to player.
+                    var client = ConnectionsPool.GetInstance().GetClient(data.ClientId);
+                    client.Send(gameCreationString);
+                    client.Send(bonusesString);
                     break;
                 case EventType.DirectionUpdate:
                     _games.ForEach(game =>
                     {
+                        // Get player and update direction.
                         var playerObj = game.GetPlayer(data.ClientId);
                         if (playerObj == null)
                             return;
@@ -132,7 +140,7 @@ namespace Server.Game
                         
                         var client = ConnectionsPool.GetInstance().GetClient(keyValuePair.Key);
 
-                        if (client == null) 
+                        if (client == null)
                             continue;
 
                         var message = new Message(EventType.PositionUpdate, JsonParser.Serialize(player.Position));
@@ -150,6 +158,45 @@ namespace Server.Game
                 Thread.Sleep((int)_waitTime);
                 _delta = (_timer.ElapsedMilliseconds * 1_000_000 - _now) / 1_000_000;
             }
+        }
+
+        // Generates random amount of bonuses.
+        private List<SerializableBonus> CreateBonuses()
+        {
+            var randomGen = new Random(DateTime.Now.Millisecond);
+            var iterations = randomGen.Next(Constants.MinBonusCount, Constants.MaxBonusCount);
+            var bonusList = new List<Bonus>();
+            var serializables = new List<SerializableBonus>();
+
+            for (var i = 0; i < iterations; i++)
+            {
+                var bonusType = string.Empty;
+                var bonusAmount = randomGen.Next(Constants.BonusMinAmount, Constants.BonusMaxAmount + 1);
+                var bonusLifespan = randomGen.Next(Constants.BonusMinLifespan, Constants.BonusMaxLifespan + 1);
+                
+                switch (randomGen.Next(Constants.BonusTypeCount))
+                {
+                    case 0:
+                        bonusType = BonusType.Health;
+                        break;
+                    case 1:
+                        bonusType = BonusType.Ammo;
+                        break;
+                    case 2:
+                        bonusType = BonusType.Speed;
+                        break;
+                }
+
+                if (string.IsNullOrEmpty(bonusType))
+                    continue;
+
+                var bonus = _bonusFactory.GetBonus(bonusType, bonusAmount, bonusLifespan);
+                bonus.Position = new Vector(randomGen.Next(0, Map.Width - Constants.MapBoundOffset), randomGen.Next(0, Map.Height - Constants.MapBoundOffset));
+                serializables.Add(bonus.GetSerializable(bonusType));
+                bonusList.Add(bonus);
+            }
+
+            return serializables;
         }
     }
 }

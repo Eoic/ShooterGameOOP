@@ -1,16 +1,34 @@
 package com.badlogic.input;
 
+import com.badlogic.gfx.Camera;
+import com.badlogic.util.Point;
+import com.badlogic.util.Vector;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class InputManager implements KeyListener, MouseListener {
+    // Keyboard
     private boolean[] keys;
     public boolean up, down, left, right;
 
-    public InputManager() {
+    // Mouse
+    public boolean lmb;
+    private Vector mouseClickPoint;
+
+    // View
+    private Camera camera;
+    private Vector mouseDirection;
+
+    boolean firstTime = true;
+
+    public InputManager(Camera camera) {
         keys = new boolean[256];
+        mouseClickPoint = new Vector(0, 0);
+        mouseDirection = new Vector(0, 0);
+        this.camera = camera;
     }
 
     public void tick() {
@@ -42,12 +60,15 @@ public class InputManager implements KeyListener, MouseListener {
 
     @Override
     public void mousePressed(MouseEvent mouseEvent) {
-        System.out.println("Press: (" + mouseEvent.getX() + "; " + mouseEvent.getY() + ")");
+        if (!lmb) {
+            lmb = true;
+            this.mouseClickPoint = new Vector(mouseEvent.getX(), mouseEvent.getY());
+        }
     }
 
     @Override
     public void mouseReleased(MouseEvent mouseEvent) {
-
+        lmb = false;
     }
 
     @Override
@@ -58,5 +79,9 @@ public class InputManager implements KeyListener, MouseListener {
     @Override
     public void mouseExited(MouseEvent mouseEvent) {
 
+    }
+
+    public Vector getMouseClickPoint() {
+        return this.mouseClickPoint;
     }
 }

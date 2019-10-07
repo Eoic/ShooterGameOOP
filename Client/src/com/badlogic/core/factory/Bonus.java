@@ -15,7 +15,7 @@ public abstract class Bonus extends GameObject {
     protected int bonusAmount;
     protected GameManager gameManager;
     public abstract void applyBonus(Player player);
-    public abstract int getBonus();
+    public abstract int getBonusAmount();
     public abstract int getLifespan();
     public abstract void setLifespan(int lifespan);
     public abstract void setBonusAmount(int bonusAmount);

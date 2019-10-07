@@ -26,6 +26,7 @@
 
             // RESPONSE TO CLIENT
             GameCreated = 10,
-            PositionUpdate = 11;
+            PositionUpdate = 11,
+            InstantiateBonuses = 12;
     }
 }

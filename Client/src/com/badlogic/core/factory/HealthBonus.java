@@ -16,13 +16,13 @@ public class HealthBonus extends Bonus {
     }
 
     @Override
-    public int getBonus() {
-        return 0;
+    public int getBonusAmount() {
+        return this.bonusAmount;
     }
 
     @Override
     public int getLifespan() {
-        return 0;
+        return this.lifespan;
     }
 
     @Override

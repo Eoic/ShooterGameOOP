@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Server.Game.Entities
 {
@@ -38,7 +39,11 @@ namespace Server.Game.Entities
 
         public override void Update(long delta)
         {
-            Position.Add(Direction * Speed * delta);
+            var change = Direction * Speed * delta;
+            var newPosition = Position + change;
+
+            if (newPosition.X <= Map.Width - Constants.MapTileSize && newPosition.X >= 0 && newPosition.Y <= Map.Height - Constants.MapTileSize && newPosition.Y >= 0)
+                Position.Add(change);
 
             if (TimeTillClientUpdate == 0)
                 TimeTillClientUpdate = Constants.PlayerUpdateInterval;

@@ -11,11 +11,11 @@ public class GameManager {
     private Camera camera;
 
     public GameManager() {
-        inputManager = new InputManager();
+        camera = new Camera();
+        inputManager = new InputManager(camera);
         window = new Window(Constants.WIDTH, Constants.HEIGHT, Constants.TITLE, Constants.IS_RESIZEABLE);
         window.getCanvas().addMouseListener(inputManager);
         window.addKeyListener(inputManager);
-        camera = new Camera();
     }
 
     public InputManager getInputManager() {

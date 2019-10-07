@@ -16,7 +16,7 @@ public class NullBonus extends Bonus {
     }
 
     @Override
-    public int getBonus() {
+    public int getBonusAmount() {
         return 0;
     }
 

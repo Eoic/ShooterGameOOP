@@ -8,6 +8,7 @@ public class MessageType {
     // Received from server
     public static int GameCreated = 10;
     public static int PositionUpdate = 11;
+    public static int InstantiateBonuses = 12;
 }
 
 

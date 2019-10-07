@@ -1,8 +1,4 @@
 ﻿using Server.Game.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Server.Game.Bonuses
 {
@@ -11,14 +7,17 @@ namespace Server.Game.Bonuses
         public int Lifespan { get; }
         public int BonusAmount { get; }
 
-        public Bonus() { }
+        protected Bonus() { }
 
-        public Bonus(int lifespan, int bonusAmount)
+        protected Bonus(int lifespan, int bonusAmount)
         {
             Lifespan = lifespan;
             BonusAmount = bonusAmount;
         }
 
         public abstract void ApplyBonus(Player player);
+
+        public SerializableBonus GetSerializable(string bonusType) => 
+            new SerializableBonus(Lifespan, BonusAmount, Position, bonusType);
     }
 }

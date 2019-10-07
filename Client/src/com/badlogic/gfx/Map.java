@@ -22,7 +22,7 @@ public class Map {
             for (int j = 0; j < height; j++) {
                 var camOffset = gameManager.getCamera().getOffset();
                 var windowSize = gameManager.getWindow().getSize();
-                int posX = i * Constants.SPRITE_WIDTH - (int)camOffset.getX() + (windowSize.width / 2 - Constants.SPRITE_WIDTH / 2);
+                int posX = i * Constants.SPRITE_WIDTH - (int)camOffset.getX()  + (windowSize.width / 2 - Constants.SPRITE_WIDTH / 2);
                 int posY = j * Constants.SPRITE_HEIGHT - (int)camOffset.getY() + (windowSize.height / 2 - Constants.SPRITE_HEIGHT / 2);
                 graphics.drawImage(tile, posX, posY, null);
             }
