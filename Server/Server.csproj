@@ -152,12 +152,15 @@
     <Compile Include="Controllers\BonusController.cs" />
     <Compile Include="Controllers\MessageController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Game\Bonuses\AbstractFactory.cs" />
     <Compile Include="Game\Bonuses\AmmoBonus.cs" />
+    <Compile Include="Game\Bonuses\AmmoFactory.cs" />
     <Compile Include="Game\Bonuses\Bonus.cs" />
-    <Compile Include="Game\Bonuses\BonusFactory.cs" />
     <Compile Include="Game\Bonuses\BonusType.cs" />
     <Compile Include="Game\Bonuses\HealthBonus.cs" />
+    <Compile Include="Game\Bonuses\HealthFactory.cs" />
     <Compile Include="Game\Bonuses\SpeedBonus.cs" />
+    <Compile Include="Game\Bonuses\SpeedFactory.cs" />
     <Compile Include="Game\Constants.cs" />
     <Compile Include="Game\Entities\Player.cs" />
     <Compile Include="Game\Entities\GameObject.cs" />

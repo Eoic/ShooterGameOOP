@@ -12,7 +12,7 @@ namespace Server.Controllers
         [Route("health")]
         public HttpResponseMessage CreateHealthBonus()
         {
-            var bonus = BonusFactory.GetBonus(BonusType.Health);
+            var bonus = new HealthFactory().GetBonus();
             bonus.ApplyBonus(null);
             return Request.CreateResponse(HttpStatusCode.OK, "Created health bonus");
         }
@@ -21,7 +21,7 @@ namespace Server.Controllers
         [Route("ammo")]
         public HttpResponseMessage CreateAmmoBonus()
         {
-            var bonus = BonusFactory.GetBonus(BonusType.Ammo);
+            var bonus = new AmmoFactory().GetBonus();
             bonus.ApplyBonus(null);
             return Request.CreateResponse(HttpStatusCode.OK, "Created ammo bonus");
         }
@@ -30,7 +30,7 @@ namespace Server.Controllers
         [Route("speed")]
         public HttpResponseMessage CreateSpeedBonus()
         {
-            var bonus = BonusFactory.GetBonus(BonusType.Speed);
+            var bonus = new SpeedFactory().GetBonus();
             bonus.ApplyBonus(null);
             return Request.CreateResponse(HttpStatusCode.OK, "Created speed bonus");
         }
