@@ -70,7 +70,6 @@ public class Player extends GameObject {
         }
 
         // Follow the player.
-        // TODO: Move to Loop.java
         gameManager.getCamera().follow(this, gameManager.getWindow().getSize());
 
         // Launch and update bullets.
@@ -86,8 +85,8 @@ public class Player extends GameObject {
     @Override
     public void render(Graphics graphics) {
         var offset = gameManager.getCamera().getOffset();
-        int posX = (int)(this.position.getX() - offset.getX()) - Constants.SPRITE_WIDTH_HALF;
-        int posY = (int)(this.position.getY() - offset.getY()) - Constants.SPRITE_HEIGHT_HALF;
+        int posX = (int) (this.position.getX() - offset.getX()) - Constants.SPRITE_WIDTH_HALF;
+        int posY = (int) (this.position.getY() - offset.getY()) - Constants.SPRITE_HEIGHT_HALF;
         graphics.drawImage(sprite, posX, posY, null);
         bulletPool.getBullets().forEach(bullet -> bullet.render(graphics));
     }

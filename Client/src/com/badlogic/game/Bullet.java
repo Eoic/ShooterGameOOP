@@ -4,7 +4,6 @@ import com.badlogic.core.GameObject;
 import com.badlogic.gfx.Assets;
 import com.badlogic.gfx.Camera;
 import com.badlogic.util.Constants;
-import com.badlogic.util.SpriteKeys;
 import com.badlogic.util.Vector;
 
 import java.awt.*;
@@ -38,7 +37,7 @@ public class Bullet extends GameObject {
     @Override
     public void update(int delta) {
         if (isActive) {
-            var change = direction.multiply(speed);
+            var change = direction.multiply(speed * delta);
             this.position.add(change);
         }
     }

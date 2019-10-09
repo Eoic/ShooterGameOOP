@@ -9,7 +9,6 @@ import com.badlogic.game.Player;
 import com.badlogic.game.RemotePlayer;
 import com.badlogic.gfx.Assets;
 import com.badlogic.gfx.Map;
-import com.badlogic.gfx.Sprite;
 import com.badlogic.network.GameRoom;
 import com.badlogic.network.Message;
 import com.badlogic.network.MessageEmitter;
@@ -120,8 +119,7 @@ public class Loop implements Observer {
         graphics.clearRect(0, 0, gameManager.getWindow().getWidth(), gameManager.getWindow().getHeight());
 
         // Start rendering
-        map.render(Assets.getSprite(SpriteKeys.NEUTRAL_TILE), graphics); // TODO: Generate map
-        graphics.drawImage(Assets.getSprite(SpriteKeys.PLAYER), 0, 0, null);
+        map.render(graphics); // TODO: Generate map
         // bonuses.forEach(bonus -> bonus.render(graphics));
         // remotePlayer.render(graphics);
         gameRoom.getPlayers().forEach(player -> player.render(graphics));
@@ -171,7 +169,6 @@ public class Loop implements Observer {
             var position = jsonParser.deserialize(message.getPayload(), Point.class);
             player = new Player(gameManager, messageEmitter);
             player.getPosition().set(new Vector(position.getX(), position.getY()));
-            // gameManager.getCamera().getOffset().set(new Vector(position.getX(), position.getY()));
             gameRoom.addPlayer(player);
         }
     }

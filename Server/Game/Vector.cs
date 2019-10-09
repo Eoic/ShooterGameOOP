@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace Server.Game
 {
@@ -27,6 +28,12 @@ namespace Server.Game
 
         public static Vector operator *(Vector vector, double scalar) =>
             new Vector(vector.X * scalar, vector.Y * scalar);
+
+        public Vector Normalized()
+        {
+            var magnitude = Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2));
+            return new Vector(X / magnitude, Y / magnitude);
+        }
 
         public override string ToString()
         {

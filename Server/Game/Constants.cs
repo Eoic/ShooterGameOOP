@@ -5,8 +5,8 @@
         public static readonly int
             //Game
             Fps = 60,
-            PlayerUpdateInterval = 60,
-            RoomUpdateInterval = 20,
+            PlayerUpdateInterval = 30,
+            RoomUpdateInterval = 60,
 
             //Players
             MaxPlayerCount = 10,
@@ -30,7 +30,7 @@
             // Map
             MapTileSize = 128,
             MapWidth = 20,
-            MapHeight = 10,
+            MapHeight = 15,
             MapBoundOffset = 64;
     }
 }

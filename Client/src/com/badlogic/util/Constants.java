@@ -7,6 +7,7 @@ public class Constants {
     public static final String
             SPRITE_SHEET = "spritesheet.png",
             TEXTURES = "/textures",
+            MAPS = "/maps",
             TITLE = "BadLogic",
             SPRITE_SHEET_INFO = "/textures/spritesheet.txt",
             SPRITE_SHEET_PATH = "/textures/spritesheet.png",
@@ -26,11 +27,11 @@ public class Constants {
             COUNTDOWN_LATCH_COUNT = 1,
             DEFAULT_PLAYER_SPEED = 1,
             DEFAULT_PLAYER_BULLET_COUNT = 100,
-            DEFAULT_BULLET_SPEED = 10;
+            DEFAULT_BULLET_SPEED = 1;
 
     public static final int
             MAP_WIDTH = 20,
-            MAP_HEIGHT = 10,
+            MAP_HEIGHT = 15,
             MAP_TILE_SIZE = 128,
             MAP_PIXEL_WIDTH = MAP_WIDTH * MAP_TILE_SIZE,
             MAP_PIXEL_HEIGHT = MAP_HEIGHT * MAP_TILE_SIZE;
