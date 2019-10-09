@@ -11,6 +11,8 @@ public class Window extends JFrame implements ComponentListener {
     private int height;
     private Canvas canvas;
     private JButton createGameBtn;
+    private JButton quitGameBtn;
+    private JButton joinGameBtn;
 
     private Window(int width, int height) {
         this.width = width;
@@ -58,11 +60,32 @@ public class Window extends JFrame implements ComponentListener {
         createGameBtn.setBounds(10, 10, 150, 35);
         createGameBtn.setText("Create game");
         createGameBtn.setFocusable(false);
+
+        quitGameBtn = new JButton();
+        quitGameBtn.setBounds(10, 55, 150, 35);
+        quitGameBtn.setText("Quit game");
+        quitGameBtn.setFocusable(false);
+
+        joinGameBtn = new JButton();
+        joinGameBtn.setBounds(10, 100, 150, 35);
+        joinGameBtn.setText("Join game");
+        joinGameBtn.setFocusable(false);
+
         this.add(createGameBtn);
+        this.add(quitGameBtn);
+        this.add(joinGameBtn);
     }
 
     public void setCreateGameBtnEvent(ActionListener actionListener) {
         createGameBtn.addActionListener(actionListener);
+    }
+
+    public void setQuitGameBtnEvent(ActionListener actionListener) {
+        quitGameBtn.addActionListener(actionListener);
+    }
+
+    public void setJoinGameBtnEvent(ActionListener actionListener) {
+        joinGameBtn.addActionListener(actionListener);
     }
 
     // --------

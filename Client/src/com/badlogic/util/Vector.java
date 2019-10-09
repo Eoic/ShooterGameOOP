@@ -3,6 +3,15 @@ package com.badlogic.util;
 public class Vector {
     private double x;
     private double y;
+    public static final Vector LEFT = new Vector(-1, 0),
+                               RIGHT = new Vector(1, 0),
+                               UP = new Vector(0, -1),
+                               DOWN = new Vector(0, 1);
+
+    public Vector() {
+        this.x = 0;
+        this.y = 0;
+    }
 
     public Vector(double x, double y) {
         this.x = x;
@@ -37,9 +46,18 @@ public class Vector {
         return new Vector(this.x - vector.getX(), this.y - vector.getY());
     }
 
+    public Vector difference(double x, double y) {
+        return new Vector(this.x - x, this.y - y);
+    }
+
     public void add(double x, double y) {
         this.x += x;
         this.y += y;
+    }
+
+    public void subtract(double x, double y) {
+        this.x -= x;
+        this.y -= y;
     }
 
     public void add(Vector vector) {
@@ -81,7 +99,7 @@ public class Vector {
         return this.x == pos.getX() && this.y == pos.getY();
     }
 
-    public Point dump() {
+    public Point getSerializable() {
         return new Point(this.x, this.y);
     }
 }

@@ -7,10 +7,8 @@ namespace Server.Game.Entities
     {
         public Guid RoomId { get; set; }
         public int Health { get; private set; }
-        public bool ShouldUpdate => Math.Abs(Direction.X) < 0.01 && Math.Abs(Direction.Y) < 0.01;
         public Vector Direction { get; set; }
         public int Speed { get; set; }
-        public int TimeTillClientUpdate = Constants.PlayerUpdateInterval;
 
         public Player(Guid id, Guid roomId)
         {
@@ -44,11 +42,6 @@ namespace Server.Game.Entities
 
             if (newPosition.X <= Map.Width - Constants.MapTileSize && newPosition.X >= 0 && newPosition.Y <= Map.Height - Constants.MapTileSize && newPosition.Y >= 0)
                 Position.Add(change);
-
-            if (TimeTillClientUpdate == 0)
-                TimeTillClientUpdate = Constants.PlayerUpdateInterval;
-
-            TimeTillClientUpdate--;
         }
     }
 }

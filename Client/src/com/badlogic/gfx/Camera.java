@@ -1,16 +1,22 @@
 package com.badlogic.gfx;
 
+import com.badlogic.core.GameObject;
 import com.badlogic.util.Vector;
 
-public class Camera {
-    private Vector offset = new Vector(0, 0);
+import java.awt.*;
 
-    public Camera() { }
-    public Camera (Vector offset) {
-        this.offset = offset;
+public class Camera {
+    private Vector offset;
+
+    public Camera() {
+        offset = new Vector();
     }
 
     public Vector getOffset() {
         return offset;
+    }
+
+    public void follow(GameObject gameObject, Dimension windowSize) {
+        offset.set(gameObject.getPosition().difference(windowSize.getWidth() / 2.0, windowSize.getHeight() / 2.0));
     }
 }

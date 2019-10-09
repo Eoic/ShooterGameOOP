@@ -18,10 +18,15 @@ public class Constants {
             BUFFER_COUNT = 3,
             SPRITE_WIDTH = 128,
             SPRITE_HEIGHT = 128,
+            SPRITE_WIDTH_HALF = 64,
+            SPRITE_HEIGHT_HALF = 64,
             SHEET_ROWS = 4,
             SHEET_COLUMNS = 3,
             FPS = 60,
-            COUNTDOWN_LATCH_COUNT = 1;
+            COUNTDOWN_LATCH_COUNT = 1,
+            DEFAULT_PLAYER_SPEED = 1,
+            DEFAULT_PLAYER_BULLET_COUNT = 100,
+            DEFAULT_BULLET_SPEED = 10;
 
     public static final int
             MAP_WIDTH = 20,

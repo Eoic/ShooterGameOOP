@@ -17,15 +17,18 @@ public class Map {
         this.gameManager = gameManager;
     }
 
-    public void render(BufferedImage tile,  Graphics graphics) {
+    public void render(BufferedImage tile, Graphics graphics) {
         for (int i = 0; i < this.width; i++) {
             for (int j = 0; j < height; j++) {
                 var camOffset = gameManager.getCamera().getOffset();
-                var windowSize = gameManager.getWindow().getSize();
-                int posX = i * Constants.SPRITE_WIDTH - (int)camOffset.getX()  + (windowSize.width / 2 - Constants.SPRITE_WIDTH / 2);
-                int posY = j * Constants.SPRITE_HEIGHT - (int)camOffset.getY() + (windowSize.height / 2 - Constants.SPRITE_HEIGHT / 2);
+                int posX = (i * Constants.SPRITE_WIDTH - (int) camOffset.getX()) - 64;
+                int posY = (j * Constants.SPRITE_HEIGHT - (int) camOffset.getY()) - 64;
                 graphics.drawImage(tile, posX, posY, null);
             }
         }
+    }
+
+    private void loadFromTemplate(String type) {
+
     }
 }

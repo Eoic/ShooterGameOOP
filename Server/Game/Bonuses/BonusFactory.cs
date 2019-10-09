@@ -5,9 +5,9 @@ using System.Web;
 
 namespace Server.Game.Bonuses
 {
-    public class BonusFactory
+    public static class BonusFactory
     {
-        public Bonus GetBonus(string bonusType, int bonusAmount = 0, int lifespan = 0)
+        public static Bonus GetBonus(string bonusType, int bonusAmount = 0, int lifespan = 0)
         {
             switch (bonusType)
             {

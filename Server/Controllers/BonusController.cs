@@ -8,6 +8,7 @@ namespace Server.Controllers
     [RoutePrefix("api/bonuses")]
     public class BonusController : ApiController
     {
+        /*
         [HttpGet]
         [Route("health")]
         public HttpResponseMessage CreateHealthBonus()
@@ -34,5 +35,6 @@ namespace Server.Controllers
             bonus.ApplyBonus(null);
             return Request.CreateResponse(HttpStatusCode.OK, "Created speed bonus");
         }
+        */
     }
 }

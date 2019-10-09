@@ -9,6 +9,7 @@ namespace Server.Network
     public class Client : WebSocketHandler, ISubject<Message>
     {
         public readonly Guid Id = Guid.NewGuid();
+        public Guid RoomId { get; set; } = Guid.Empty;
         public List<IObserver<Message>> Observers { get; } = new List<IObserver<Message>>();
 
         /// <summary>
@@ -19,7 +20,7 @@ namespace Server.Network
         {
             ConnectionsPool.GetInstance().Clients.Add(this);
             var count = ConnectionsPool.GetInstance().Clients.Count;
-            NotifyAllObservers(new Message(EventType.ClientConnected, $"New client connected. Current count: {count}."));
+            NotifyAllObservers(new Message(RequestCode.Connect, $"New client connected. Current count: {count}."));
         }
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace Server.Network
         {
             var messageObj = JsonParser.Deserialize<Message>(message);
 
-            if (messageObj == null || messageObj.Type == EventType.Invalid)
+            if (messageObj == null || messageObj.Type == RequestCode.Ping)
             {
                 Debug.WriteLine("Malformed message.");
                 return;
@@ -48,7 +49,7 @@ namespace Server.Network
         {
             ConnectionsPool.GetInstance().Clients.Remove(this);
             var count = ConnectionsPool.GetInstance().Clients.Count;
-            NotifyAllObservers(new Message(EventType.ClientDisconnected, $"Client has disconnected. Current count: {count}."));
+            NotifyAllObservers(new Message(RequestCode.Disconnect, $"Client has disconnected. Current count: {count}."));
         }
 
         /// <summary>
@@ -58,7 +59,7 @@ namespace Server.Network
         public override void OnError()
         {
             ConnectionsPool.GetInstance().Clients.Remove(this);
-            NotifyAllObservers(new Message(EventType.ErrorOccured, "Connection with client lost."));
+            NotifyAllObservers(new Message(RequestCode.RaiseError, "Connection with client lost."));
         }
 
         /// <summary>
