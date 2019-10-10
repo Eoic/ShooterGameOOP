@@ -2,40 +2,42 @@ package com.badlogic.gfx.ui.panels;
 
 import com.badlogic.gfx.Window;
 import com.badlogic.gfx.ui.CanvasElement;
+import com.badlogic.gfx.ui.Colors;
 import com.badlogic.gfx.ui.Position;
 import com.badlogic.util.Point;
-import com.badlogic.util.Vector;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
-import java.awt.*;
 
-public class HealthBar extends JPanel implements CanvasElement {
-    private Window window;
-    private JPanel background;
+public class HealthBar implements CanvasElement {
+    private int width, height, xOffset, yOffset, maxValue = 100, currentValue = 100;
+    private JPanel background = new JPanel();
+    private JPanel foreground = new JPanel();
     private Position xPosition, yPosition;
-    private int width, height, xOffset, yOffset, minValue, maxValue = 100, currentValue = 50;
-    private JLabel label;
+    private Window window;
 
     public HealthBar(Window window, int width, int height, Position xPosition, Position yPosition) {
-        this.label = new JLabel();
-        this.window = window;
         this.xPosition = xPosition;
         this.yPosition = yPosition;
-        this.width = width;
+        this.window = window;
         this.height = height;
-        this.createInfoLabel();
-        this.setBounds(0, 0, width, height);
-        this.setOpaque(true);
-        this.setBackground(new Color(236, 16, 72));
-        this.setBorder(new LineBorder(new Color(255, 150, 150), 5, false));
+        this.width = width;
+        this.createBackground();
+        this.createForeground();
     }
 
     @Override
     public void update() {
         var startPoint = getStartPosition();
-        this.setBounds((int)startPoint.getX() + this.xOffset, (int)startPoint.getY() + this.yOffset, this.width, this.height);
+        var foregroundWidth = ((maxValue - currentValue) * this.width) / maxValue;
+        this.foreground.setBounds((int)startPoint.getX() + this.xOffset, (int)startPoint.getY() + this.yOffset, this.width - foregroundWidth, this.height);
+        this.background.setBounds((int)startPoint.getX() + this.xOffset + this.width - foregroundWidth, (int)startPoint.getY() + this.yOffset, foregroundWidth, this.height);
+    }
+
+    @Override
+    public void addToFrame(JFrame frame) {
+        frame.add(foreground);
+        frame.add(background);
     }
 
     // Calculates from which point panel should be started to render
@@ -62,24 +64,23 @@ public class HealthBar extends JPanel implements CanvasElement {
         this.yOffset = yOffset;
     }
 
-    private void createInfoLabel() {
-        this.label.setText(currentValue + " / " + maxValue);
-        this.label.setHorizontalAlignment(SwingConstants.CENTER);
-        this.label.setFont(new Font("Arial", Font.BOLD, 16));
-        this.label.setForeground(Color.white);
-        this.add(label);
+    private void createBackground() {
+        this.background.setOpaque(true);
+        this.background.setBackground(Colors.Gray);
+        this.background.setBorder(new LineBorder(Colors.DarkRed, 1, false));
     }
 
-    public void updateStatus() {
-        this.label.setText(currentValue + " / " + maxValue);
+    private void createForeground() {
+        this.foreground.setOpaque(true);
+        this.foreground.setBackground(Colors.Crimson);
+        this.foreground.setBorder(new LineBorder(Colors.DarkRed, 1, false));
     }
 
-    //
-    public JPanel getBackgroundElement() {
-        return null;
+    public void setCurrentValue(int currentValue) {
+        this.currentValue = currentValue;
     }
 
-    public JPanel getForegroundComponent() {
-        return null;
+    public void setMaxValue(int maxValue) {
+        this.maxValue = maxValue;
     }
 }

@@ -35,6 +35,10 @@ public class Window extends JFrame implements ComponentListener {
         this.canvas.setMinimumSize(new Dimension(width, height));
         this.canvasElementCollection = new CanvasElementCollection();
         this.canvas.setFocusable(false);
+        var hbar = (HealthBar)CanvasFactory.createPanel(CanvasElementType.HealthBar, this, Position.CENTER, Position.END, 750, 35);
+        hbar.setOffset(0, -31);
+        this.canvasElementCollection.attach(hbar);
+        hbar.addToFrame(this);
         this.createInterface();
         this.add(canvas);
         this.pack();
@@ -84,11 +88,6 @@ public class Window extends JFrame implements ComponentListener {
         this.add(joinGameBtn);
 
         // Temporary
-
-        var hbar = (HealthBar)CanvasFactory.createPanel(CanvasElementType.HealthBar, this, Position.CENTER, Position.END, 750, 35);
-        hbar.setOffset(0, -31);
-        this.canvasElementCollection.attach(hbar);
-        this.add(hbar);
     }
 
     public void setCreateGameBtnEvent(ActionListener actionListener) {
@@ -110,6 +109,7 @@ public class Window extends JFrame implements ComponentListener {
         this.width = componentEvent.getComponent().getWidth();
         this.height = componentEvent.getComponent().getHeight();
         this.canvasElementCollection.refresh();
+        this.revalidate();
     }
 
     @Override

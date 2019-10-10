@@ -16,7 +16,7 @@ public class Constants {
     public static final int
             WIDTH = 800,
             HEIGHT = 600,
-            BUFFER_COUNT = 3,
+            BUFFER_COUNT = 2,
             SPRITE_WIDTH = 128,
             SPRITE_HEIGHT = 128,
             SPRITE_WIDTH_HALF = 64,
@@ -27,7 +27,8 @@ public class Constants {
             COUNTDOWN_LATCH_COUNT = 1,
             DEFAULT_PLAYER_SPEED = 1,
             DEFAULT_PLAYER_BULLET_COUNT = 100,
-            DEFAULT_BULLET_SPEED = 1;
+            DEFAULT_BULLET_SPEED = 1,
+            DEFUALT_PANEL_BORDER_WIDTH = 3;
 
     public static final int
             MAP_WIDTH = 20,

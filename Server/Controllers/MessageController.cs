@@ -24,7 +24,7 @@ namespace Server.Controllers
                 currentContext.AcceptWebSocketRequest(ProcessWebSocketSession);
 
             return Request.CreateResponse(HttpStatusCode.SwitchingProtocols);
-        }
+        } 
 
         // Create and return web socket connections handler.
         private Task ProcessWebSocketSession(AspNetWebSocketContext context)
