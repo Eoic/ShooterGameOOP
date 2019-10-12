@@ -7,6 +7,8 @@
         public int Ammo { get; set; }
         public int OwnedById { get; set; }
         public double rate { get; set; }
+        public string type { get; set; }
+        public Bullet bullets { get; set; }
 
         public void updateRate(IRateStrategy s)
         {
@@ -26,6 +28,8 @@
             private int Ammo { get; set; }
             private int OwnedById { get; set; }
             private IRateStrategy RateStrategy { get; set; }
+            private string Type { get; set; }
+            private Bullet Bullets { get; set; }
 
             public static Builder GetInstance()
             {
@@ -71,6 +75,18 @@
                 return this;
             }
 
+            public Builder setType(string type)
+            {
+                Type = type;
+                return this;
+            }
+
+            public Builder setBulets(Bullet bullet)
+            {
+                Bullets = bullet;
+                return this;
+            }
+
             public Weapon build()
             {
                 var weapon = new Weapon();
@@ -78,6 +94,8 @@
                 weapon.Name = Name;
                 weapon.Ammo = Ammo;
                 weapon.OwnedById = OwnedById;
+                weapon.type = Type;
+                weapon.bullets = Bullets;
                 if(RateStrategy != null) weapon.rate = RateStrategy.rate();
 
                 dispose();

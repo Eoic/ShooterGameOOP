@@ -171,7 +171,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AbstractFactory.cs" />
+    <Compile Include="Models\Bullet.cs" />
+    <Compile Include="Models\GunTypes.cs" />
     <Compile Include="Models\IRateStrategy.cs" />
+    <Compile Include="Models\PistolFactory.cs" />
+    <Compile Include="Models\ShotgunFactory.cs" />
+    <Compile Include="Models\SniperRifleFactory.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Weapon.cs" />
     <Compile Include="Network\ConnectionsPool.cs" />
