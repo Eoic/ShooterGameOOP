@@ -2,10 +2,6 @@
 # DesignPatterns
 T120B516 Objektinis programų projektavimas
 
-### Testing server with Postman
-Set SSL verification to *OFF* <br>
-`File -> Settings -> General -> SSL certificate verification`
-
 ### WebSocket
 #### Connection string
 `ws://localhost:{port}/api/messages`<br>
