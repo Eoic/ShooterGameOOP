@@ -7,6 +7,7 @@ using System.Threading;
 using Server.Game.Bonuses;
 using Server.Game.Entities;
 using Server.Utilities;
+using Server.Game.Commands;
 
 namespace Server.Game
 {
@@ -66,43 +67,19 @@ namespace Server.Game
                     break;
                 case RequestCode.Disconnect:
                     ConnectionsPool.GetInstance().RemoveClient(data.ClientId);
-                    RemoveFromRoom(data.ClientId);
+                    new RemoveClientCommand(data.ClientId, _games).Execute();
                     break;
                 case RequestCode.QuitGame:
-                    RemoveFromRoom(data.ClientId);
+                    new RemoveClientCommand(data.ClientId, _games).Execute();
                     var message = new Message(RequestCode.QuitGame, "Game quit successfully.");
                     ConnectionsPool.GetInstance().GetClient(data.ClientId).Send(JsonParser.Serialize(message));
                     break;
                 case RequestCode.RaiseError:
                     ConnectionsPool.GetInstance().RemoveClient(data.ClientId);
-                    RemoveFromRoom(data.ClientId);
+                    new RemoveClientCommand(data.ClientId, _games).Execute();
                     break;
                 case RequestCode.JoinGame:
-                    for (int i = 0; i < _games.Count; i++)
-                    {
-                        if (!_games[i].IsFull())
-                        {
-                            if (_games[i].Players.ContainsKey(data.ClientId))
-                            {
-                                Debug.WriteLine("Player is already in the game. Bailing out.");
-                                break;
-                            }
-
-                            // 1. Find room and prepare client.
-                            var room = _games[i];
-                            var joiningPlayer = new Player(data.ClientId, room.RoomId);
-                            var initPos = new Vector(Map.CenterX, Map.CenterY);
-                            joiningPlayer.Position = initPos;
-                            _games[i].AddPlayer(joiningPlayer);
-
-                            // 2. TODO: get bonuses from game room
-
-                            // 3. Notify about successful join
-                            var gameJoinString = new Message(ResponseCode.GameJoined, JsonParser.Serialize(initPos));
-                            ConnectionsPool.GetInstance().GetClient(data.ClientId).Send(JsonParser.Serialize(gameJoinString));
-                            break;
-                        }
-                    }
+                    new AddPlayerCommand(data.ClientId, _games).Execute();
                     break;
                 case RequestCode.CreateGame:
                     // 1. Find and prepare client, create game room.
@@ -237,32 +214,6 @@ namespace Server.Game
             }
 
             return serializes;
-        }
-
-        // remove player form game room.
-        private void RemoveFromRoom(Guid id)
-        {
-            int? emptyRoomIndex = null;
-
-            for (var i = 0; i < _games.Count; i++)
-            {
-                var playerInThisRoom = _games[i].Players.ContainsKey(id);
-
-                if (!playerInThisRoom)
-                    continue;
-
-                _games[i].Players.Remove(id);
-
-                if (_games[i].Players.Count == 0) {
-                    Debug.WriteLine("Room has no more players...");
-                    emptyRoomIndex = i;
-                }
-
-                break;
-            }
-
-            if (emptyRoomIndex.HasValue)
-                _games.RemoveAt(emptyRoomIndex.Value);
         }
     }
 }

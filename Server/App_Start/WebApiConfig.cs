@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Web.Http;
 
 namespace Server
@@ -19,5 +20,11 @@ namespace Server
                 defaults: new { id = RouteParameter.Optional }
             );
         }
+
+        //[STAThread]
+        //static void Main()
+        //{
+        //    Console.ReadLine();
+        //}
     }
 }
