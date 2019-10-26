@@ -1,16 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Server.Network;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
+using Server.Game.Bonuses;
 using Server.Game.Entities;
 using Server.Utilities;
 
 namespace Server.Game
 {
-    public class GameManager : IObserver<Message>
+    public class GameManager : Network.IObserver<Message>
     {
-        // Loop
         private readonly long _frameTime = 1_000_000_000 / Constants.Fps;
+        private readonly List<GameRoom> _games = new List<GameRoom>();
         private readonly Stopwatch _timer;
         private readonly Thread _runner;
         private long _updateTime;
@@ -19,9 +22,6 @@ namespace Server.Game
         private long _delta;
         private long _now;
         
-        // Game session
-        private List<GameRoom> _games = new List<GameRoom>();
-
         public GameManager()
         {
             _runner = new Thread(Tick);
@@ -62,32 +62,73 @@ namespace Server.Game
         {
             switch (data.Type)
             {
-                case EventType.ClientConnected:
+                case RequestCode.Connect:
                     break;
-                case EventType.ClientDisconnected:
-                    _games.ForEach(game => game.RemovePlayer(data.ClientId));
+                case RequestCode.Disconnect:
+                    ConnectionsPool.GetInstance().RemoveClient(data.ClientId);
+                    RemoveFromRoom(data.ClientId);
                     break;
-                case EventType.ErrorOccured:
-                    Debug.WriteLine(data.Payload);
+                case RequestCode.QuitGame:
+                    RemoveFromRoom(data.ClientId);
+                    var message = new Message(RequestCode.QuitGame, "Game quit successfully.");
+                    ConnectionsPool.GetInstance().GetClient(data.ClientId).Send(JsonParser.Serialize(message));
                     break;
-                case EventType.CreateGame:
-                    // Creates new game and adds player itself
+                case RequestCode.RaiseError:
+                    ConnectionsPool.GetInstance().RemoveClient(data.ClientId);
+                    RemoveFromRoom(data.ClientId);
+                    break;
+                case RequestCode.JoinGame:
+                    for (int i = 0; i < _games.Count; i++)
+                    {
+                        if (!_games[i].IsFull())
+                        {
+                            if (_games[i].Players.ContainsKey(data.ClientId))
+                            {
+                                Debug.WriteLine("Player is already in the game. Bailing out.");
+                                break;
+                            }
+
+                            // 1. Find room and prepare client.
+                            var room = _games[i];
+                            var joiningPlayer = new Player(data.ClientId, room.RoomId);
+                            var initPos = new Vector(Map.CenterX, Map.CenterY);
+                            joiningPlayer.Position = initPos;
+                            _games[i].AddPlayer(joiningPlayer);
+
+                            // 2. TODO: get bonuses from game room
+
+                            // 3. Notify about successful join
+                            var gameJoinString = new Message(ResponseCode.GameJoined, JsonParser.Serialize(initPos));
+                            ConnectionsPool.GetInstance().GetClient(data.ClientId).Send(JsonParser.Serialize(gameJoinString));
+                            break;
+                        }
+                    }
+                    break;
+                case RequestCode.CreateGame:
+                    // 1. Find and prepare client, create game room.
+                    var client = ConnectionsPool.GetInstance().GetClient(data.ClientId);
                     var gameRoom = new GameRoom();
+                    client.RoomId = gameRoom.RoomId;
+
+                    // 2. Create new player instance and additional objects.
+                    var initialPosition = new Vector(Map.CenterX, Map.CenterY);
                     var player = new Player(data.ClientId, gameRoom.RoomId);
+                    var bonuses = CreateBonuses();
+
+                    // 3. Setup created game objects.
+                    player.Position = initialPosition;
                     gameRoom.AddPlayer(player);
                     _games.Add(gameRoom);
-                    // Finally, send initial position (test)
-                    var newPos = new Vector(0, 0);
-                    var newPosString = JsonParser.Serialize(newPos);
-                    var message = new Message(EventType.GameCreated, newPosString);
-                    var messageStr = JsonParser.Serialize(message);
 
-                    // Broadcast position update to all players in GameRoom
-                    // TODO...
-
-                    ConnectionsPool.GetInstance().GetClient(data.ClientId).Send(messageStr);
+                    // 4. Notify event about created game and send data.
+                    var gameCreationMessage = new Message(ResponseCode.GameCreated, JsonParser.Serialize(initialPosition));
+                    var bonusesMessage = new Message(ResponseCode.BonusesCreated, JsonParser.Serialize(bonuses));
+                    var gameCreationString = JsonParser.Serialize(gameCreationMessage);
+                    var bonusesString = JsonParser.Serialize(bonusesMessage);
+                    client.Send(gameCreationString);
+                    client.Send(bonusesString);
                     break;
-                case EventType.DirectionUpdate:
+                case RequestCode.UpdateDirection:
                     _games.ForEach(game =>
                     {
                         var playerObj = game.GetPlayer(data.ClientId);
@@ -116,29 +157,36 @@ namespace Server.Game
                 _now = _timer.ElapsedMilliseconds * 1_000_000;
 
                 // --- Game logic here ---
-                _games.ForEach(game =>
+                foreach (var gameRoom in _games)
                 {
-                    foreach (var keyValuePair in game.Players)
+                    // Update room players.
+                    gameRoom.Update(_delta);
+
+                    if (gameRoom.TimeTillRoomUpdate != 0)
+                        continue;
+
+                    var playerSerializes = new List<SerializablePlayer>();
+
+                    // Create list of serializable players.
+                    foreach (var gameRoomPlayer in gameRoom.Players)
                     {
-                        var player = keyValuePair.Value;
-
-                        if (player == null)
-                            continue;
-
-                        player.Update(_delta);
-
-                        if (player.TimeTillClientUpdate != 0) 
-                            continue;
-                        
-                        var client = ConnectionsPool.GetInstance().GetClient(keyValuePair.Key);
-
-                        if (client == null) 
-                            continue;
-
-                        var message = new Message(EventType.PositionUpdate, JsonParser.Serialize(player.Position));
-                        client.Send(JsonParser.Serialize(message));
+                        var player = gameRoomPlayer.Value;
+                        var playerSerialize = new SerializablePlayer(player.Position, player.Direction, 0);
+                        playerSerializes.Add(playerSerialize);
                     }
-                });
+
+                    // Send burst. Player of receiverIndex is a receiver. 
+                    int receiverIndex = 0;
+                    foreach (var gameRoomPlayer in gameRoom.Players)
+                    {
+                        var client = ConnectionsPool.GetInstance().GetClient(gameRoomPlayer.Key);
+                        playerSerializes[receiverIndex].Type = 10; // Set receiver to different type. 
+                        var playerSerializesString = JsonParser.Serialize(playerSerializes);
+                        var message = new Message(ResponseCode.PositionUpdated, playerSerializesString);
+                        client?.Send(JsonParser.Serialize(message));
+                        receiverIndex++;
+                    }
+                }
                 // -----------------------
 
                 _updateTime = _timer.ElapsedMilliseconds * 1_000_000 - _now;
@@ -150,6 +198,71 @@ namespace Server.Game
                 Thread.Sleep((int)_waitTime);
                 _delta = (_timer.ElapsedMilliseconds * 1_000_000 - _now) / 1_000_000;
             }
+        }
+
+        // Generates random amount of bonuses.
+        private List<SerializableBonus> CreateBonuses()
+        {
+            var randomGen = new Random(DateTime.Now.Millisecond);
+            var iterations = randomGen.Next(Constants.MinBonusCount, Constants.MaxBonusCount);
+            var bonusList = new List<Bonus>();
+            var serializes = new List<SerializableBonus>();
+
+            for (var i = 0; i < iterations; i++)
+            {
+                var bonusType = string.Empty;
+                var bonusAmount = randomGen.Next(Constants.BonusMinAmount, Constants.BonusMaxAmount + 1);
+                var bonusLifespan = randomGen.Next(Constants.BonusMinLifespan, Constants.BonusMaxLifespan + 1);
+                
+                switch (randomGen.Next(Constants.BonusTypeCount))
+                {
+                    case 0:
+                        bonusType = BonusType.Health;
+                        break;
+                    case 1:
+                        bonusType = BonusType.Ammo;
+                        break;
+                    case 2:
+                        bonusType = BonusType.Speed;
+                        break;
+                }
+
+                if (string.IsNullOrEmpty(bonusType))
+                    continue;
+
+                var bonus = BonusFactory.GetBonus(bonusType, bonusAmount, bonusLifespan);
+                bonus.Position = new Vector(randomGen.Next(0, Map.Width - Constants.MapBoundOffset), randomGen.Next(0, Map.Height - Constants.MapBoundOffset));
+                serializes.Add(bonus.GetSerializable(bonusType));
+                bonusList.Add(bonus);
+            }
+
+            return serializes;
+        }
+
+        // remove player form game room.
+        private void RemoveFromRoom(Guid id)
+        {
+            int? emptyRoomIndex = null;
+
+            for (var i = 0; i < _games.Count; i++)
+            {
+                var playerInThisRoom = _games[i].Players.ContainsKey(id);
+
+                if (!playerInThisRoom)
+                    continue;
+
+                _games[i].Players.Remove(id);
+
+                if (_games[i].Players.Count == 0) {
+                    Debug.WriteLine("Room has no more players...");
+                    emptyRoomIndex = i;
+                }
+
+                break;
+            }
+
+            if (emptyRoomIndex.HasValue)
+                _games.RemoveAt(emptyRoomIndex.Value);
         }
     }
 }

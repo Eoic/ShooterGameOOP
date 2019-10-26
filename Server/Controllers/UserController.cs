@@ -18,6 +18,7 @@ namespace Server.Controllers
         {
             return Weapon.Builder.GetInstance()
                 .setName("TestPistol")
+                //.setRate(new MediumRate())
                 .build();
         }
     }

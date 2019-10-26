@@ -7,16 +7,16 @@ namespace Server.Game.Bonuses
 {
     public static class BonusFactory
     {
-        public static Bonus GetBonus(string bonusType)
+        public static Bonus GetBonus(string bonusType, int bonusAmount = 0, int lifespan = 0)
         {
             switch (bonusType)
             {
                 case BonusType.Health:
-                    return new HealthBonus();
+                    return new HealthBonus(bonusAmount, lifespan, bonusType);
                 case BonusType.Ammo:
-                    return new AmmoBonus();
+                    return new AmmoBonus(bonusAmount, lifespan);
                 case BonusType.Speed:
-                    return new SpeedBonus();
+                    return new SpeedBonus(bonusAmount, lifespan);
                 default:
                     return null;
             }

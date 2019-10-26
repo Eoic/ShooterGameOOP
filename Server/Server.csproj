@@ -157,10 +157,13 @@
     <Compile Include="Game\Bonuses\BonusFactory.cs" />
     <Compile Include="Game\Bonuses\BonusType.cs" />
     <Compile Include="Game\Bonuses\HealthBonus.cs" />
+    <Compile Include="Game\Bonuses\SerializableBonus.cs" />
     <Compile Include="Game\Bonuses\SpeedBonus.cs" />
     <Compile Include="Game\Constants.cs" />
-    <Compile Include="Game\Entities\GameObjects\Player.cs" />
-    <Compile Include="Game\Entities\GameObjects\GameObject.cs" />
+    <Compile Include="Game\Entities\Map.cs" />
+    <Compile Include="Game\Entities\Player.cs" />
+    <Compile Include="Game\Entities\GameObject.cs" />
+    <Compile Include="Game\Entities\SerializablePlayer.cs" />
     <Compile Include="Game\GameManagerWrapper.cs" />
     <Compile Include="Game\GameRoom.cs" />
     <Compile Include="Game\GameManager.cs" />
@@ -168,14 +171,22 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AbstractFactory.cs" />
+    <Compile Include="Models\Bullet.cs" />
+    <Compile Include="Models\GunTypes.cs" />
+    <Compile Include="Models\IRateStrategy.cs" />
+    <Compile Include="Models\PistolFactory.cs" />
+    <Compile Include="Models\ShotgunFactory.cs" />
+    <Compile Include="Models\SniperRifleFactory.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Weapon.cs" />
     <Compile Include="Network\ConnectionsPool.cs" />
-    <Compile Include="Network\EventType.cs" />
-    <Compile Include="Network\GameWebSocketHandler.cs" />
+    <Compile Include="Network\Client.cs" />
     <Compile Include="Network\Message.cs" />
     <Compile Include="Network\IObserver.cs" />
     <Compile Include="Network\ISubject.cs" />
+    <Compile Include="Network\RequestCode.cs" />
+    <Compile Include="Network\ResponseCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\JsonParser.cs" />
   </ItemGroup>

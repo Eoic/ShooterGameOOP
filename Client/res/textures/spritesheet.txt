@@ -7,3 +7,6 @@ normalTile
 ammoBonus
 healthBonus
 speedBonus
+bulletVarOne
+bulletVarTwo
+bulletVarThree

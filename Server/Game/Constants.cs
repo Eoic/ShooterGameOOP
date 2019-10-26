@@ -5,16 +5,32 @@
         public static readonly int
             //Game
             Fps = 60,
-            PlayerUpdateInterval = 60,
+            PlayerUpdateInterval = 30,
+            RoomUpdateInterval = 60,
 
             //Players
             MaxPlayerCount = 10,
-            MaxPlayerPerTeam = MaxPlayerCount / 2,
+            MaxPlayersPerTeam = MaxPlayerCount / 2,
             DefaultSpeed = 1,
 
-            //Healt Points
-            BonusHP = 30,
-            MaxHP = 100,
-            MinHP = 0;
+            //Health Points
+            BonusHealth = 30,
+            MaxHealth = 100,
+            MinHealth = 0,
+
+            // Bonuses
+            BonusTypeCount = 3,
+            MinBonusCount = 1,
+            MaxBonusCount = 10,
+            BonusMinLifespan = 1,
+            BonusMaxLifespan = 100,
+            BonusMinAmount = 5,
+            BonusMaxAmount = 100,
+
+            // Map
+            MapTileSize = 128,
+            MapWidth = 20,
+            MapHeight = 15,
+            MapBoundOffset = 64;
     }
 }
