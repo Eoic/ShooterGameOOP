@@ -12,12 +12,14 @@ public class RemotePlayer extends GameObject {
     private Window window;
     private Camera camera;
     private Vector direction;
+    private int speed;
 
     public RemotePlayer(Window window, Camera camera, BufferedImage sprite) {
         this.window = window;
         this.camera = camera;
         this.sprite = sprite;
         this.direction = new Vector(0, 0);
+        this.speed = Constants.DEFAULT_PLAYER_SPEED;
     }
 
     @Override
@@ -30,7 +32,13 @@ public class RemotePlayer extends GameObject {
 
     @Override
     public void update(int delta) {
-        this.position.add(direction);
+        var change = direction.multiply(delta * speed);
+        var newPos = change.sum(this.position);
+
+        if (newPos.getX() >= 0 && newPos.getX() < Constants.MAP_PIXEL_WIDTH - Constants.MAP_TILE_SIZE &&
+            newPos.getY() >= 0 && newPos.getY() < Constants.MAP_PIXEL_HEIGHT - Constants.MAP_TILE_SIZE) {
+            this.position.add(change);
+        }
     }
 
     public void setDirection(Vector direction) {

@@ -152,11 +152,16 @@ public class Loop implements Observer {
     }
 
     // Handle messages received from server.
-    // TODO: Split message handling to separate methods
     @Override
     public void update(Object data) {
+        if (data == null)
+            return;
+
         // Deserialize received message.
         var message = jsonParser.deserialize(data.toString(), Message.class);
+
+        if (message == null)
+            return;
 
         // Take action according to event type.
         // # List all available games in the UI
