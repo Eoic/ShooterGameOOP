@@ -142,7 +142,6 @@ public class Loop implements Observer {
             player.render(graphics);
             roomPlayers.forEach((key, value) -> value.render(graphics));
             // bonuses.forEach(bonus -> bonus.render(graphics));
-            // gameRoom.getPlayers().forEach(player -> player.render(graphics));
         }
         // Stop rendering
 
@@ -190,7 +189,16 @@ public class Loop implements Observer {
                     }
                     // Update other player in the room.
                     else {
-                        // :(
+                        if (!roomPlayers.containsKey(serializablePlayer.getPlayerId())) {
+                            var roomPlayer = new RemotePlayer(gameManager.getWindow(), gameManager.getCamera(), Assets.getSprite(SpriteKeys.ENEMY_PLAYER));
+                            roomPlayer.setPosition(Vector.fromPoint(serializablePlayer.getPosition()));
+                            roomPlayer.setDirection(Vector.fromPoint(serializablePlayer.getDirection()));
+                            roomPlayers.put(serializablePlayer.getPlayerId(), roomPlayer);
+                        } else {
+                            var roomPlayer = roomPlayers.get(serializablePlayer.getPlayerId());
+                            roomPlayer.setPosition(Vector.fromPoint(serializablePlayer.getPosition()));
+                            roomPlayer.setDirection(Vector.fromPoint(serializablePlayer.getDirection()));
+                        }
                     }
                 });
             });
