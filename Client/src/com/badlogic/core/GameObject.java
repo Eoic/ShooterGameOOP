@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public abstract class GameObject {
     protected String id = UUID.randomUUID().toString();
-    protected Vector position = new Vector();
+    public Vector position = new Vector();
     protected GameManager gameManager;
     protected BufferedImage sprite;
 

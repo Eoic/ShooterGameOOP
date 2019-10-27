@@ -159,6 +159,9 @@
     <Compile Include="Game\Bonuses\HealthBonus.cs" />
     <Compile Include="Game\Bonuses\SerializableBonus.cs" />
     <Compile Include="Game\Bonuses\SpeedBonus.cs" />
+    <Compile Include="Game\Commands\AddPlayerCommand.cs" />
+    <Compile Include="Game\Commands\ICommand.cs" />
+    <Compile Include="Game\Commands\RemoveClientCommand.cs" />
     <Compile Include="Game\Constants.cs" />
     <Compile Include="Game\Entities\Map.cs" />
     <Compile Include="Game\Entities\Player.cs" />
@@ -167,6 +170,8 @@
     <Compile Include="Game\GameManagerWrapper.cs" />
     <Compile Include="Game\GameRoom.cs" />
     <Compile Include="Game\GameManager.cs" />
+    <Compile Include="Game\PlayerManager.cs" />
+    <Compile Include="Game\SerializableGameRoom.cs" />
     <Compile Include="Game\Vector.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

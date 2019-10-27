@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+using System.Text;
 using Server.Game.Entities;
+using System.Collections.Generic;
 
 namespace Server.Game
 {
@@ -36,6 +36,30 @@ namespace Server.Game
                 TimeTillRoomUpdate = Constants.RoomUpdateInterval;
 
             TimeTillRoomUpdate--;
+        }
+
+        public override string ToString()
+        {
+            var index = 0;
+            var builder = new StringBuilder();
+            builder.AppendLine(new string('-', 80));
+            builder.AppendFormat("| {0, -50} | {1, -23} |\n", "Room ID", "Size");
+            builder.AppendLine(new string('-', 80));
+            builder.AppendFormat("| {0, -50} | {1, -23} |\n", RoomId.ToString(), Players.Count + " / " + Constants.MaxPlayerCount);
+            builder.AppendLine(new string('-', 80));
+            builder.AppendFormat("| {0, -3} | {1, -44} | {2, -23} |\n", "Nr.", "Player ID", "Position");
+            builder.AppendLine(new string('-', 80));
+
+            foreach (var keyValuePair in Players)
+                builder.AppendFormat("| {0, -3} | {1, -44} | {2, -23} |\n", ++index, keyValuePair.Key, keyValuePair.Value.Position);
+            
+            builder.AppendLine(new string('-', 80));
+            return builder.ToString();
+        }
+        
+        public SerializableGameRoom GetSerializable()
+        {
+            return new SerializableGameRoom(RoomId.ToString(), Players.Count, Constants.MaxPlayerCount);
         }
     }
 }

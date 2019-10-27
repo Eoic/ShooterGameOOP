@@ -64,6 +64,9 @@ namespace Server.Game
             switch (data.Type)
             {
                 case RequestCode.Connect:
+                    var gameList = JsonParser.Serialize((from game in _games select game.GetSerializable()).ToList());
+                    var gameListMessage = new Message(ResponseCode.ConnectionEstablished, gameList);
+                    ConnectionsPool.GetInstance().GetClient(data.ClientId).Send(JsonParser.Serialize(gameListMessage));
                     break;
                 case RequestCode.Disconnect:
                     ConnectionsPool.GetInstance().RemoveClient(data.ClientId);
@@ -79,7 +82,8 @@ namespace Server.Game
                     new RemoveClientCommand(data.ClientId, _games).Execute();
                     break;
                 case RequestCode.JoinGame:
-                    new AddPlayerCommand(data.ClientId, _games).Execute();
+                    Debug.WriteLine(data.Payload);
+                    // new AddPlayerCommand(data.ClientId, _games).Execute();
                     break;
                 case RequestCode.CreateGame:
                     // 1. Find and prepare client, create game room.
@@ -117,7 +121,7 @@ namespace Server.Game
                     });
                     break;
                 default:
-                    Debug.WriteLine("Received message with unknown type.");
+                    Debug.WriteLine("Received message of unknown type.");
                     Debug.WriteLine(data.ToString());
                     break;
             }
@@ -136,24 +140,29 @@ namespace Server.Game
                 // --- Game logic here ---
                 foreach (var gameRoom in _games)
                 {
-                    // Update room players.
+                    // Update all room players.
                     gameRoom.Update(_delta);
 
+                    // If clients still don't need update sent, skip this iteration.
                     if (gameRoom.TimeTillRoomUpdate != 0)
                         continue;
 
+                    // Create list of serializable players.
                     var playerSerializes = new List<SerializablePlayer>();
 
-                    // Create list of serializable players.
                     foreach (var gameRoomPlayer in gameRoom.Players)
                     {
                         var player = gameRoomPlayer.Value;
                         var playerSerialize = new SerializablePlayer(player.Position, player.Direction, 0);
                         playerSerializes.Add(playerSerialize);
                     }
+                    
+                    // Print gamer room info.
+                    System.Diagnostics.Debug.WriteLine(gameRoom);
 
-                    // Send burst. Player of receiverIndex is a receiver. 
+                    // Send broadcast.
                     int receiverIndex = 0;
+
                     foreach (var gameRoomPlayer in gameRoom.Players)
                     {
                         var client = ConnectionsPool.GetInstance().GetClient(gameRoomPlayer.Key);

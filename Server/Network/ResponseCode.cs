@@ -27,6 +27,9 @@ namespace Server.Network
             PositionUpdated = 4,
 
             // Notify about created bonuses
-            BonusesCreated = 5;
+            BonusesCreated = 5,
+
+            // Notidy about established connection
+            ConnectionEstablished = 6;
     }
 }

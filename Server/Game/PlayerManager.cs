@@ -4,8 +4,6 @@ using Server.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Web;
 
 namespace Server.Game
 {
@@ -43,6 +41,7 @@ namespace Server.Game
         public static void RemovePlayer(List<GameRoom> games, Guid clientId)
         {
             int? emptyRoomIndex = null;
+
             for (var i = 0; i < games.Count; i++)
             {
                 var playerInThisRoom = games[i].Players.ContainsKey(clientId);

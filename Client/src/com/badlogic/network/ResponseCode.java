@@ -21,5 +21,8 @@ public class ResponseCode {
         PositionUpdated = 4,
 
         // Message about created bonuses
-        BonusesCreated = 5;
+        BonusesCreated = 5,
+
+        // Message about successful connection to server
+        ConnectionEstablished = 6;
 }

@@ -19,8 +19,9 @@ namespace Server.Network
         public override void OnOpen()
         {
             ConnectionsPool.GetInstance().Clients.Add(this);
-            var count = ConnectionsPool.GetInstance().Clients.Count;
-            NotifyAllObservers(new Message(RequestCode.Connect, $"New client connected. Current count: {count}."));
+            var messageObj = new Message(RequestCode.Connect, "New client connected");
+            messageObj.ClientId = Id;
+            NotifyAllObservers(messageObj);
         }
 
         /// <summary>

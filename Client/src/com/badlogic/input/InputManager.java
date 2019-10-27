@@ -22,8 +22,6 @@ public class InputManager implements KeyListener, MouseListener {
     private Camera camera;
     private Vector mouseDirection;
 
-    boolean firstTime = true;
-
     public InputManager(Camera camera) {
         keys = new boolean[256];
         mouseClickPoint = new Vector(0, 0);
