@@ -1,32 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Web;
 
 namespace Server.Game.Commands
 {
-    public class RemoveClientCommand : ICommand
+    public class RemovePlayerCommand : ICommand
     {
         private Guid clientId;
+        private Guid roomId;
         private Guid lastRemovedPlayer;
         private List<GameRoom> _games;
 
-        public RemoveClientCommand(Guid clientId, List<GameRoom> games)
+        public RemovePlayerCommand(Guid clientId, Guid roomId, List<GameRoom> games)
         {
             this.clientId = clientId;
+            this.roomId = roomId;
             _games = games;
         }
 
         public void Execute()
         {
             lastRemovedPlayer = clientId;
-            PlayerManager.RemovePlayer(_games, clientId);
+            PlayerManager.RemovePlayer(_games, clientId, roomId);
         }
 
         public void Undo()
         {
-            PlayerManager.AddPlayer(_games, lastRemovedPlayer);
+            PlayerManager.AddPlayer(_games, lastRemovedPlayer, roomId);
         }
     }
 }

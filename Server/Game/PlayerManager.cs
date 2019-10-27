@@ -9,37 +9,37 @@ namespace Server.Game
 {
     public class PlayerManager
     {
-        public static void AddPlayer(List<GameRoom> games, Guid clientId)
+        public static void AddPlayer(List<GameRoom> games, Guid clientId, Guid roomId)
         {
-            for (int i = 0; i < games.Count; i++)
+            var gameToJoin = games.Find(game => game.RoomId == roomId);
+
+            if (gameToJoin != null)
             {
-                if (!games[i].IsFull())
+                if (gameToJoin.Players.ContainsKey(clientId))
                 {
-                    if (games[i].Players.ContainsKey(clientId))
-                    {
-                        Debug.WriteLine("Player is already in the game. Bailing out.");
-                        break;
-                    }
-
-                    // 1. Find room and prepare client.
-                    var room = games[i];
-                    var joiningPlayer = new Player(clientId, room.RoomId);
-                    var initPos = new Vector(Map.CenterX, Map.CenterY);
-                    joiningPlayer.Position = initPos;
-                    games[i].AddPlayer(joiningPlayer);
-
-                    // 2. TODO: get bonuses from game room
-
-                    // 3. Notify about successful join
-                    var gameJoinString = new Message(ResponseCode.GameJoined, JsonParser.Serialize(initPos));
-                    ConnectionsPool.GetInstance().GetClient(clientId).Send(JsonParser.Serialize(gameJoinString));
-                    break;
+                    Debug.WriteLine("Player is already in the game. Bailing out.");
+                    return;
                 }
+
+                // 1. Find room and prepare client.
+                var joiningPlayer = new Player(clientId, roomId);
+                var initPos = new Vector(Map.CenterX, Map.CenterY);
+                joiningPlayer.Position = initPos;
+                gameToJoin.AddPlayer(joiningPlayer);
+
+                // 3. Notify about successful join
+                var gameJoinString = new Message(ResponseCode.GameJoined, JsonParser.Serialize(initPos));
+                ConnectionsPool.GetInstance().GetClient(clientId).Send(JsonParser.Serialize(gameJoinString));
+                Debug.WriteLine("Player added to the game");
+                return;
             }
+
+            Debug.WriteLine("This game room does not exist.");
         }
 
-        public static void RemovePlayer(List<GameRoom> games, Guid clientId)
+        public static void RemovePlayer(List<GameRoom> games, Guid clientId, Guid roomId)
         {
+            // TODO: Search by room.
             int? emptyRoomIndex = null;
 
             for (var i = 0; i < games.Count; i++)

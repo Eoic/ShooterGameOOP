@@ -31,6 +31,9 @@
             UpdateDirection = 7,
 
             // Notifies about shot fired
-            Shoot = 8;
+            Shoot = 8,
+
+            // List of joinable games
+            FormGameList = 9;
     }
 }

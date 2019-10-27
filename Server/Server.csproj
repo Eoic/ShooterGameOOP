@@ -161,7 +161,7 @@
     <Compile Include="Game\Bonuses\SpeedBonus.cs" />
     <Compile Include="Game\Commands\AddPlayerCommand.cs" />
     <Compile Include="Game\Commands\ICommand.cs" />
-    <Compile Include="Game\Commands\RemoveClientCommand.cs" />
+    <Compile Include="Game\Commands\RemovePlayerCommand.cs" />
     <Compile Include="Game\Constants.cs" />
     <Compile Include="Game\Entities\Map.cs" />
     <Compile Include="Game\Entities\Player.cs" />

@@ -14,6 +14,7 @@ import com.badlogic.network.MessageEmitter;
 import com.badlogic.network.RequestCode;
 import com.badlogic.network.ResponseCode;
 import com.badlogic.serializables.SerializableBonus;
+import com.badlogic.serializables.SerializableGame;
 import com.badlogic.serializables.SerializablePlayer;
 import com.badlogic.util.*;
 import com.badlogic.util.Point;
@@ -77,20 +78,17 @@ public class Loop implements Observer {
         if (messageEmitter.isConnectionFailed())
             return;
 
-        // Load graphics.
-        Assets.load();
-
         // Set event listener
         messageEmitter.addListener(this);
+
+        // Load graphics.
+        Assets.load();
 
         // Set UI events
         // # Create game
         gameManager.getWindow().setCreateGameBtnEvent(actionEvent -> {
             var message = new Message(RequestCode.CreateGame, "");
             messageEmitter.send(jsonParser.serialize(message));
-            clientInGame = true;
-            gameManager.getWindow().getClientHealthBar().setVisible(true);
-            gameManager.getWindow().setCanvasColor(new Color(64, 67, 78));
         });
 
         // # Exit game
@@ -99,12 +97,19 @@ public class Loop implements Observer {
             messageEmitter.send(jsonParser.serialize(message));
         });
 
+        gameManager.getWindow().setRefreshGameListBtnEvent(actionEvent -> {
+            messageEmitter.send(jsonParser.serialize(new Message(RequestCode.FormGameList, "")));
+        });
+
         /*
         gameManager.getWindow().setJoinGameBtnEvent(actionEvent -> {
             var message = new Message(RequestCode.JoinGame, "Joining game.");
             messageEmitter.send(jsonParser.serialize(message));
         });
         */
+
+        // Load game list
+        messageEmitter.send(jsonParser.serialize(new Message(RequestCode.FormGameList, "")));
     }
 
     // Updates game entities (e.g. position)
@@ -148,9 +153,10 @@ public class Loop implements Observer {
         var message = jsonParser.deserialize(data.toString(), Message.class);
 
         // Take action according to event type.
-        // # List all available games in the ui
-        if (message.getType() == ResponseCode.ConnectionEstablished) {
-            System.out.println(message.getPayload());
+        // # List all available games in the UI
+        if (message.getType() == ResponseCode.GameListFormed) {
+            List<SerializableGame> gameList = jsonParser.deserializeList(message.getPayload(), SerializableGame.class);
+            gameManager.getWindow().updateGameList(new ArrayList<>(gameList), messageEmitter);
         }
         // # Create and place player on the map.
         else if (message.getType() == ResponseCode.GameCreated) {
@@ -158,6 +164,7 @@ public class Loop implements Observer {
             player = new Player(gameManager, messageEmitter);
             player.getPosition().set(new Vector(position.getX(), position.getY()));
             gameRoom.addPlayer(player);
+            this.setActiveGameMode();
         }
         // # Update positions af all players in the room.
         else if (message.getType() == ResponseCode.PositionUpdated) {
@@ -180,14 +187,13 @@ public class Loop implements Observer {
             });
         } else if (message.getType() == ResponseCode.GameQuit) {
             System.out.println(message.getPayload());
-            gameRoom.getPlayers().remove(0); // For now....
+            gameRoom.getPlayers().remove(0);
         } else if (message.getType() == ResponseCode.GameJoined) {
-            // Temporary
-            System.out.println("Game joined");
             var position = jsonParser.deserialize(message.getPayload(), Point.class);
             player = new Player(gameManager, messageEmitter);
             player.getPosition().set(new Vector(position.getX(), position.getY()));
             gameRoom.addPlayer(player);
+            this.setActiveGameMode();
         }
     }
 
@@ -209,5 +215,12 @@ public class Loop implements Observer {
                 bonuses.add(bonus);
             }
         });
+    }
+
+    private void setActiveGameMode() {
+        clientInGame = true;
+        gameManager.getWindow().getClientHealthBar().setVisible(true);
+        gameManager.getWindow().setCanvasColor(new Color(64, 67, 78));
+        this.gameManager.getWindow().setActiveGameMode();
     }
 }

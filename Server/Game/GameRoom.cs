@@ -2,6 +2,7 @@
 using System.Text;
 using Server.Game.Entities;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Server.Game
 {
@@ -60,6 +61,18 @@ namespace Server.Game
         public SerializableGameRoom GetSerializable()
         {
             return new SerializableGameRoom(RoomId.ToString(), Players.Count, Constants.MaxPlayerCount);
+        }
+
+        [DataContract]
+        public class SerializableGameRoomId
+        {
+            [DataMember]
+            public Guid RoomId { get; set; }
+
+            public SerializableGameRoomId(string roomId)
+            {
+                RoomId = Guid.Parse(roomId);
+            }
         }
     }
 }

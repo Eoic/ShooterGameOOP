@@ -23,6 +23,6 @@ public class ResponseCode {
         // Message about created bonuses
         BonusesCreated = 5,
 
-        // Message about successful connection to server
-        ConnectionEstablished = 6;
+        // Message about game list
+        GameListFormed = 6;
 }

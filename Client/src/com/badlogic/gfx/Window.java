@@ -25,6 +25,7 @@ public class Window extends JFrame implements ComponentListener {
     private GameList gameList;
     private JButton createGameBtn;
     private JButton quitGameBtn;
+    private JButton refreshGameListBtn;
     private HealthBar clientHealthBar;
     private CanvasElementCollection canvasElementCollection;
 
@@ -77,12 +78,14 @@ public class Window extends JFrame implements ComponentListener {
         return canvas;
     }
 
-    // -- UI --
     private void createInterface() {
         createGameBtn = this.createButton(10, 10, 150, 35, "Create game");
         quitGameBtn = this.createButton(10, 10, 150, 35, "Quit game");
+        refreshGameListBtn = this.createButton(180, 10, 150, 35, "Refresh");
+        quitGameBtn.setVisible(false);
         this.add(createGameBtn);
         this.add(quitGameBtn);
+        this.add(refreshGameListBtn);
     }
 
     private JButton createButton(int posX, int posY, int width, int height, String content) {
@@ -96,16 +99,22 @@ public class Window extends JFrame implements ComponentListener {
     // Perform game creation and hide unrelated ui elements.
     public void setCreateGameBtnEvent(ActionListener actionListener) {
         createGameBtn.addActionListener(actionListener);
-        createGameBtn.addActionListener(actionEvent -> {
-            gameList.setVisible(false);
-            createGameBtn.setVisible(false);
-        });
+    }
+
+    public void setActiveGameMode() {
+        gameList.setVisible(false);
+        createGameBtn.setVisible(false);
+        refreshGameListBtn.setVisible(false);
+        quitGameBtn.setVisible(true);
     }
 
     public void setQuitGameBtnEvent(ActionListener actionListener) {
         quitGameBtn.addActionListener(actionListener);
     }
-    // --------
+
+    public void setRefreshGameListBtnEvent(ActionListener actionListener) {
+        refreshGameListBtn.addActionListener(actionListener);
+    }
 
     @Override
     public void componentResized(ComponentEvent componentEvent) {

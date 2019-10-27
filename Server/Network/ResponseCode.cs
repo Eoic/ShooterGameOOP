@@ -29,7 +29,7 @@ namespace Server.Network
             // Notify about created bonuses
             BonusesCreated = 5,
 
-            // Notidy about established connection
-            ConnectionEstablished = 6;
+            // Sending game list
+            GameListFormed = 6;
     }
 }

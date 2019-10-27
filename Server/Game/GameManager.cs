@@ -63,28 +63,59 @@ namespace Server.Game
         {
             switch (data.Type)
             {
+                // New client connected
                 case RequestCode.Connect:
+                    Debug.WriteLine("New client connected.");
+                    break;
+
+                // Send all available games
+                case RequestCode.FormGameList:
                     var gameList = JsonParser.Serialize((from game in _games select game.GetSerializable()).ToList());
-                    var gameListMessage = new Message(ResponseCode.ConnectionEstablished, gameList);
+                    var gameListMessage = new Message(ResponseCode.GameListFormed, gameList);
                     ConnectionsPool.GetInstance().GetClient(data.ClientId).Send(JsonParser.Serialize(gameListMessage));
                     break;
+
+                // Connection with client lost
                 case RequestCode.Disconnect:
+                    var clientDisconnect = ConnectionsPool.GetInstance().GetClient(data.ClientId);
+
+                    if (clientDisconnect != null)
+                        if (clientDisconnect.RoomId != null)
+                            new RemovePlayerCommand(data.ClientId, clientDisconnect.RoomId, _games).Execute();
+                    
                     ConnectionsPool.GetInstance().RemoveClient(data.ClientId);
-                    new RemoveClientCommand(data.ClientId, _games).Execute();
+                    Debug.WriteLine("Client disconnected");
                     break;
+
+                // Client left the game
                 case RequestCode.QuitGame:
-                    new RemoveClientCommand(data.ClientId, _games).Execute();
+                    var roomIdQuit = ConnectionsPool.GetInstance().GetClient(data.ClientId).RoomId;
+
+                    if (roomIdQuit != null) 
+                        new RemovePlayerCommand(data.ClientId, roomIdQuit, _games).Execute();
+
                     var message = new Message(RequestCode.QuitGame, "Game quit successfully.");
                     ConnectionsPool.GetInstance().GetClient(data.ClientId).Send(JsonParser.Serialize(message));
                     break;
+
+                // An error occured
                 case RequestCode.RaiseError:
+                    var clientError = ConnectionsPool.GetInstance().GetClient(data.ClientId);
+
+                    if (clientError != null)
+                        if (clientError.RoomId != null)
+                            new RemovePlayerCommand(data.ClientId, clientError.RoomId, _games).Execute();
+
                     ConnectionsPool.GetInstance().RemoveClient(data.ClientId);
-                    new RemoveClientCommand(data.ClientId, _games).Execute();
                     break;
+
+                // Player is joining to existing game
                 case RequestCode.JoinGame:
-                    Debug.WriteLine(data.Payload);
-                    // new AddPlayerCommand(data.ClientId, _games).Execute();
+                    var roomId = JsonParser.Deserialize<GameRoom.SerializableGameRoomId>(data.Payload).RoomId;
+                    new AddPlayerCommand(data.ClientId, roomId, _games).Execute();
                     break;
+
+                // Player creates new game
                 case RequestCode.CreateGame:
                     // 1. Find and prepare client, create game room.
                     var client = ConnectionsPool.GetInstance().GetClient(data.ClientId);
@@ -109,6 +140,8 @@ namespace Server.Game
                     client.Send(gameCreationString);
                     client.Send(bonusesString);
                     break;
+
+                // Player changed its movement direction
                 case RequestCode.UpdateDirection:
                     _games.ForEach(game =>
                     {
@@ -158,7 +191,7 @@ namespace Server.Game
                     }
                     
                     // Print gamer room info.
-                    System.Diagnostics.Debug.WriteLine(gameRoom);
+                    // System.Diagnostics.Debug.WriteLine(gameRoom);
 
                     // Send broadcast.
                     int receiverIndex = 0;

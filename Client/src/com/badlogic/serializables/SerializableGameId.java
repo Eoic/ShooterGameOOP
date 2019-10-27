@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SerializableGameId {
-    @JsonProperty("GameId")
-    private String gameId;
+    @JsonProperty("RoomId")
+    private String roomId;
 
     @JsonCreator
-    public SerializableGameId(@JsonProperty("GameId") String gameId) {
-        this.gameId = gameId;
+    public SerializableGameId(@JsonProperty("RoomId") String roomId) {
+        this.roomId = roomId;
     }
 }

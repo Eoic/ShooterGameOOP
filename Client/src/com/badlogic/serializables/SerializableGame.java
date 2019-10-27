@@ -3,8 +3,8 @@ package com.badlogic.serializables;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SerializableGame {
-    @JsonProperty("GameId")
-    private String gameId;
+    @JsonProperty("RoomId")
+    private String roomId;
 
     @JsonProperty("JoinedPlayers")
     private int joinedPlayers;
@@ -12,16 +12,16 @@ public class SerializableGame {
     @JsonProperty("MaxPlayers")
     private int maxPlayers;
 
-    public SerializableGame(@JsonProperty("GameId") String gameId,
+    public SerializableGame(@JsonProperty("RoomId") String roomId,
                             @JsonProperty("JoinedPlayers") int joinedPlayers,
                             @JsonProperty("MaxPlayers") int maxPlayers)                          {
-        this.gameId = gameId;
+        this.roomId = roomId;
         this.joinedPlayers = joinedPlayers;
         this.maxPlayers = maxPlayers;
     }
 
-    public String getGameId() {
-        return gameId;
+    public String getRoomId() {
+        return roomId;
     }
 
     public int getJoinedPlayers() {

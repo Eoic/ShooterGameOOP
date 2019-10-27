@@ -19,10 +19,8 @@ public class GameList extends JPanel {
         this.setLayout(new GridLayout(0, 3));
 
         // List header.
-        this.add(createLabel("GAME ID"));
-        this.add(createLabel("PLAYERS"));
-        this.add(createLabel("ACTIONS"));
-        setBorder(BorderFactory.createEmptyBorder(50, 10, 0, 15));
+        this.setHeader();
+        this.setBorder(BorderFactory.createEmptyBorder(50, 10, 0, 15));
 
         // Initial value.
         this.addNoGamesEntry();
@@ -34,13 +32,19 @@ public class GameList extends JPanel {
             return;
         }
 
-        gameList.forEach((game) -> addEntry(game.getGameId(), game.getJoinedPlayers(), game.getMaxPlayers(), (event) -> {
-            var gameId = new SerializableGameId(game.getGameId());
+        this.removeAll();
+        this.revalidate();
+        this.repaint();
+
+        this.setHeader();
+
+        gameList.forEach((game) -> addEntry(game.getRoomId(), game.getJoinedPlayers(), game.getMaxPlayers(), (event) -> {
+            var gameId = new SerializableGameId(game.getRoomId());
             var message = new Message(RequestCode.JoinGame, jsonParser.serialize(gameId));
             messageEmitter.send(jsonParser.serialize(message));
         }));
 
-        this.revalidate();
+        // this.revalidate();
     }
 
     private void addNoGamesEntry() {
@@ -68,5 +72,11 @@ public class GameList extends JPanel {
         button.setBackground(Color.GREEN);
         button.addActionListener(actionListener);
         return button;
+    }
+
+    private void setHeader() {
+        this.add(createLabel("ROOM ID"));
+        this.add(createLabel("PLAYERS"));
+        this.add(createLabel("ACTIONS"));
     }
 }

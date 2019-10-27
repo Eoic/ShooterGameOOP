@@ -30,5 +30,8 @@ public class RequestCode {
         UpdateDirection = 7,
 
         // Notifies about shot fired
-        Shoot = 8;
+        Shoot = 8,
+
+        // Request server for games to join.
+        FormGameList = 9;
 }
