@@ -32,4 +32,12 @@ public class RemotePlayer extends GameObject {
     public void update(int delta) {
         this.position.add(direction);
     }
+
+    public void setDirection(Vector direction) {
+        this.direction = direction;
+    }
+
+    public void setPosition(Vector position) {
+        this.position = position;
+    }
 }

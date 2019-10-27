@@ -30,6 +30,9 @@ namespace Server.Network
             BonusesCreated = 5,
 
             // Sending game list
-            GameListFormed = 6;
+            GameListFormed = 6,
+
+            // Player joined client's room
+            NewPlayerJoined = 7;
     }
 }

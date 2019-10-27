@@ -113,6 +113,9 @@ namespace Server.Game
                 case RequestCode.JoinGame:
                     var roomId = JsonParser.Deserialize<GameRoom.SerializableGameRoomId>(data.Payload).RoomId;
                     new AddPlayerCommand(data.ClientId, roomId, _games).Execute();
+
+                    // Force room to update immediately
+                    _games.Find((room) => room.RoomId == roomId).TimeTillRoomUpdate = 1;
                     break;
 
                 // Player creates new game
@@ -186,24 +189,33 @@ namespace Server.Game
                     foreach (var gameRoomPlayer in gameRoom.Players)
                     {
                         var player = gameRoomPlayer.Value;
-                        var playerSerialize = new SerializablePlayer(player.Position, player.Direction, 0);
+                        var playerSerialize = new SerializablePlayer(player.Position, player.Direction, 0, gameRoomPlayer.Value.Id.ToString());
                         playerSerializes.Add(playerSerialize);
                     }
                     
-                    // Print gamer room info.
-                    // System.Diagnostics.Debug.WriteLine(gameRoom);
+                    // Print game room info.
+                    Debug.WriteLine(gameRoom);
 
                     // Send broadcast.
-                    int receiverIndex = 0;
-
                     foreach (var gameRoomPlayer in gameRoom.Players)
                     {
-                        var client = ConnectionsPool.GetInstance().GetClient(gameRoomPlayer.Key);
-                        playerSerializes[receiverIndex].Type = 10; // Set receiver to different type. 
+                        var client = ConnectionsPool.GetInstance().GetClient(gameRoomPlayer.Key);   // Target client
+
+                        for (int i = 0; i < playerSerializes.Count; i++)
+                        {
+                            // Set host player (Stupid temporary solution)
+                            if (playerSerializes[i].PlayerId == gameRoomPlayer.Key.ToString())
+                            {
+                                playerSerializes[i].Type = 10;
+                                continue;
+                            }
+
+                            playerSerializes[i].Type = 0;
+                        }
+
                         var playerSerializesString = JsonParser.Serialize(playerSerializes);
                         var message = new Message(ResponseCode.PositionUpdated, playerSerializesString);
                         client?.Send(JsonParser.Serialize(message));
-                        receiverIndex++;
                     }
                 }
                 // -----------------------

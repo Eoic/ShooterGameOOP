@@ -44,7 +44,7 @@ public class GameList extends JPanel {
             messageEmitter.send(jsonParser.serialize(message));
         }));
 
-        // this.revalidate();
+        this.revalidate();
     }
 
     private void addNoGamesEntry() {

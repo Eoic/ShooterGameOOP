@@ -6,6 +6,7 @@ import com.badlogic.core.factory.BonusType;
 import com.badlogic.core.observer.Observer;
 import com.badlogic.game.GameManager;
 import com.badlogic.game.Player;
+import com.badlogic.game.RemotePlayer;
 import com.badlogic.gfx.Assets;
 import com.badlogic.gfx.Map;
 import com.badlogic.network.GameRoom;
@@ -18,11 +19,11 @@ import com.badlogic.serializables.SerializableGame;
 import com.badlogic.serializables.SerializablePlayer;
 import com.badlogic.util.*;
 import com.badlogic.util.Point;
+import com.badlogic.util.Vector;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.*;
 
 public class Loop implements Observer {
@@ -41,6 +42,7 @@ public class Loop implements Observer {
     private long lastTime;
 
     // Game entities
+    private HashMap<String, RemotePlayer> roomPlayers;
     private ArrayList<Bonus> bonuses;
     private GameManager gameManager;
     private Player player;
@@ -56,6 +58,7 @@ public class Loop implements Observer {
         map = new Map(Constants.MAP_WIDTH, Constants.MAP_HEIGHT, gameManager);
         player = new Player(gameManager, messageEmitter);
         bonuses = new ArrayList<>();
+        roomPlayers = new HashMap<>();
         this.initialize();
     }
 
@@ -115,6 +118,7 @@ public class Loop implements Observer {
     // Updates game entities (e.g. position)
     private void update() {
         gameManager.getInputManager().tick();
+        roomPlayers.forEach((key, value) -> value.update((int) delta));
         player.update((int)delta);
     }
 
@@ -135,8 +139,10 @@ public class Loop implements Observer {
         // Start rendering
         if (clientInGame) {
             map.render(graphics);
+            player.render(graphics);
+            roomPlayers.forEach((key, value) -> value.render(graphics));
             // bonuses.forEach(bonus -> bonus.render(graphics));
-            gameRoom.getPlayers().forEach(player -> player.render(graphics));
+            // gameRoom.getPlayers().forEach(player -> player.render(graphics));
         }
         // Stop rendering
 
@@ -170,13 +176,16 @@ public class Loop implements Observer {
         else if (message.getType() == ResponseCode.PositionUpdated) {
             messageExecutor.submit(() -> {
                 var players = jsonParser.deserializeList(message.getPayload(), SerializablePlayer.class);
+
                 players.forEach(serializablePlayer -> {
+                    // Update this player.
                     if (serializablePlayer.getType() == 10) {
                         var position = serializablePlayer.getPosition();
                         gameRoom.getPlayers().get(0).position.set(new Vector(position.getX(), position.getY()));
-                    } else {
-                        // var p = serializablePlayer.getPosition();
-                        // remotePlayer.position = new Vector(p.getX(), p.getY());
+                    }
+                    // Update other player in the room.
+                    else {
+                        // :(
                     }
                 });
             });
@@ -194,6 +203,8 @@ public class Loop implements Observer {
             player.getPosition().set(new Vector(position.getX(), position.getY()));
             gameRoom.addPlayer(player);
             this.setActiveGameMode();
+        } else if (message.getType() == ResponseCode.NewPlayerJoined) {
+            System.out.println("new player joined this room");
         }
     }
 

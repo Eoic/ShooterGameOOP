@@ -24,5 +24,8 @@ public class ResponseCode {
         BonusesCreated = 5,
 
         // Message about game list
-        GameListFormed = 6;
+        GameListFormed = 6,
+
+        // Player joined client's room
+        NewPlayerJoined  = 7;
 }
