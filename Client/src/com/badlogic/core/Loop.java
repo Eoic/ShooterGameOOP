@@ -21,7 +21,6 @@ import com.badlogic.util.*;
 import com.badlogic.util.Point;
 import com.badlogic.util.Vector;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -32,6 +31,7 @@ public class Loop implements Observer {
 
     // Game loop
     private static final long timeStep = 1000 / Constants.FPS;
+    private ScheduledExecutorService backgroundEventsExecutor;
     private ScheduledExecutorService executor;
     private ExecutorService messageExecutor;
     private MessageEmitter messageEmitter;
@@ -52,6 +52,7 @@ public class Loop implements Observer {
         messageExecutor = Executors.newSingleThreadExecutor();
         messageEmitter = new MessageEmitter();
         executor = Executors.newSingleThreadScheduledExecutor();
+        backgroundEventsExecutor = Executors.newSingleThreadScheduledExecutor();
         jsonParser = new JsonParser();
         gameRoom = new GameRoom();
         gameManager = new GameManager();
@@ -69,10 +70,15 @@ public class Loop implements Observer {
 
         isRunning = true;
         lastTime = System.currentTimeMillis();
+
         executor.scheduleAtFixedRate(() -> {
             update();
             render();
         }, 0, timeStep, TimeUnit.MILLISECONDS);
+
+        backgroundEventsExecutor.scheduleAtFixedRate(() -> {
+            messageEmitter.send(jsonParser.serialize(new Message(RequestCode.FormGameList, "")));
+        }, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
     // Initializes game resources
@@ -99,17 +105,6 @@ public class Loop implements Observer {
             var message = new Message(RequestCode.QuitGame, "Exiting.");
             messageEmitter.send(jsonParser.serialize(message));
         });
-
-        gameManager.getWindow().setRefreshGameListBtnEvent(actionEvent -> {
-            messageEmitter.send(jsonParser.serialize(new Message(RequestCode.FormGameList, "")));
-        });
-
-        /*
-        gameManager.getWindow().setJoinGameBtnEvent(actionEvent -> {
-            var message = new Message(RequestCode.JoinGame, "Joining game.");
-            messageEmitter.send(jsonParser.serialize(message));
-        });
-        */
 
         // Load game list
         messageEmitter.send(jsonParser.serialize(new Message(RequestCode.FormGameList, "")));
@@ -244,8 +239,9 @@ public class Loop implements Observer {
 
     private void setActiveGameMode() {
         clientInGame = true;
+        backgroundEventsExecutor.shutdown();
         gameManager.getWindow().getClientHealthBar().setVisible(true);
-        gameManager.getWindow().setCanvasColor(new Color(64, 67, 78));
+        gameManager.getWindow().setCanvasColor(Constants.CANVAS_COLOR);
         this.gameManager.getWindow().setActiveGameMode();
     }
 }

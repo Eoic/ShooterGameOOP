@@ -1,8 +1,13 @@
 package com.badlogic.util;
 
+import java.awt.*;
+
 public class Constants {
     public static final boolean
             IS_RESIZEABLE = true;
+
+    public static final Color CANVAS_COLOR =
+            new Color(64, 67, 78);
 
     public static final String
             SPRITE_SHEET = "spritesheet.png",

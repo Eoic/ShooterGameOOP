@@ -14,29 +14,30 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class GameList extends JPanel {
+
     public GameList() {
+        int gridLayoutRows = 0;
+        int gridLayoutCols = 3;
+        int borderMarginTop = 50;
+        int borderMarginLeft = 10;
+        int borderMarginBottom = 0;
+        int borderMarginRight = 15;
         this.setBackground(Color.WHITE);
-        this.setLayout(new GridLayout(0, 3));
-
-        // List header.
+        this.setLayout(new GridLayout(gridLayoutRows, gridLayoutCols));
         this.setHeader();
-        this.setBorder(BorderFactory.createEmptyBorder(50, 10, 0, 15));
-
-        // Initial value.
+        this.setBorder(BorderFactory.createEmptyBorder(borderMarginTop, borderMarginLeft, borderMarginBottom, borderMarginRight));
         this.addNoGamesEntry();
     }
-    
+
+    // Update list of games available
     public void updateList(ArrayList<SerializableGame> gameList, MessageEmitter messageEmitter, JsonParser jsonParser) {
+        this.removeAll();
+        this.setHeader();
+
         if (gameList.size() == 0) {
             this.addNoGamesEntry();
             return;
         }
-
-        this.removeAll();
-        this.revalidate();
-        this.repaint();
-
-        this.setHeader();
 
         gameList.forEach((game) -> addEntry(game.getRoomId(), game.getJoinedPlayers(), game.getMaxPlayers(), (event) -> {
             var gameId = new SerializableGameId(game.getRoomId());

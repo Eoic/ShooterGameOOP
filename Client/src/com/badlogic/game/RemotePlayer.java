@@ -24,9 +24,8 @@ public class RemotePlayer extends GameObject {
 
     @Override
     public void render(Graphics graphics) {
-        var windowSize = window.getSize();
-        int posX = (int)position.getX() - (int)camera.getOffset().getX() - Constants.SPRITE_WIDTH_HALF; // + (windowSize.width / 2 - Constants.SPRITE_WIDTH / 2) - 512;
-        int posY = (int)position.getY() - (int)camera.getOffset().getY() - Constants.SPRITE_WIDTH_HALF; // + (windowSize.height / 2 - Constants.SPRITE_HEIGHT / 2) - 512;
+        int posX = (int)position.getX() - (int)camera.getOffset().getX() - Constants.SPRITE_WIDTH_HALF;
+        int posY = (int)position.getY() - (int)camera.getOffset().getY() - Constants.SPRITE_WIDTH_HALF;
         graphics.drawImage(this.sprite, posX, posY, null);
     }
 

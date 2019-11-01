@@ -115,7 +115,7 @@ namespace Server.Game
                     new AddPlayerCommand(data.ClientId, roomId, _games).Execute();
 
                     // Force room to update immediately
-                    _games.Find((room) => room.RoomId == roomId).TimeTillRoomUpdate = 1;
+                    _games.Find((room) => room.RoomId == roomId).ForceUpdate();
                     break;
 
                 // Player creates new game
