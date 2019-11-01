@@ -207,6 +207,7 @@ public class Loop implements Observer {
                 var serializableBonuses = jsonParser.deserializeList(message.getPayload(), SerializableBonus.class);
                 createBonuses(serializableBonuses);
             });
+
         } else if (message.getType() == ResponseCode.GameQuit) {
             System.out.println(message.getPayload());
             gameRoom.getPlayers().remove(0);

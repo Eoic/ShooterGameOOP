@@ -27,6 +27,11 @@ namespace Server.Game
         public bool IsFull() =>
             Players.Count >= Constants.MaxPlayerCount;
 
+        public void ForceUpdate()
+        {
+            TimeTillRoomUpdate = 1;
+        }
+
         // Update all players.
         public void Update(long delta)
         {

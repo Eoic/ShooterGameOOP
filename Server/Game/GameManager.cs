@@ -149,11 +149,13 @@ namespace Server.Game
                     _games.ForEach(game =>
                     {
                         var playerObj = game.GetPlayer(data.ClientId);
+
                         if (playerObj == null)
                             return;
 
                         var direction = JsonParser.Deserialize<Vector>(data.Payload);
                         game.GetPlayer(data.ClientId).Direction = direction;
+                        game.ForceUpdate();
                     });
                     break;
                 default:
@@ -194,7 +196,7 @@ namespace Server.Game
                     }
                     
                     // Print game room info.
-                    Debug.WriteLine(gameRoom);
+                    // Debug.WriteLine(gameRoom);
 
                     // Send broadcast.
                     foreach (var gameRoomPlayer in gameRoom.Players)
@@ -203,7 +205,7 @@ namespace Server.Game
 
                         for (int i = 0; i < playerSerializes.Count; i++)
                         {
-                            // Set host player (Stupid temporary solution)
+                            // Set host player
                             if (playerSerializes[i].PlayerId == gameRoomPlayer.Key.ToString())
                             {
                                 playerSerializes[i].Type = 10;
