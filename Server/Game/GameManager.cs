@@ -81,7 +81,7 @@ namespace Server.Game
 
                     if (clientDisconnect != null)
                         if (clientDisconnect.RoomId != null)
-                            new RemovePlayerCommand(data.ClientId, clientDisconnect.RoomId, _games).Execute();
+                            new RemovePlayerCommand(data.ClientId, clientDisconnect.RoomId, 0, _games).Execute();
                     
                     ConnectionsPool.GetInstance().RemoveClient(data.ClientId);
                     Debug.WriteLine("Client disconnected");
@@ -92,7 +92,7 @@ namespace Server.Game
                     var roomIdQuit = ConnectionsPool.GetInstance().GetClient(data.ClientId).RoomId;
 
                     if (roomIdQuit != null) 
-                        new RemovePlayerCommand(data.ClientId, roomIdQuit, _games).Execute();
+                        new RemovePlayerCommand(data.ClientId, roomIdQuit, 0, _games).Execute();
 
                     var message = new Message(RequestCode.QuitGame, "Game quit successfully.");
                     ConnectionsPool.GetInstance().GetClient(data.ClientId).Send(JsonParser.Serialize(message));
@@ -104,18 +104,18 @@ namespace Server.Game
 
                     if (clientError != null)
                         if (clientError.RoomId != null)
-                            new RemovePlayerCommand(data.ClientId, clientError.RoomId, _games).Execute();
+                            new RemovePlayerCommand(data.ClientId, clientError.RoomId, 0, _games).Execute();
 
                     ConnectionsPool.GetInstance().RemoveClient(data.ClientId);
                     break;
 
                 // Player is joining to existing game
                 case RequestCode.JoinGame:
-                    var roomId = JsonParser.Deserialize<GameRoom.SerializableGameRoomId>(data.Payload).RoomId;
-                    new AddPlayerCommand(data.ClientId, roomId, _games).Execute();
+                    var joinInfo = JsonParser.Deserialize<GameRoom.SerializableGameRoomId>(data.Payload);
+                    new AddPlayerCommand(data.ClientId, joinInfo.RoomId, joinInfo.Team, _games).Execute();
 
                     // Force room to update immediately
-                    _games.Find((room) => room.RoomId == roomId).ForceUpdate();
+                    _games.Find((room) => room.RoomId == joinInfo.RoomId).ForceUpdate();
                     break;
 
                 // Player creates new game
@@ -123,6 +123,7 @@ namespace Server.Game
                     // 1. Find and prepare client, create game room.
                     var client = ConnectionsPool.GetInstance().GetClient(data.ClientId);
                     var gameRoom = new GameRoom();
+                    var team = int.Parse(data.Payload);
                     client.RoomId = gameRoom.RoomId;
 
                     // 2. Create new player instance and additional objects.
@@ -132,12 +133,13 @@ namespace Server.Game
 
                     // 3. Setup created game objects.
                     player.Position = initialPosition;
-                    player.JoinTeam(int.Parse(data.Payload));
+                    player.JoinTeam(team);
                     gameRoom.AddPlayer(player);
                     _games.Add(gameRoom);
 
                     // 4. Notify event about created game and send data.
-                    var gameCreationMessage = new Message(ResponseCode.GameCreated, JsonParser.Serialize(initialPosition));
+                    var serializablePlayer = new SerializablePlayer(initialPosition, new Vector(0, 0), 0, player.Id.ToString(), team);
+                    var gameCreationMessage = new Message(ResponseCode.GameCreated, JsonParser.Serialize(serializablePlayer));
                     var bonusesMessage = new Message(ResponseCode.BonusesCreated, JsonParser.Serialize(bonuses));
                     var gameCreationString = JsonParser.Serialize(gameCreationMessage);
                     var bonusesString = JsonParser.Serialize(bonusesMessage);
@@ -192,7 +194,7 @@ namespace Server.Game
                     foreach (var gameRoomPlayer in gameRoom.Players)
                     {
                         var player = gameRoomPlayer.Value;
-                        var playerSerialize = new SerializablePlayer(player.Position, player.Direction, 0, gameRoomPlayer.Value.Id.ToString());
+                        var playerSerialize = new SerializablePlayer(player.Position, player.Direction, 0, gameRoomPlayer.Value.Id.ToString(), player.Team);
                         playerSerializes.Add(playerSerialize);
                     }
                     

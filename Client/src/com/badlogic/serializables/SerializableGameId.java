@@ -7,8 +7,13 @@ public class SerializableGameId {
     @JsonProperty("RoomId")
     private String roomId;
 
+    @JsonProperty("Team")
+    private int team;
+
     @JsonCreator
-    public SerializableGameId(@JsonProperty("RoomId") String roomId) {
+    public SerializableGameId(@JsonProperty("RoomId") String roomId,
+                              @JsonProperty("Team") int team) {
         this.roomId = roomId;
+        this.team = team;
     }
 }

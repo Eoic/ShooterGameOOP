@@ -173,9 +173,10 @@ public class Loop implements Observer {
         }
         // # Create and place player on the map.
         else if (message.getType() == ResponseCode.GameCreated || message.getType() == ResponseCode.GameJoined) {
-            var position = jsonParser.deserialize(message.getPayload(), Point.class);
+            var serializablePlayer = jsonParser.deserialize(message.getPayload(), SerializablePlayer.class);
             player = new Player(gameManager, messageEmitter);
-            player.getPosition().set(new Vector(position.getX(), position.getY()));
+            player.setTeam(serializablePlayer.getTeam());
+            player.getPosition().set(Vector.fromPoint(serializablePlayer.getPosition()));
             gameRoom.addPlayer(player);
             this.setActiveGameMode();
         }
@@ -186,7 +187,6 @@ public class Loop implements Observer {
 
                 players.forEach(serializablePlayer -> {
                     // Update this player.
-                    // TODO: Remove player from the game room by id.
                     if (serializablePlayer.getType() == 10)
                         gameRoom.getPlayers().get(0).position.set(Vector.fromPoint(serializablePlayer.getPosition()));
 
@@ -194,7 +194,8 @@ public class Loop implements Observer {
                     else {
                         // Player is new
                         if (!roomPlayers.containsKey(serializablePlayer.getPlayerId())) {
-                            var roomPlayer = new RemotePlayer(gameManager.getWindow(), gameManager.getCamera(), Assets.getSprite(SpriteKeys.ENEMY_PLAYER));
+                            var isFriendly = gameRoom.getPlayers().get(0).getTeam() == serializablePlayer.getTeam();
+                            var roomPlayer = new RemotePlayer(gameManager.getWindow(), gameManager.getCamera(), isFriendly);
                             roomPlayer.setPosition(Vector.fromPoint(serializablePlayer.getPosition()));
                             roomPlayer.setDirection(Vector.fromPoint(serializablePlayer.getDirection()));
                             roomPlayers.put(serializablePlayer.getPlayerId(), roomPlayer);

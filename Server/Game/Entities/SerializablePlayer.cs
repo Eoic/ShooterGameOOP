@@ -9,13 +9,15 @@ namespace Server.Game.Entities
         [DataMember] public Vector Position { get; set; }
         [DataMember] public Vector Direction { get; set; }
         [DataMember] public int Type { get; set; }
+        [DataMember] public int Team { get; set; }
 
-        public SerializablePlayer(Vector position, Vector direction, int type, string playerId)
+        public SerializablePlayer(Vector position, Vector direction, int type, string playerId, int team)
         {
             Position = position;
             Direction = direction;
             Type = type;
             PlayerId = playerId;
+            Team = team;
         }
     }
 }

@@ -17,15 +17,20 @@ public class SerializablePlayer {
     @JsonProperty("Type")
     private int type;
 
+    @JsonProperty("Team")
+    private int team;
+
     @JsonCreator
     public SerializablePlayer(@JsonProperty("Position") Point position,
                               @JsonProperty("Direction") Point direction,
                               @JsonProperty("Type") int type,
-                              @JsonProperty("PlayerId") String playerId) {
+                              @JsonProperty("PlayerId") String playerId,
+                              @JsonProperty("Team") int team) {
         this.position = position;
         this.direction = direction;
         this.type = type;
         this.playerId = playerId;
+        this.team = team;
     }
 
     public Point getPosition() {
@@ -42,5 +47,9 @@ public class SerializablePlayer {
 
     public String getPlayerId() {
         return playerId;
+    }
+
+    public int getTeam() {
+        return team;
     }
 }
