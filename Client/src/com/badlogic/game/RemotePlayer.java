@@ -1,8 +1,10 @@
 package com.badlogic.game;
 
 import com.badlogic.core.GameObject;
+import com.badlogic.gfx.Assets;
 import com.badlogic.gfx.Camera;
 import com.badlogic.util.Constants;
+import com.badlogic.util.SpriteKeys;
 import com.badlogic.util.Vector;
 
 import java.awt.*;
@@ -14,12 +16,17 @@ public class RemotePlayer extends GameObject {
     private Vector direction;
     private int speed;
 
-    public RemotePlayer(Window window, Camera camera, BufferedImage sprite) {
+    public RemotePlayer(Window window, Camera camera, boolean isFriendly) {
         this.window = window;
         this.camera = camera;
-        this.sprite = sprite;
         this.direction = new Vector(0, 0);
         this.speed = Constants.DEFAULT_PLAYER_SPEED;
+
+        if (!isFriendly) {
+            this.sprite = Assets.getSprite(SpriteKeys.ENEMY_PLAYER);
+        } else {
+            this.sprite = Assets.getSprite(SpriteKeys.FRIENDLY_PLAYER);
+        }
     }
 
     @Override

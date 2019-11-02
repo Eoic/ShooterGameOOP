@@ -9,7 +9,7 @@ namespace Server.Game
 {
     public class PlayerManager
     {
-        public static void AddPlayer(List<GameRoom> games, Guid clientId, Guid roomId)
+        public static void AddPlayer(List<GameRoom> games, Guid clientId, Guid roomId, int team)
         {
             var gameToJoin = games.Find(game => game.RoomId == roomId);
 
@@ -24,11 +24,13 @@ namespace Server.Game
                 // 1. Find room and prepare client.
                 var joiningPlayer = new Player(clientId, roomId);
                 var initPos = new Vector(Map.CenterX, Map.CenterY);
+                joiningPlayer.JoinTeam(team);
                 joiningPlayer.Position = initPos;
                 gameToJoin.AddPlayer(joiningPlayer);
 
                 // 3. Notify about successful join
-                var gameJoinString = new Message(ResponseCode.GameJoined, JsonParser.Serialize(initPos));
+                var serializablePlayer = new SerializablePlayer(initPos, new Vector(0, 0), 0, joiningPlayer.Id.ToString(), team);
+                var gameJoinString = new Message(ResponseCode.GameJoined, JsonParser.Serialize(serializablePlayer));
                 ConnectionsPool.GetInstance().GetClient(clientId).Send(JsonParser.Serialize(gameJoinString));
                 Debug.WriteLine("Player added to the game");
                 return;

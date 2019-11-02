@@ -8,12 +8,14 @@ namespace Server.Game.Commands
         private Guid clientId;
         private Guid roomId;
         private Guid lastRemovedPlayer;
+        private int team;
         private List<GameRoom> _games;
 
-        public RemovePlayerCommand(Guid clientId, Guid roomId, List<GameRoom> games)
+        public RemovePlayerCommand(Guid clientId, Guid roomId, int team, List<GameRoom> games)
         {
             this.clientId = clientId;
             this.roomId = roomId;
+            this.team = team;
             _games = games;
         }
 
@@ -25,7 +27,7 @@ namespace Server.Game.Commands
 
         public void Undo()
         {
-            PlayerManager.AddPlayer(_games, lastRemovedPlayer, roomId);
+            PlayerManager.AddPlayer(_games, lastRemovedPlayer, roomId, team);
         }
     }
 }

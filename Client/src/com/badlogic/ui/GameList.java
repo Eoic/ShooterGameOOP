@@ -7,6 +7,7 @@ import com.badlogic.network.MessageEmitter;
 import com.badlogic.network.RequestCode;
 import com.badlogic.serializables.SerializableGame;
 import com.badlogic.serializables.SerializableGameId;
+import com.badlogic.util.Constants;
 import com.badlogic.util.JsonParser;
 
 import javax.swing.*;
@@ -47,10 +48,10 @@ public class GameList extends JPanel {
             window.showTeamSelectionWindow();
             ArrayList<ActionListener> events = new ArrayList<>();
 
-            for (var i = 0; i < 2; i++) {
-                int finalI = i; // TODO: Pass team id to message
+            for (var i = 0; i < Constants.TEAM_COUNT; i++) {
+                int finalI = i;
                 events.add(actionEvent -> {
-                    var gameId = new SerializableGameId(game.getRoomId());
+                    var gameId = new SerializableGameId(game.getRoomId(), finalI);
                     var message = new Message(RequestCode.JoinGame, jsonParser.serialize(gameId));
                     messageEmitter.send(jsonParser.serialize(message));
                 });

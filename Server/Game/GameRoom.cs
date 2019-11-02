@@ -46,20 +46,23 @@ namespace Server.Game
 
         public override string ToString()
         {
+            var dividerWidth = 88;
             var index = 0;
             var builder = new StringBuilder();
-            builder.AppendLine(new string('-', 80));
-            builder.AppendFormat("| {0, -50} | {1, -23} |\n", "Room ID", "Size");
-            builder.AppendLine(new string('-', 80));
-            builder.AppendFormat("| {0, -50} | {1, -23} |\n", RoomId.ToString(), Players.Count + " / " + Constants.MaxPlayerCount);
-            builder.AppendLine(new string('-', 80));
-            builder.AppendFormat("| {0, -3} | {1, -44} | {2, -23} |\n", "Nr.", "Player ID", "Position");
-            builder.AppendLine(new string('-', 80));
+            builder.AppendLine(new string('-', dividerWidth));
+            builder.AppendFormat("| {0, -50} | {1, -31} |\n", "Room ID", "Size");
+            builder.AppendLine(new string('-', dividerWidth));
+            builder.AppendFormat("| {0, -50} | {1, -31} |\n", RoomId.ToString(), Players.Count + " / " + Constants.MaxPlayerCount);
+            builder.AppendLine(new string('-', dividerWidth));
+            builder.AppendFormat("| {0, -3} | {1, -44} | {2, -23} | {3, -5} |\n", "Nr.", "Player ID", "Position", "Team");
+            builder.AppendLine(new string('-', dividerWidth));
 
-            foreach (var keyValuePair in Players)
-                builder.AppendFormat("| {0, -3} | {1, -44} | {2, -23} |\n", ++index, keyValuePair.Key, keyValuePair.Value.Position);
+            foreach (var keyValuePair in Players) {
+                var player = keyValuePair.Value;
+                builder.AppendFormat("| {0, -3} | {1, -44} | {2, -23} | {3, -5} |\n", ++index, keyValuePair.Key, player.Position, player.Team);
+            }
             
-            builder.AppendLine(new string('-', 80));
+            builder.AppendLine(new string('-', dividerWidth));
             return builder.ToString();
         }
         
@@ -73,10 +76,13 @@ namespace Server.Game
         {
             [DataMember]
             public Guid RoomId { get; set; }
+            [DataMember]
+            public int Team { get; set; }
 
-            public SerializableGameRoomId(string roomId)
+            public SerializableGameRoomId(string roomId, int team)
             {
                 RoomId = Guid.Parse(roomId);
+                Team = team;
             }
         }
     }

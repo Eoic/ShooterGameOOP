@@ -20,6 +20,7 @@ public class Player extends GameObject {
     private BufferedImage sprite;
     private Vector direction;
     private int speed;
+    private int team;
 
     public Player(GameManager gameManager, MessageEmitter messageEmitter) {
         this.bulletPool = new BulletPool(Constants.DEFAULT_PLAYER_BULLET_COUNT, gameManager, SpriteKeys.BULLET_TYPE_TWO);
@@ -89,5 +90,13 @@ public class Player extends GameObject {
         int posY = (int) (this.position.getY() - offset.getY()) - Constants.SPRITE_HEIGHT_HALF;
         graphics.drawImage(sprite, posX, posY, null);
         bulletPool.getBullets().forEach(bullet -> bullet.render(graphics));
+    }
+
+    public int getTeam() {
+        return this.team;
+    }
+
+    public void setTeam(int team) {
+        this.team = team;
     }
 }
