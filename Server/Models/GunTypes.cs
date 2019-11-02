@@ -6,10 +6,11 @@ namespace Server.Models
     {
        private static List<string> gunTypes = new List<string> { "Pistol", "Sniper Rifle", "Shotgun" };
 
-        public static string getGunType(int id)
+        public static string GetGunType(int id)
         {
             if(id <= gunTypes.Count)
                 return gunTypes[id];
+
             return null;
         }
     }

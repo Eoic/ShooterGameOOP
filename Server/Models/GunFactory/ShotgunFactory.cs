@@ -6,14 +6,14 @@
 
         public override Bullet createBullet()
         {
-            return new Bullet(20, GunTypes.getGunType(defaultGunType));
+            return new Bullet(20, GunTypes.GetGunType(defaultGunType));
         }
 
         public override Weapon createWeapon()
         {
             return Weapon.Builder.GetInstance()
-                .setName("Test " + GunTypes.getGunType(defaultGunType))
-                .setType(GunTypes.getGunType(defaultGunType))
+                .setName("Test " + GunTypes.GetGunType(defaultGunType))
+                .setType(GunTypes.GetGunType(defaultGunType))
                 .setBulets(createBullet()).
                 build();
         }

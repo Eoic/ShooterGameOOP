@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace Server.Game
 {
@@ -23,6 +24,12 @@ namespace Server.Game
             Y += vector.Y;
         }
 
+        public void Add(double scalar)
+        {
+            X += scalar;
+            Y += scalar;
+        }
+
         public static Vector operator+(Vector left, Vector right) =>
             new Vector(left.X + right.X, left.Y + right.Y);
 
@@ -37,7 +44,9 @@ namespace Server.Game
 
         public override string ToString()
         {
-            return $"(X: {X}, Y: {Y})";
+            var builder = new StringBuilder();
+            builder.AppendFormat("X: {0:0.00}, Y: {0:0.00}", X, Y);
+            return builder.ToString();
         }
     }
 }

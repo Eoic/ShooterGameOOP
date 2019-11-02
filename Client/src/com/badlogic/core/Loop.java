@@ -187,8 +187,9 @@ public class Loop implements Observer {
 
                 players.forEach(serializablePlayer -> {
                     // Update this player.
-                    if (serializablePlayer.getType() == 10)
+                    if (serializablePlayer.getType() == 10) {
                         gameRoom.getPlayers().get(0).position.set(Vector.fromPoint(serializablePlayer.getPosition()));
+                    }
 
                     // Update other player in the game room.
                     else {
@@ -198,6 +199,7 @@ public class Loop implements Observer {
                             var roomPlayer = new RemotePlayer(gameManager.getWindow(), gameManager.getCamera(), isFriendly);
                             roomPlayer.setPosition(Vector.fromPoint(serializablePlayer.getPosition()));
                             roomPlayer.setDirection(Vector.fromPoint(serializablePlayer.getDirection()));
+                            roomPlayer.parseBullets(serializablePlayer.getBullets());
                             roomPlayers.put(serializablePlayer.getPlayerId(), roomPlayer);
                         }
                         // Old player
@@ -205,6 +207,7 @@ public class Loop implements Observer {
                             var roomPlayer = roomPlayers.get(serializablePlayer.getPlayerId());
                             roomPlayer.setPosition(Vector.fromPoint(serializablePlayer.getPosition()));
                             roomPlayer.setDirection(Vector.fromPoint(serializablePlayer.getDirection()));
+                            roomPlayer.parseBullets(serializablePlayer.getBullets());
                         }
                     }
                 });

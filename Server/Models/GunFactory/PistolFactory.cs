@@ -8,14 +8,14 @@ namespace Server.Models
 
         public override Bullet createBullet()
         {
-            return new Bullet(10, GunTypes.getGunType(defaultGunType).ToString());
+            return new Bullet(10, GunTypes.GetGunType(defaultGunType).ToString());
         }
 
         public override Weapon createWeapon()
         {
             Weapon weapon = new ConcreteWeapon(100).Clone() as Weapon;
             weapon.bullets = createBullet();
-            weapon.Name = "Test " + GunTypes.getGunType(defaultGunType);
+            weapon.Name = "Test " + GunTypes.GetGunType(defaultGunType);
             return weapon;
         }
     }

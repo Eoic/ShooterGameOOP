@@ -16,13 +16,14 @@ public class BulletPool {
             bullets.add(new Bullet(Constants.DEFAULT_BULLET_SPEED, gameManager.getWindow(), gameManager.getCamera(), bulletType));
     }
 
-    void launch(Vector target, Vector origin) {
+    Vector launch(Vector target, Vector origin) {
         for (Bullet bullet : bullets) {
             if (!bullet.getActiveState()) {
-                bullet.launch(target, origin);
-                break;
+                return bullet.launch(target, origin);
             }
         }
+
+        return new Vector(0, 0);
     }
 
     List<Bullet> getBullets() {
@@ -33,7 +34,7 @@ public class BulletPool {
         for (Bullet bullet : bullets) {
             if (bullet.getPosition().getX() < -Constants.SPRITE_WIDTH_HALF ||
                 bullet.getPosition().getX() > Constants.MAP_PIXEL_WIDTH - Constants.SPRITE_WIDTH_HALF ||
-                bullet.getPosition().getY() < - Constants.SPRITE_HEIGHT_HALF ||
+                bullet.getPosition().getY() < -Constants.SPRITE_HEIGHT_HALF ||
                 bullet.getPosition().getY() > Constants.MAP_PIXEL_HEIGHT - Constants.SPRITE_WIDTH_HALF)
                 bullet.dispose();
         }
