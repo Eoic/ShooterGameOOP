@@ -1,9 +1,10 @@
-﻿namespace Server.Models
+﻿using Server.Models.Prototype;
+
+namespace Server.Models
 {
     public class PistolFactory : AbstractFactory
     {
         public new int defaultGunType = 0;
-
 
         public override Bullet createBullet()
         {
@@ -12,11 +13,10 @@
 
         public override Weapon createWeapon()
         {
-            return Weapon.Builder.GetInstance()
-                .setName("Test " + GunTypes.getGunType(defaultGunType))
-                .setType(GunTypes.getGunType(defaultGunType))
-                .setBulets(createBullet()).
-                build();
+            Weapon weapon = new ConcreteWeapon(100).Clone() as Weapon;
+            weapon.bullets = createBullet();
+            weapon.Name = "Test " + GunTypes.getGunType(defaultGunType);
+            return weapon;
         }
     }
 }
