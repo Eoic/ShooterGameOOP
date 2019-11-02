@@ -33,7 +33,8 @@ public class Constants {
             DEFAULT_PLAYER_SPEED = 1,
             DEFAULT_PLAYER_BULLET_COUNT = 100,
             DEFAULT_BULLET_SPEED = 1,
-            DEFUALT_PANEL_BORDER_WIDTH = 3;
+            DEFUALT_PANEL_BORDER_WIDTH = 3,
+            TEAM_COUNT = 2;
 
     public static final int
             MAP_WIDTH = 20,

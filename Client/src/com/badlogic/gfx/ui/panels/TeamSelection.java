@@ -2,13 +2,11 @@ package com.badlogic.gfx.ui.panels;
 
 import com.badlogic.gfx.Window;
 import com.badlogic.gfx.ui.CanvasElement;
-import com.badlogic.network.Message;
 import com.badlogic.network.MessageEmitter;
-import com.badlogic.network.RequestCode;
-import com.badlogic.util.JsonParser;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class TeamSelection implements CanvasElement {
@@ -69,15 +67,10 @@ public class TeamSelection implements CanvasElement {
         }
     }
 
-    public void setEventForSelection(MessageEmitter messageEmitter) {
-        var jsonParser = new JsonParser();
-
+    // Add given listeners to selection buttons
+    public void setEventForSelection(MessageEmitter messageEmitter, ArrayList<ActionListener> listeners) {
         for (int i = 0; i < this.teams.size(); i++) {
-            int finalI = i;
-            teams.get(i).addActionListener(actionEvent -> {
-                var message = new Message(RequestCode.CreateGame, Integer.toString(finalI));
-                messageEmitter.send(jsonParser.serialize(message));
-            });
+            teams.get(i).addActionListener(listeners.get(i));
         }
     }
 }

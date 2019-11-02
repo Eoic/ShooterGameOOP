@@ -21,6 +21,8 @@ import com.badlogic.util.*;
 import com.badlogic.util.Point;
 import com.badlogic.util.Vector;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -93,12 +95,21 @@ public class Loop implements Observer {
         // Load graphics.
         Assets.load();
 
-        // Set UI events
-        // # Select team
-        gameManager.getWindow().setTeamSelectionEvents(messageEmitter);
-
+        // SET UI EVENTS
         // # Create game
         gameManager.getWindow().setCreateGameBtnEvent(actionEvent -> {
+            ArrayList<ActionListener> listeners = new ArrayList<>();
+
+            // Bind game creation events to team selection buttons.
+            for (int i = 0; i < Constants.TEAM_COUNT; i++) {
+                int finalI = i;
+                listeners.add((action) -> {
+                    var message = new Message(RequestCode.CreateGame, Integer.toString(finalI));
+                    messageEmitter.send(jsonParser.serialize(message));
+                });
+            }
+
+            gameManager.getWindow().setTeamSelectionEvents(messageEmitter, listeners);
             gameManager.getWindow().showTeamSelectionWindow();
         });
 

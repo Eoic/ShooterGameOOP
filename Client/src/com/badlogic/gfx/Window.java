@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 public class Window extends JFrame implements ComponentListener {
     private int width;
@@ -146,7 +147,7 @@ public class Window extends JFrame implements ComponentListener {
     }
 
     public void updateGameList(ArrayList<SerializableGame> gameArrayList, MessageEmitter messageEmitter) {
-        this.gameList.updateList(gameArrayList, messageEmitter, new JsonParser());
+        this.gameList.updateList(gameArrayList, messageEmitter, new JsonParser(), this);
     }
 
     public void setCanvasColor(Color color) {
@@ -159,7 +160,7 @@ public class Window extends JFrame implements ComponentListener {
         this.teamSelectionPanel.setVisible(true);
     }
 
-    public void setTeamSelectionEvents(MessageEmitter messageEmitter) {
-        this.teamSelectionPanel.setEventForSelection(messageEmitter);
+    public void setTeamSelectionEvents(MessageEmitter messageEmitter, ArrayList<ActionListener> listeners) {
+        this.teamSelectionPanel.setEventForSelection(messageEmitter, listeners);
     }
 }

@@ -1,5 +1,7 @@
 package com.badlogic.ui;
 
+import com.badlogic.gfx.Window;
+import com.badlogic.gfx.ui.panels.TeamSelection;
 import com.badlogic.network.Message;
 import com.badlogic.network.MessageEmitter;
 import com.badlogic.network.RequestCode;
@@ -10,6 +12,7 @@ import com.badlogic.util.JsonParser;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
@@ -30,7 +33,7 @@ public class GameList extends JPanel {
     }
 
     // Update list of games available
-    public void updateList(ArrayList<SerializableGame> gameList, MessageEmitter messageEmitter, JsonParser jsonParser) {
+    public void updateList(ArrayList<SerializableGame> gameList, MessageEmitter messageEmitter, JsonParser jsonParser, Window window) {
         this.removeAll();
         this.setHeader();
 
@@ -40,9 +43,20 @@ public class GameList extends JPanel {
         }
 
         gameList.forEach((game) -> addEntry(game.getRoomId(), game.getJoinedPlayers(), game.getMaxPlayers(), (event) -> {
-            var gameId = new SerializableGameId(game.getRoomId());
-            var message = new Message(RequestCode.JoinGame, jsonParser.serialize(gameId));
-            messageEmitter.send(jsonParser.serialize(message));
+            // Show team selection window and add actions to selection.
+            window.showTeamSelectionWindow();
+            ArrayList<ActionListener> events = new ArrayList<>();
+
+            for (var i = 0; i < 2; i++) {
+                int finalI = i; // TODO: Pass team id to message
+                events.add(actionEvent -> {
+                    var gameId = new SerializableGameId(game.getRoomId());
+                    var message = new Message(RequestCode.JoinGame, jsonParser.serialize(gameId));
+                    messageEmitter.send(jsonParser.serialize(message));
+                });
+            }
+
+            window.setTeamSelectionEvents(messageEmitter, events);
         }));
 
         this.revalidate();
