@@ -94,10 +94,12 @@ public class Loop implements Observer {
         Assets.load();
 
         // Set UI events
+        // # Select team
+        gameManager.getWindow().setTeamSelectionEvents(messageEmitter);
+
         // # Create game
         gameManager.getWindow().setCreateGameBtnEvent(actionEvent -> {
-            var message = new Message(RequestCode.CreateGame, "");
-            messageEmitter.send(jsonParser.serialize(message));
+            gameManager.getWindow().showTeamSelectionWindow();
         });
 
         // # Exit game
@@ -105,9 +107,6 @@ public class Loop implements Observer {
             var message = new Message(RequestCode.QuitGame, "Exiting.");
             messageEmitter.send(jsonParser.serialize(message));
         });
-
-        // Load game list
-        messageEmitter.send(jsonParser.serialize(new Message(RequestCode.FormGameList, "")));
     }
 
     // Updates game entities (e.g. position)
@@ -131,14 +130,12 @@ public class Loop implements Observer {
         var graphics = bufferStrategy.getDrawGraphics();
         graphics.clearRect(0, 0, gameManager.getWindow().getWidth(), gameManager.getWindow().getHeight());
 
-        // Start rendering
         if (clientInGame) {
             map.render(graphics);
             player.render(graphics);
             roomPlayers.forEach((key, value) -> value.render(graphics));
             // bonuses.forEach(bonus -> bonus.render(graphics));
         }
-        // Stop rendering
 
         bufferStrategy.show();
         graphics.dispose();
@@ -164,7 +161,7 @@ public class Loop implements Observer {
             gameManager.getWindow().updateGameList(new ArrayList<>(gameList), messageEmitter);
         }
         // # Create and place player on the map.
-        else if (message.getType() == ResponseCode.GameCreated) {
+        else if (message.getType() == ResponseCode.GameCreated || message.getType() == ResponseCode.GameJoined) {
             var position = jsonParser.deserialize(message.getPayload(), Point.class);
             player = new Player(gameManager, messageEmitter);
             player.getPosition().set(new Vector(position.getX(), position.getY()));
@@ -178,18 +175,21 @@ public class Loop implements Observer {
 
                 players.forEach(serializablePlayer -> {
                     // Update this player.
-                    if (serializablePlayer.getType() == 10) {
-                        var position = serializablePlayer.getPosition();
-                        gameRoom.getPlayers().get(0).position.set(new Vector(position.getX(), position.getY()));
-                    }
-                    // Update other player in the room.
+                    // TODO: Remove player from the game room by id.
+                    if (serializablePlayer.getType() == 10)
+                        gameRoom.getPlayers().get(0).position.set(Vector.fromPoint(serializablePlayer.getPosition()));
+
+                    // Update other player in the game room.
                     else {
+                        // Player is new
                         if (!roomPlayers.containsKey(serializablePlayer.getPlayerId())) {
                             var roomPlayer = new RemotePlayer(gameManager.getWindow(), gameManager.getCamera(), Assets.getSprite(SpriteKeys.ENEMY_PLAYER));
                             roomPlayer.setPosition(Vector.fromPoint(serializablePlayer.getPosition()));
                             roomPlayer.setDirection(Vector.fromPoint(serializablePlayer.getDirection()));
                             roomPlayers.put(serializablePlayer.getPlayerId(), roomPlayer);
-                        } else {
+                        }
+                        // Old player
+                        else {
                             var roomPlayer = roomPlayers.get(serializablePlayer.getPlayerId());
                             roomPlayer.setPosition(Vector.fromPoint(serializablePlayer.getPosition()));
                             roomPlayer.setDirection(Vector.fromPoint(serializablePlayer.getDirection()));
@@ -197,23 +197,19 @@ public class Loop implements Observer {
                     }
                 });
             });
-        } else if (message.getType() == ResponseCode.BonusesCreated) {
+        }
+        // # Show bonuses in the map
+        else if (message.getType() == ResponseCode.BonusesCreated) {
             messageExecutor.submit(() -> {
                 var serializableBonuses = jsonParser.deserializeList(message.getPayload(), SerializableBonus.class);
                 createBonuses(serializableBonuses);
             });
-
-        } else if (message.getType() == ResponseCode.GameQuit) {
-            System.out.println(message.getPayload());
-            gameRoom.getPlayers().remove(0);
-        } else if (message.getType() == ResponseCode.GameJoined) {
-            var position = jsonParser.deserialize(message.getPayload(), Point.class);
-            player = new Player(gameManager, messageEmitter);
-            player.getPosition().set(new Vector(position.getX(), position.getY()));
-            gameRoom.addPlayer(player);
-            this.setActiveGameMode();
-        } else if (message.getType() == ResponseCode.NewPlayerJoined) {
-            System.out.println("new player joined this room");
+        }
+        // # Host player is quitting the game
+        else if (message.getType() == ResponseCode.GameQuit) {
+            // TODO: Remove player from the game room by id.
+            // System.out.println(message.getPayload());
+            // gameRoom.getPlayers().remove(0);
         }
     }
 

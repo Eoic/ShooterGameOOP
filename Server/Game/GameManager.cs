@@ -132,6 +132,7 @@ namespace Server.Game
 
                     // 3. Setup created game objects.
                     player.Position = initialPosition;
+                    player.JoinTeam(int.Parse(data.Payload));
                     gameRoom.AddPlayer(player);
                     _games.Add(gameRoom);
 
@@ -196,7 +197,7 @@ namespace Server.Game
                     }
                     
                     // Print game room info.
-                    // Debug.WriteLine(gameRoom);
+                    Debug.WriteLine(gameRoom);
 
                     // Send broadcast.
                     foreach (var gameRoomPlayer in gameRoom.Players)

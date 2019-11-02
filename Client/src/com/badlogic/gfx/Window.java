@@ -1,10 +1,9 @@
 package com.badlogic.gfx;
 
-import com.badlogic.gfx.ui.CanvasElementCollection;
-import com.badlogic.gfx.ui.CanvasElementType;
-import com.badlogic.gfx.ui.CanvasFactory;
-import com.badlogic.gfx.ui.Position;
+import com.badlogic.gfx.ui.*;
 import com.badlogic.gfx.ui.panels.HealthBar;
+import com.badlogic.gfx.ui.panels.TeamSelection;
+import com.badlogic.network.Message;
 import com.badlogic.network.MessageEmitter;
 import com.badlogic.serializables.SerializableGame;
 import com.badlogic.ui.GameList;
@@ -12,7 +11,6 @@ import com.badlogic.util.JsonParser;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -26,6 +24,7 @@ public class Window extends JFrame implements ComponentListener {
     private JButton createGameBtn;
     private JButton quitGameBtn;
     private HealthBar clientHealthBar;
+    private TeamSelection teamSelectionPanel;
     private CanvasElementCollection canvasElementCollection;
 
     private Window(int width, int height) {
@@ -44,10 +43,14 @@ public class Window extends JFrame implements ComponentListener {
         this.canvasElementCollection = new CanvasElementCollection();
         this.canvas.setFocusable(false);
         this.clientHealthBar = (HealthBar) CanvasFactory.createPanel(CanvasElementType.HealthBar, this, Position.CENTER, Position.END, 750, 35);
+        this.teamSelectionPanel = new TeamSelection(this, new String[]{"BLUE", "RED" });
+        teamSelectionPanel.setVisible(false);
         assert clientHealthBar != null;
         this.clientHealthBar.setOffset(0, -31);
         this.canvasElementCollection.attach(clientHealthBar);
+        this.canvasElementCollection.attach(teamSelectionPanel);
         this.clientHealthBar.addToFrame(this);
+        this.teamSelectionPanel.addToFrame(this);
         this.clientHealthBar.setVisible(false);
         this.createInterface();
         this.createGameListWindow();
@@ -100,6 +103,7 @@ public class Window extends JFrame implements ComponentListener {
 
     public void setActiveGameMode() {
         gameList.setVisible(false);
+        teamSelectionPanel.setVisible(false);
         createGameBtn.setVisible(false);
         quitGameBtn.setVisible(true);
     }
@@ -147,5 +151,15 @@ public class Window extends JFrame implements ComponentListener {
 
     public void setCanvasColor(Color color) {
         this.canvas.setBackground(color);
+    }
+
+    public void showTeamSelectionWindow() {
+        this.gameList.setVisible(false);
+        this.createGameBtn.setVisible(false);
+        this.teamSelectionPanel.setVisible(true);
+    }
+
+    public void setTeamSelectionEvents(MessageEmitter messageEmitter) {
+        this.teamSelectionPanel.setEventForSelection(messageEmitter);
     }
 }

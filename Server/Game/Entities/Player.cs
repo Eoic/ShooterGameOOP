@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace Server.Game.Entities
 {
@@ -9,6 +8,7 @@ namespace Server.Game.Entities
         public int Health { get; private set; }
         public Vector Direction { get; set; }
         public int Speed { get; set; }
+        public int Team { get; private set; }
 
         public Player(Guid id, Guid roomId)
         {
@@ -33,6 +33,11 @@ namespace Server.Game.Entities
 
             if (Health >= Constants.MaxHealth)
                 Health = Constants.MaxHealth;
+        }
+
+        public void JoinTeam(int teamId)
+        {
+            Team = teamId;
         }
 
         public override void Update(long delta)

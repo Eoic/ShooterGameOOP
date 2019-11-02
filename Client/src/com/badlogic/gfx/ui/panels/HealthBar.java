@@ -75,7 +75,6 @@ public class HealthBar implements CanvasElement {
         this.foreground.setBackground(Colors.Crimson);
         this.foreground.setBorder(new LineBorder(Colors.DarkRed, 1, false));
     }
-
     public void setVisible(boolean visible) {
         this.background.setVisible(visible);
         this.foreground.setVisible(visible);
