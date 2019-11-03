@@ -23,7 +23,7 @@ public class SerializablePlayer {
     private int team;
 
     @JsonProperty("Bullets")
-    private ArrayList<SerializableBullet> bullets = new ArrayList<>();
+    private ArrayList<SerializableBullet> bullets;
 
     @JsonCreator
     public SerializablePlayer(@JsonProperty("Position") Point position,

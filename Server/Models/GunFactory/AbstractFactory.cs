@@ -1,9 +1,7 @@
-﻿namespace Server.Models
+﻿namespace Server.Models.GunFactory
 {
     public abstract class AbstractFactory
     {
-        public int defaultGunType;
-
         public abstract Weapon CreateWeapon();
 
         public abstract Bullet CreateBullet();

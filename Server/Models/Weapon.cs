@@ -24,16 +24,16 @@ namespace Server.Models
 
         public void UpdateRate(IRateStrategy s)
         {
-            Rate = s.rate();
+            Rate = s.Rate();
         }
 
         public class Builder
         {
-            private static volatile Builder instance;
-            private static readonly object syncRoot = new object();
+            private static volatile Builder _instance;
+            private static readonly object SyncRoot = new object();
 
-            private const int DEFAULT_AMMO = 100;
-            private const int DEFAULT_OWNER = 0;
+            private const int DefaultAmmo = 100;
+            private const int DefaultOwner = 0;
 
             private int Id;
             private string Name { get; set; }
@@ -45,21 +45,21 @@ namespace Server.Models
 
             public static Builder GetInstance()
             {
-                if (instance == null)
+                if (_instance == null)
                 {
-                    lock (syncRoot)
+                    lock (SyncRoot)
                     {
-                        if (instance == null)
-                            instance = new Builder();
+                        if (_instance == null)
+                            _instance = new Builder();
                     }
                 }
 
-                return instance;
+                return _instance;
             }
 
             public Builder()
             {
-                Ammo = DEFAULT_AMMO;
+                Ammo = DefaultAmmo;
 
             }
 
@@ -101,16 +101,18 @@ namespace Server.Models
 
             public Weapon Build()
             {
-                var weapon = new Weapon();
-                weapon.Id = Id++;
-                weapon.Name = Name;
-                weapon.Ammo = Ammo;
-                weapon.OwnedById = OwnedById;
-                weapon.Type = Type;
-                weapon.Bullets = Bullets;
-                
+                var weapon = new Weapon
+                {
+                    Id = Id++,
+                    Name = Name,
+                    Ammo = Ammo,
+                    OwnedById = OwnedById,
+                    Type = Type,
+                    Bullets = Bullets
+                };
+
                 if(RateStrategy != null) 
-                    weapon.Rate = RateStrategy.rate();
+                    weapon.Rate = RateStrategy.Rate();
 
                 Dispose();
                 return weapon;
@@ -119,8 +121,8 @@ namespace Server.Models
             private void Dispose()
             {
                 Name = null;
-                Ammo = DEFAULT_AMMO;
-                OwnedById = DEFAULT_OWNER;
+                Ammo = DefaultAmmo;
+                OwnedById = DefaultOwner;
                 RateStrategy = null;
             }
         }

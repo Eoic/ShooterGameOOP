@@ -184,13 +184,13 @@
     </Compile>
     <Compile Include="Models\GunFactory\AbstractFactory.cs" />
     <Compile Include="Models\Bullet.cs" />
+    <Compile Include="Models\GunFactory\GunType.cs" />
     <Compile Include="Models\GunTypes.cs" />
     <Compile Include="Models\IRateStrategy.cs" />
     <Compile Include="Models\GunFactory\PistolFactory.cs" />
     <Compile Include="Models\GunFactory\ShotgunFactory.cs" />
     <Compile Include="Models\GunFactory\SniperRifleFactory.cs" />
     <Compile Include="Models\Prototype\WeaponPrototype.cs" />
-    <Compile Include="Models\User.cs" />
     <Compile Include="Models\Weapon.cs" />
     <Compile Include="Network\ConnectionsPool.cs" />
     <Compile Include="Network\Client.cs" />

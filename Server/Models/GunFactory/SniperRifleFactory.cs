@@ -1,19 +1,17 @@
-﻿namespace Server.Models
+﻿using Server.Game;
+
+namespace Server.Models.GunFactory
 {
     public class SniperRifleFactory : AbstractFactory
     {
-        private new int defaultGunType = 1;
-
-        public override Bullet CreateBullet()
-        {
-            return new Bullet(50, GunTypes.GetGunType(defaultGunType));
-        }
+        public override Bullet CreateBullet() =>
+            new Bullet(Constants.SniperRifleDamage, GunTypes.GetGunType(GunType.SniperRifle));
 
         public override Weapon CreateWeapon()
         {
             return Weapon.Builder.GetInstance()
-                  .SetName("Test " + GunTypes.GetGunType(defaultGunType))
-                  .SetType(GunTypes.GetGunType(defaultGunType))
+                  .SetName(GunTypes.GetGunType(GunType.SniperRifle))
+                  .SetType(GunTypes.GetGunType(GunType.SniperRifle))
                   .SetBullets(CreateBullet()).
                   Build();
         }

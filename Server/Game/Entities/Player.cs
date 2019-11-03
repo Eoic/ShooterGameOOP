@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Server.Game.Physics;
 
 namespace Server.Game.Entities
@@ -14,7 +15,6 @@ namespace Server.Game.Entities
         public int Team { get; private set; }
         public List<Bullet> Bullets { get; set; }
         public CollisionsManager PlayerCollisionsManager { get; }
-        public CollisionsManager BulletCollisionsManager { get; }
         public Player(Guid id, Guid roomId)
         {
             Id = id;
@@ -24,7 +24,6 @@ namespace Server.Game.Entities
             Health = Constants.MaxHealth;
             Bullets = new List<Bullet>();
             PlayerCollisionsManager = new CollisionsManager(new PlayerCollider());
-            BulletCollisionsManager = new CollisionsManager(new BulletCollider());
             CreateBulletPool();
         }
 
@@ -88,13 +87,8 @@ namespace Server.Game.Entities
             PlayerCollisionsManager.ProcessMotion(delta, this);
 
             // Update bullets
-            for (var i = 0; i < Bullets.Count; i++)
-            {
-                if (Bullets[i].IsActive == false)
-                    continue;
-
-                Bullets[i].Update(delta);
-            }
+            foreach (var bullet in Bullets.Where(bullet => bullet.IsActive))
+                bullet.Update(delta);
         }
     }
 }

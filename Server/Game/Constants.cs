@@ -34,6 +34,11 @@
             MapTileHalfSize = 64,
             MapWidth = 20,
             MapHeight = 15,
-            MapBoundOffset = 64;
+            MapBoundOffset = 64,
+
+            // Guns
+            PistolDamage = 10,
+            ShotgunDamage = 20,
+            SniperRifleDamage = 50;
     }
 }

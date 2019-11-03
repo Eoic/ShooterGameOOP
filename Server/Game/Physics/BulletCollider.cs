@@ -26,11 +26,7 @@ namespace Server.Game.Physics
                     y > Constants.MapHeight * Constants.MapTileSize - Constants.MapTileHalfSize);
         }
 
-        public void Move(Vector change, GameObject subject)
-        {
-            // var change = Direction * delta * Constants.DefaultBulletSpeed;
-            // Position.Add(change);
+        public void Move(Vector change, GameObject subject) =>
             subject.Position.Add(change);
-        }
     }
 }
