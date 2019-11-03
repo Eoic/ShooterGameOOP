@@ -40,6 +40,7 @@ public class GameList extends JPanel {
 
         if (gameList.size() == 0) {
             this.addNoGamesEntry();
+            this.revalidate();
             return;
         }
 
