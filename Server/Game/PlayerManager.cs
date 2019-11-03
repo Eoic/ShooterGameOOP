@@ -1,4 +1,5 @@
 ﻿using Server.Game.Entities;
+using Server.Models;
 using Server.Network;
 using Server.Utilities;
 using System;
@@ -29,7 +30,7 @@ namespace Server.Game
                 gameToJoin.AddPlayer(joiningPlayer);
 
                 // 3. Notify about successful join
-                var serializablePlayer = new SerializablePlayer(initPos, new Vector(0, 0), 0, joiningPlayer.Id.ToString(), team);
+                var serializablePlayer = new SerializablePlayer(initPos, new Vector(0, 0), 0, joiningPlayer.Id.ToString(), team, new List<Bullet.SerializableBullet>());
                 var gameJoinString = new Message(ResponseCode.GameJoined, JsonParser.Serialize(serializablePlayer));
                 ConnectionsPool.GetInstance().GetClient(clientId).Send(JsonParser.Serialize(gameJoinString));
                 Debug.WriteLine("Player added to the game");

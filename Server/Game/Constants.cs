@@ -12,6 +12,8 @@
             MaxPlayerCount = 10,
             MaxPlayersPerTeam = MaxPlayerCount / 2,
             DefaultSpeed = 1,
+            DefaultBulletSpeed = 1,
+            DefaultBulletPoolSize = 100,
 
             //Health Points
             BonusHealth = 30,
@@ -29,6 +31,7 @@
 
             // Map
             MapTileSize = 128,
+            MapTileHalfSize = 64,
             MapWidth = 20,
             MapHeight = 15,
             MapBoundOffset = 64;

@@ -8,6 +8,7 @@ using Server.Game.Bonuses;
 using Server.Game.Entities;
 using Server.Utilities;
 using Server.Game.Commands;
+using Server.Models;
 
 namespace Server.Game
 {
@@ -138,7 +139,7 @@ namespace Server.Game
                     _games.Add(gameRoom);
 
                     // 4. Notify event about created game and send data.
-                    var serializablePlayer = new SerializablePlayer(initialPosition, new Vector(0, 0), 0, player.Id.ToString(), team);
+                    var serializablePlayer = new SerializablePlayer(initialPosition, new Vector(0, 0), 0, player.Id.ToString(), team, new List<Bullet.SerializableBullet>());
                     var gameCreationMessage = new Message(ResponseCode.GameCreated, JsonParser.Serialize(serializablePlayer));
                     var bonusesMessage = new Message(ResponseCode.BonusesCreated, JsonParser.Serialize(bonuses));
                     var gameCreationString = JsonParser.Serialize(gameCreationMessage);
@@ -158,6 +159,20 @@ namespace Server.Game
 
                         var direction = JsonParser.Deserialize<Vector>(data.Payload);
                         game.GetPlayer(data.ClientId).Direction = direction;
+                        game.ForceUpdate();
+                    });
+                    break;
+                case RequestCode.Shoot:
+                    _games.ForEach((game) =>
+                    {
+                        // Add new bullet to player.
+                        var playerObj = game.GetPlayer(data.ClientId);
+                        var shotDirection = JsonParser.Deserialize<Vector>(data.Payload);
+
+                        if (playerObj == null)
+                            return;
+
+                        playerObj.AddBullet(playerObj.Position, shotDirection);
                         game.ForceUpdate();
                     });
                     break;
@@ -194,7 +209,7 @@ namespace Server.Game
                     foreach (var gameRoomPlayer in gameRoom.Players)
                     {
                         var player = gameRoomPlayer.Value;
-                        var playerSerialize = new SerializablePlayer(player.Position, player.Direction, 0, gameRoomPlayer.Value.Id.ToString(), player.Team);
+                        var playerSerialize = new SerializablePlayer(player.Position, player.Direction, 0, gameRoomPlayer.Value.Id.ToString(), player.Team, player.GetBullets());
                         playerSerializes.Add(playerSerialize);
                     }
                     

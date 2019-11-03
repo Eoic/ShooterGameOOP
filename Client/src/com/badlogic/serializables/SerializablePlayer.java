@@ -4,6 +4,8 @@ import com.badlogic.util.Point;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
+
 public class SerializablePlayer {
     @JsonProperty("PlayerId")
     private String playerId;
@@ -20,17 +22,22 @@ public class SerializablePlayer {
     @JsonProperty("Team")
     private int team;
 
+    @JsonProperty("Bullets")
+    private ArrayList<SerializableBullet> bullets = new ArrayList<>();
+
     @JsonCreator
     public SerializablePlayer(@JsonProperty("Position") Point position,
                               @JsonProperty("Direction") Point direction,
                               @JsonProperty("Type") int type,
                               @JsonProperty("PlayerId") String playerId,
-                              @JsonProperty("Team") int team) {
+                              @JsonProperty("Team") int team,
+                              @JsonProperty("Bullets") ArrayList<SerializableBullet> bullets) {
         this.position = position;
         this.direction = direction;
         this.type = type;
         this.playerId = playerId;
         this.team = team;
+        this.bullets = bullets;
     }
 
     public Point getPosition() {
@@ -51,5 +58,9 @@ public class SerializablePlayer {
 
     public int getTeam() {
         return team;
+    }
+
+    public ArrayList<SerializableBullet> getBullets() {
+        return bullets;
     }
 }

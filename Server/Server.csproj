@@ -170,6 +170,8 @@
     <Compile Include="Game\GameManagerWrapper.cs" />
     <Compile Include="Game\GameRoom.cs" />
     <Compile Include="Game\GameManager.cs" />
+    <Compile Include="Game\Physics\CollisionsDetector.cs" />
+    <Compile Include="Game\Physics\HitDetector.cs" />
     <Compile Include="Game\PlayerManager.cs" />
     <Compile Include="Game\SerializableGameRoom.cs" />
     <Compile Include="Game\Vector.cs" />
@@ -208,7 +210,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Game\Physics\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

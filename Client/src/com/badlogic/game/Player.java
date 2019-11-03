@@ -73,12 +73,14 @@ public class Player extends GameObject {
         // Follow the player.
         gameManager.getCamera().follow(this, gameManager.getWindow().getSize());
 
-        // Launch and update bullets.
+        // Launch bullet on mouse click.
         if (gameManager.getInputManager().lmb) {
-            bulletPool.launch(gameManager.getInputManager().getMouseClickPoint(), this.position);
+            Vector direction = bulletPool.launch(gameManager.getInputManager().getMouseClickPoint(), this.position);
+            messageEmitter.send(jsonParser.serialize(new Message(RequestCode.Shoot, jsonParser.serialize(direction.getSerializable()))));
             gameManager.getInputManager().lmb = false;
         }
 
+        // Update bullets.
         bulletPool.getBullets().forEach(bullet -> bullet.update(delta));
         bulletPool.cleanup();
     }

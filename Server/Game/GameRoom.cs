@@ -59,7 +59,17 @@ namespace Server.Game
 
             foreach (var keyValuePair in Players) {
                 var player = keyValuePair.Value;
+                builder.AppendLine(new string('-', dividerWidth));
                 builder.AppendFormat("| {0, -3} | {1, -44} | {2, -23} | {3, -5} |\n", ++index, keyValuePair.Key, player.Position, player.Team);
+
+                builder.AppendLine(new string('-', dividerWidth));
+                builder.AppendFormat("| Bullets |\n");
+                builder.AppendLine(new string('-', dividerWidth));
+
+                keyValuePair.Value.Bullets.ForEach((bullet) => {
+                    if (bullet.IsActive)
+                        builder.AppendLine(bullet.ToString());
+                });
             }
             
             builder.AppendLine(new string('-', dividerWidth));

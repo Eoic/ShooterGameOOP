@@ -42,11 +42,12 @@ public class Bullet extends GameObject {
         }
     }
 
-    public void launch(Vector target, Vector globalOrigin) {
+    public Vector launch(Vector target, Vector globalOrigin) {
         this.origin = new Vector(window.getSize().width / 2.0, window.getSize().height / 2.0);
         this.position = new Vector(globalOrigin.getX(), globalOrigin.getY());
         this.direction = target.difference(origin).getNormalized();
         this.isActive = true;
+        return this.direction;
     }
 
     public boolean getActiveState() {

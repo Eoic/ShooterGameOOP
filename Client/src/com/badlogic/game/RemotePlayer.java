@@ -3,18 +3,20 @@ package com.badlogic.game;
 import com.badlogic.core.GameObject;
 import com.badlogic.gfx.Assets;
 import com.badlogic.gfx.Camera;
+import com.badlogic.serializables.SerializableBullet;
 import com.badlogic.util.Constants;
 import com.badlogic.util.SpriteKeys;
 import com.badlogic.util.Vector;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public class RemotePlayer extends GameObject {
     private Window window;
     private Camera camera;
     private Vector direction;
     private int speed;
+    private ArrayList<RemoteBullet> bullets;
 
     public RemotePlayer(Window window, Camera camera, boolean isFriendly) {
         this.window = window;
@@ -27,6 +29,8 @@ public class RemotePlayer extends GameObject {
         } else {
             this.sprite = Assets.getSprite(SpriteKeys.FRIENDLY_PLAYER);
         }
+
+        bullets = new ArrayList<>();
     }
 
     @Override
@@ -34,6 +38,7 @@ public class RemotePlayer extends GameObject {
         int posX = (int)position.getX() - (int)camera.getOffset().getX() - Constants.SPRITE_WIDTH_HALF;
         int posY = (int)position.getY() - (int)camera.getOffset().getY() - Constants.SPRITE_WIDTH_HALF;
         graphics.drawImage(this.sprite, posX, posY, null);
+        this.renderBullets(graphics, camera);
     }
 
     @Override
@@ -45,6 +50,26 @@ public class RemotePlayer extends GameObject {
             newPos.getY() >= 0 && newPos.getY() < Constants.MAP_PIXEL_HEIGHT - Constants.MAP_TILE_SIZE) {
             this.position.add(change);
         }
+
+        this.updateBullets(delta);
+    }
+
+    // Revalidate bullets.
+    public void parseBullets(ArrayList<SerializableBullet> bullets) {
+        this.bullets = new ArrayList<>();
+        bullets.forEach((bullet) -> this.bullets.add(new RemoteBullet(bullet.getPosition(), bullet.getDirection())));
+    }
+
+    public void renderBullets(Graphics graphics, Camera camera) {
+        bullets.forEach((bullet) -> {
+            bullet.render(graphics, camera);
+        });
+    }
+
+    public void updateBullets(int delta) {
+        bullets.forEach((bullet) -> {
+            bullet.update(delta);
+        });
     }
 
     public void setDirection(Vector direction) {
