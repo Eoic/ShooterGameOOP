@@ -1,7 +1,14 @@
-﻿namespace Server.Models
+﻿using Server.Models.Prototype;
+
+namespace Server.Models
 {
-    public class Weapon
+    public class Weapon : WeaponPrototype
     {
+        public Weapon()
+        {
+            this.Ammo = 100;
+        }
+
         public int Id { get; set; }
         public string Name { get; set; }
         public int Ammo { get; set; }
@@ -9,6 +16,11 @@
         public double rate { get; set; }
         public string type { get; set; }
         public Bullet bullets { get; set; }
+
+        public override Weapon Clone()
+        {
+            return (Weapon)this.MemberwiseClone();
+        }
 
         public void updateRate(IRateStrategy s)
         {

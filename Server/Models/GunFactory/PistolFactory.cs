@@ -1,6 +1,4 @@
-﻿using Server.Models.Prototype;
-
-namespace Server.Models
+﻿namespace Server.Models
 {
     public class PistolFactory : AbstractFactory
     {
@@ -13,7 +11,7 @@ namespace Server.Models
 
         public override Weapon createWeapon()
         {
-            Weapon weapon = new ConcreteWeapon(100).Clone() as Weapon;
+            Weapon weapon = new Weapon().Clone();
             weapon.bullets = createBullet();
             weapon.Name = "Test " + GunTypes.getGunType(defaultGunType);
             return weapon;

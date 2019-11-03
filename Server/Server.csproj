@@ -183,7 +183,6 @@
     <Compile Include="Models\GunFactory\PistolFactory.cs" />
     <Compile Include="Models\GunFactory\ShotgunFactory.cs" />
     <Compile Include="Models\GunFactory\SniperRifleFactory.cs" />
-    <Compile Include="Models\Prototype\ConcreteWeapon.cs" />
     <Compile Include="Models\Prototype\WeaponPrototype.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Weapon.cs" />

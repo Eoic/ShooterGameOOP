@@ -16,10 +16,8 @@ namespace Server.Controllers
         [HttpGet]
         public Weapon GetPistol()
         {
-            return Weapon.Builder.GetInstance()
-                .setName("TestPistol")
-                //.setRate(new MediumRate())
-                .build();
+            Weapon weapon = new PistolFactory().createWeapon();
+            return weapon;
         }
     }
 }
