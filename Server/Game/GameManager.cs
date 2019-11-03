@@ -31,7 +31,7 @@ namespace Server.Game
         }
 
         /// <summary>
-        /// Ends game loop
+        /// Starts game loop
         /// </summary>
         public void Start()
         {
@@ -41,19 +41,6 @@ namespace Server.Game
             _isRunning = true;
             _timer.Start();
             _runner.Start();
-        }
-
-        /// <summary>
-        /// Starts game loop
-        /// </summary>
-        public void Stop()
-        {
-            if (!_isRunning)
-                return;
-
-            _isRunning = false;
-            _timer.Stop();
-            _runner.Join();
         }
 
         /// <summary>
@@ -80,10 +67,9 @@ namespace Server.Game
                 case RequestCode.Disconnect:
                     var clientDisconnect = ConnectionsPool.GetInstance().GetClient(data.ClientId);
 
-                    if (clientDisconnect != null)
-                        if (clientDisconnect.RoomId != null)
-                            new RemovePlayerCommand(data.ClientId, clientDisconnect.RoomId, 0, _games).Execute();
-                    
+                    if (clientDisconnect?.RoomId != null)
+                        new RemovePlayerCommand(data.ClientId, clientDisconnect.RoomId, 0, _games).Execute();
+
                     ConnectionsPool.GetInstance().RemoveClient(data.ClientId);
                     Debug.WriteLine("Client disconnected");
                     break;
@@ -116,7 +102,10 @@ namespace Server.Game
                     new AddPlayerCommand(data.ClientId, joinInfo.RoomId, joinInfo.Team, _games).Execute();
 
                     // Force room to update immediately
-                    _games.Find((room) => room.RoomId == joinInfo.RoomId).ForceUpdate();
+                    var roomToUpdate = _games.Find((room) => room.RoomId == joinInfo.RoomId);
+                    roomToUpdate.ForceUpdate();
+                    var bonusesMsg = new Message(ResponseCode.BonusesCreated, JsonParser.Serialize(roomToUpdate.GetSerializableBonuses()));
+                    ConnectionsPool.GetInstance().GetClient(data.ClientId).Send(JsonParser.Serialize(bonusesMsg));
                     break;
 
                 // Player creates new game
@@ -130,18 +119,19 @@ namespace Server.Game
                     // 2. Create new player instance and additional objects.
                     var initialPosition = new Vector(Map.CenterX, Map.CenterY);
                     var player = new Player(data.ClientId, gameRoom.RoomId);
-                    var bonuses = CreateBonuses();
+                    var bonuses = BonusGenerator.Create();
 
                     // 3. Setup created game objects.
                     player.Position = initialPosition;
                     player.JoinTeam(team);
                     gameRoom.AddPlayer(player);
+                    gameRoom.SetBonuses(bonuses);
                     _games.Add(gameRoom);
 
                     // 4. Notify event about created game and send data.
                     var serializablePlayer = new SerializablePlayer(initialPosition, new Vector(0, 0), 0, player.Id.ToString(), team, new List<Bullet.SerializableBullet>());
                     var gameCreationMessage = new Message(ResponseCode.GameCreated, JsonParser.Serialize(serializablePlayer));
-                    var bonusesMessage = new Message(ResponseCode.BonusesCreated, JsonParser.Serialize(bonuses));
+                    var bonusesMessage = new Message(ResponseCode.BonusesCreated, JsonParser.Serialize(gameRoom.GetSerializableBonuses()));
                     var gameCreationString = JsonParser.Serialize(gameCreationMessage);
                     var bonusesString = JsonParser.Serialize(bonusesMessage);
                     client.Send(gameCreationString);
@@ -221,7 +211,7 @@ namespace Server.Game
                     {
                         var client = ConnectionsPool.GetInstance().GetClient(gameRoomPlayer.Key);   // Target client
 
-                        for (int i = 0; i < playerSerializes.Count; i++)
+                        for (var i = 0; i < playerSerializes.Count; i++)
                         {
                             // Set host player
                             if (playerSerializes[i].PlayerId == gameRoomPlayer.Key.ToString())
@@ -249,45 +239,6 @@ namespace Server.Game
                 Thread.Sleep((int)_waitTime);
                 _delta = (_timer.ElapsedMilliseconds * 1_000_000 - _now) / 1_000_000;
             }
-        }
-
-        // Generates random amount of bonuses.
-        private List<SerializableBonus> CreateBonuses()
-        {
-            var randomGen = new Random(DateTime.Now.Millisecond);
-            var iterations = randomGen.Next(Constants.MinBonusCount, Constants.MaxBonusCount);
-            var bonusList = new List<Bonus>();
-            var serializes = new List<SerializableBonus>();
-
-            for (var i = 0; i < iterations; i++)
-            {
-                var bonusType = string.Empty;
-                var bonusAmount = randomGen.Next(Constants.BonusMinAmount, Constants.BonusMaxAmount + 1);
-                var bonusLifespan = randomGen.Next(Constants.BonusMinLifespan, Constants.BonusMaxLifespan + 1);
-                
-                switch (randomGen.Next(Constants.BonusTypeCount))
-                {
-                    case 0:
-                        bonusType = BonusType.Health;
-                        break;
-                    case 1:
-                        bonusType = BonusType.Ammo;
-                        break;
-                    case 2:
-                        bonusType = BonusType.Speed;
-                        break;
-                }
-
-                if (string.IsNullOrEmpty(bonusType))
-                    continue;
-
-                var bonus = BonusFactory.GetBonus(bonusType, bonusAmount, bonusLifespan);
-                bonus.Position = new Vector(randomGen.Next(0, Map.Width - Constants.MapBoundOffset), randomGen.Next(0, Map.Height - Constants.MapBoundOffset));
-                serializes.Add(bonus.GetSerializable(bonusType));
-                bonusList.Add(bonus);
-            }
-
-            return serializes;
         }
     }
 }

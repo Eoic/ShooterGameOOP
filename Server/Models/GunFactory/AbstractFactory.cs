@@ -4,8 +4,8 @@
     {
         public int defaultGunType;
 
-        public abstract Weapon createWeapon();
+        public abstract Weapon CreateWeapon();
 
-        public abstract Bullet createBullet();
+        public abstract Bullet CreateBullet();
     }
 }

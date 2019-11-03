@@ -22,7 +22,7 @@
 
             // Bonuses
             BonusTypeCount = 3,
-            MinBonusCount = 1,
+            MinBonusCount = 4,
             MaxBonusCount = 10,
             BonusMinLifespan = 1,
             BonusMaxLifespan = 100,

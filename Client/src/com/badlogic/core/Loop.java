@@ -143,9 +143,9 @@ public class Loop implements Observer {
 
         if (clientInGame) {
             map.render(graphics);
-            player.render(graphics);
+            bonuses.forEach(bonus -> bonus.render(graphics));
             roomPlayers.forEach((key, value) -> value.render(graphics));
-            // bonuses.forEach(bonus -> bonus.render(graphics));
+            player.render(graphics);
         }
 
         bufferStrategy.show();
@@ -229,6 +229,8 @@ public class Loop implements Observer {
     }
 
     private void createBonuses(List<SerializableBonus> serializableBonuses) {
+        bonuses = new ArrayList<>();
+
         serializableBonuses.forEach(serializableBonus -> {
             Bonus bonus = null;
 

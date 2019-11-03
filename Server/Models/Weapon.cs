@@ -6,31 +6,31 @@ namespace Server.Models
     {
         public Weapon()
         {
-            this.Ammo = 100;
+            Ammo = 100;
         }
 
         public int Id { get; set; }
         public string Name { get; set; }
         public int Ammo { get; set; }
         public int OwnedById { get; set; }
-        public double rate { get; set; }
-        public string type { get; set; }
-        public Bullet bullets { get; set; }
+        public double Rate { get; set; }
+        public string Type { get; set; }
+        public Bullet Bullets { get; set; }
 
         public override Weapon Clone()
         {
             return (Weapon)this.MemberwiseClone();
         }
 
-        public void updateRate(IRateStrategy s)
+        public void UpdateRate(IRateStrategy s)
         {
-            rate = s.rate();
+            Rate = s.rate();
         }
 
         public class Builder
         {
             private static volatile Builder instance;
-            private static object syncRoot = new object();
+            private static readonly object syncRoot = new object();
 
             private const int DEFAULT_AMMO = 100;
             private const int DEFAULT_OWNER = 0;
@@ -63,58 +63,60 @@ namespace Server.Models
 
             }
 
-            public Builder setName(string name)
+            public Builder SetName(string name)
             {
                 Name = name;
                 return this;
             }
 
-            public Builder setAmmo(int ammo)
+            public Builder SetAmmo(int ammo)
             {
                 Ammo = ammo;
                 return this;
             }
 
-            public Builder setOwner(int ownerId)
+            public Builder SetOwner(int ownerId)
             {
                 OwnedById = ownerId;
                 return this;
             }
 
-            public Builder setRate(IRateStrategy s)
+            public Builder SetRate(IRateStrategy s)
             {
                 RateStrategy = s;
                 return this;
             }
 
-            public Builder setType(string type)
+            public Builder SetType(string type)
             {
                 Type = type;
                 return this;
             }
 
-            public Builder setBulets(Bullet bullet)
+            public Builder SetBullets(Bullet bullet)
             {
                 Bullets = bullet;
                 return this;
             }
 
-            public Weapon build()
+            public Weapon Build()
             {
                 var weapon = new Weapon();
                 weapon.Id = Id++;
                 weapon.Name = Name;
                 weapon.Ammo = Ammo;
                 weapon.OwnedById = OwnedById;
-                weapon.type = Type;
-                weapon.bullets = Bullets;
-                if(RateStrategy != null) weapon.rate = RateStrategy.rate();
+                weapon.Type = Type;
+                weapon.Bullets = Bullets;
+                
+                if(RateStrategy != null) 
+                    weapon.Rate = RateStrategy.rate();
 
-                dispose();
+                Dispose();
                 return weapon;
             }
 
-            private void dispose()
+            private void Dispose()
             {
                 Name = null;
                 Ammo = DEFAULT_AMMO;

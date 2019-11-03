@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Server.Game.Bonuses
+﻿namespace Server.Game.Bonuses
 {
     public static class BonusFactory
     {
@@ -12,11 +7,11 @@ namespace Server.Game.Bonuses
             switch (bonusType)
             {
                 case BonusType.Health:
-                    return new HealthBonus(bonusAmount, lifespan, bonusType);
+                    return new HealthBonus(bonusType, bonusAmount, lifespan);
                 case BonusType.Ammo:
-                    return new AmmoBonus(bonusAmount, lifespan);
+                    return new AmmoBonus(bonusType, bonusAmount, lifespan);
                 case BonusType.Speed:
-                    return new SpeedBonus(bonusAmount, lifespan);
+                    return new SpeedBonus(bonusType, bonusAmount, lifespan);
                 default:
                     return null;
             }

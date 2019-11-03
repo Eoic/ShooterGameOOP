@@ -9,7 +9,7 @@ namespace Server.Game.Entities
         public Guid Id { get; protected set; }
         public Vector Position { get; set; }
 
-        public GameObject()
+        protected GameObject()
         {
             Position = new Vector();
         }

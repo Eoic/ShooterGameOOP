@@ -2,15 +2,18 @@
 using System.Text;
 using Server.Game.Entities;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using Server.Game.Bonuses;
 
 namespace Server.Game
 {
     public class GameRoom
     {
         public Guid RoomId { get; } = Guid.NewGuid();
-        public int TimeTillRoomUpdate = Constants.RoomUpdateInterval;
+        public int TimeTillRoomUpdate { get; set; } = Constants.RoomUpdateInterval;
         public Dictionary<Guid, Player> Players { get; } = new Dictionary<Guid, Player>();
+        public List<Bonus> Bonuses { get; private set; } = new List<Bonus>();
 
         public void AddPlayer(Player player)
         {
@@ -44,9 +47,14 @@ namespace Server.Game
             TimeTillRoomUpdate--;
         }
 
+        public void SetBonuses(List<Bonus> bonuses) => Bonuses = bonuses;
+
+        public List<SerializableBonus> GetSerializableBonuses() => 
+            Bonuses.Select(bonus => bonus.GetSerializable()).ToList();
+
         public override string ToString()
         {
-            var dividerWidth = 88;
+            const int dividerWidth = 88;
             var index = 0;
             var builder = new StringBuilder();
             builder.AppendLine(new string('-', dividerWidth));

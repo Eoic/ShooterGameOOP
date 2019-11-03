@@ -16,7 +16,7 @@ namespace Server.Controllers
         [HttpGet]
         public Weapon GetPistol()
         {
-            Weapon weapon = new PistolFactory().createWeapon();
+            Weapon weapon = new PistolFactory().CreateWeapon();
             return weapon;
         }
     }

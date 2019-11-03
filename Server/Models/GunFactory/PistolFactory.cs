@@ -4,15 +4,15 @@
     {
         public new int defaultGunType = 0;
 
-        public override Bullet createBullet()
+        public override Bullet CreateBullet()
         {
             return new Bullet(10, GunTypes.GetGunType(defaultGunType).ToString());
         }
 
-        public override Weapon createWeapon()
+        public override Weapon CreateWeapon()
         {
             Weapon weapon = new Weapon().Clone();
-            weapon.bullets = createBullet();
+            weapon.Bullets = CreateBullet();
             weapon.Name = "Test " + GunTypes.GetGunType(defaultGunType);
             return weapon;
         }

@@ -6,8 +6,7 @@ namespace Server.Game.Bonuses
 {
     public class AmmoBonus : Bonus
     {
-        public AmmoBonus() { }
-        public AmmoBonus(int lifespan, int bonusAmount) : base(lifespan, bonusAmount) { }
+        public AmmoBonus(string bonusType, int lifespan, int bonusAmount) : base(bonusType, lifespan, bonusAmount) { }
 
         public override void ApplyBonus(Player player)
         {

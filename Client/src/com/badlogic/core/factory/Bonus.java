@@ -30,8 +30,8 @@ public abstract class Bonus extends GameObject {
     public void render(Graphics graphics) {
         var camOffset = gameManager.getCamera().getOffset();
         var windowSize = gameManager.getWindow().getSize();
-        int posX = (int)position.getX() - (int)camOffset.getX() + (windowSize.width / 2 - Constants.SPRITE_WIDTH / 2);
-        int posY = (int)position.getY() - (int)camOffset.getY() + (windowSize.height / 2 - Constants.SPRITE_HEIGHT / 2);
+        int posX = (int)position.getX() - (int)camOffset.getX() - Constants.SPRITE_WIDTH_HALF;
+        int posY = (int)position.getY() - (int)camOffset.getY() - Constants.SPRITE_HEIGHT_HALF;
         graphics.drawImage(sprite, posX, posY, null);
     }
 }

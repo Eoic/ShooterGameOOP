@@ -155,6 +155,7 @@
     <Compile Include="Game\Bonuses\AmmoBonus.cs" />
     <Compile Include="Game\Bonuses\Bonus.cs" />
     <Compile Include="Game\Bonuses\BonusFactory.cs" />
+    <Compile Include="Game\Bonuses\BonusGenerator.cs" />
     <Compile Include="Game\Bonuses\BonusType.cs" />
     <Compile Include="Game\Bonuses\HealthBonus.cs" />
     <Compile Include="Game\Bonuses\SerializableBonus.cs" />
