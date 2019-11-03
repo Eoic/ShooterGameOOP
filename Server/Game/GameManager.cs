@@ -8,6 +8,7 @@ using Server.Game.Bonuses;
 using Server.Game.Entities;
 using Server.Utilities;
 using Server.Game.Commands;
+using Server.Game.Physics;
 using Server.Models;
 
 namespace Server.Game
@@ -15,6 +16,7 @@ namespace Server.Game
     public class GameManager : Network.IObserver<Message>
     {
         private readonly long _frameTime = 1_000_000_000 / Constants.Fps;
+        private readonly HitsObserver _hitsObserver = new HitsObserver();
         private readonly List<GameRoom> _games = new List<GameRoom>();
         private readonly Stopwatch _timer;
         private readonly Thread _runner;
@@ -65,6 +67,7 @@ namespace Server.Game
 
                 // Connection with client lost
                 case RequestCode.Disconnect:
+                    Debug.WriteLine(data.ClientId);
                     var clientDisconnect = ConnectionsPool.GetInstance().GetClient(data.ClientId);
 
                     if (clientDisconnect?.RoomId != null)
@@ -77,10 +80,7 @@ namespace Server.Game
                 // Client left the game
                 case RequestCode.QuitGame:
                     var roomIdQuit = ConnectionsPool.GetInstance().GetClient(data.ClientId).RoomId;
-
-                    if (roomIdQuit != null) 
-                        new RemovePlayerCommand(data.ClientId, roomIdQuit, 0, _games).Execute();
-
+                    new RemovePlayerCommand(data.ClientId, roomIdQuit, 0, _games).Execute();
                     var message = new Message(RequestCode.QuitGame, "Game quit successfully.");
                     ConnectionsPool.GetInstance().GetClient(data.ClientId).Send(JsonParser.Serialize(message));
                     break;
@@ -89,9 +89,8 @@ namespace Server.Game
                 case RequestCode.RaiseError:
                     var clientError = ConnectionsPool.GetInstance().GetClient(data.ClientId);
 
-                    if (clientError != null)
-                        if (clientError.RoomId != null)
-                            new RemovePlayerCommand(data.ClientId, clientError.RoomId, 0, _games).Execute();
+                    if (clientError?.RoomId != null)
+                        new RemovePlayerCommand(data.ClientId, clientError.RoomId, 0, _games).Execute();
 
                     ConnectionsPool.GetInstance().RemoveClient(data.ClientId);
                     break;
@@ -105,6 +104,10 @@ namespace Server.Game
                     var roomToUpdate = _games.Find((room) => room.RoomId == joinInfo.RoomId);
                     roomToUpdate.ForceUpdate();
                     var bonusesMsg = new Message(ResponseCode.BonusesCreated, JsonParser.Serialize(roomToUpdate.GetSerializableBonuses()));
+
+                    var clientConnection = ConnectionsPool.GetInstance().GetClient(data.ClientId);
+                    clientConnection.RoomId = roomToUpdate.RoomId;
+
                     ConnectionsPool.GetInstance().GetClient(data.ClientId).Send(JsonParser.Serialize(bonusesMsg));
                     break;
 
@@ -129,7 +132,7 @@ namespace Server.Game
                     _games.Add(gameRoom);
 
                     // 4. Notify event about created game and send data.
-                    var serializablePlayer = new SerializablePlayer(initialPosition, new Vector(0, 0), 0, player.Id.ToString(), team, new List<Bullet.SerializableBullet>());
+                    var serializablePlayer = new SerializablePlayer(initialPosition, new Vector(0, 0), 0, player.Id.ToString(), team, player.Health, new List<Bullet.SerializableBullet>());
                     var gameCreationMessage = new Message(ResponseCode.GameCreated, JsonParser.Serialize(serializablePlayer));
                     var bonusesMessage = new Message(ResponseCode.BonusesCreated, JsonParser.Serialize(gameRoom.GetSerializableBonuses()));
                     var gameCreationString = JsonParser.Serialize(gameCreationMessage);
@@ -155,14 +158,13 @@ namespace Server.Game
                 case RequestCode.Shoot:
                     _games.ForEach((game) =>
                     {
-                        // Add new bullet to player.
                         var playerObj = game.GetPlayer(data.ClientId);
                         var shotDirection = JsonParser.Deserialize<Vector>(data.Payload);
 
                         if (playerObj == null)
                             return;
 
-                        playerObj.AddBullet(playerObj.Position, shotDirection);
+                        playerObj.AddBullet(playerObj.Position, shotDirection, _hitsObserver);
                         game.ForceUpdate();
                     });
                     break;
@@ -199,28 +201,28 @@ namespace Server.Game
                     foreach (var gameRoomPlayer in gameRoom.Players)
                     {
                         var player = gameRoomPlayer.Value;
-                        var playerSerialize = new SerializablePlayer(player.Position, player.Direction, 0, gameRoomPlayer.Value.Id.ToString(), player.Team, player.GetBullets());
+                        var playerSerialize = new SerializablePlayer(player.Position, player.Direction, 0, gameRoomPlayer.Value.Id.ToString(), player.Team, player.Health, player.GetBullets());
                         playerSerializes.Add(playerSerialize);
                     }
                     
                     // Print game room info.
-                    Debug.WriteLine(gameRoom);
+                    // Debug.WriteLine(gameRoom);
 
                     // Send broadcast.
                     foreach (var gameRoomPlayer in gameRoom.Players)
                     {
                         var client = ConnectionsPool.GetInstance().GetClient(gameRoomPlayer.Key);   // Target client
 
-                        for (var i = 0; i < playerSerializes.Count; i++)
+                        foreach (var player in playerSerializes)
                         {
                             // Set host player
-                            if (playerSerializes[i].PlayerId == gameRoomPlayer.Key.ToString())
+                            if (player.PlayerId == gameRoomPlayer.Key.ToString())
                             {
-                                playerSerializes[i].Type = 10;
+                                player.Type = 10;
                                 continue;
                             }
 
-                            playerSerializes[i].Type = 0;
+                            player.Type = 0;
                         }
 
                         var playerSerializesString = JsonParser.Serialize(playerSerializes);

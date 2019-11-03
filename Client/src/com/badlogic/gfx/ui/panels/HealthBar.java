@@ -48,7 +48,7 @@ public class HealthBar implements CanvasElement {
     }
 
     // Get position of rendered element according to its size and window width.
-    private int  getStartPoint(int windowSize, int elementSize, Position position) {
+    private int getStartPoint(int windowSize, int elementSize, Position position) {
         int startPoint = 0;
 
         if (position == Position.END)
@@ -82,6 +82,7 @@ public class HealthBar implements CanvasElement {
 
     public void setCurrentValue(int currentValue) {
         this.currentValue = currentValue;
+        this.update();
     }
 
     public void setMaxValue(int maxValue) {

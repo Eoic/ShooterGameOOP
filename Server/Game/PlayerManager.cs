@@ -30,7 +30,7 @@ namespace Server.Game
                 gameToJoin.AddPlayer(joiningPlayer);
 
                 // 3. Notify about successful join
-                var serializablePlayer = new SerializablePlayer(initPos, new Vector(0, 0), 0, joiningPlayer.Id.ToString(), team, new List<Bullet.SerializableBullet>());
+                var serializablePlayer = new SerializablePlayer(initPos, new Vector(0, 0), 0, joiningPlayer.Id.ToString(), team, Constants.MaxHealth, new List<Bullet.SerializableBullet>());
                 var gameJoinString = new Message(ResponseCode.GameJoined, JsonParser.Serialize(serializablePlayer));
                 ConnectionsPool.GetInstance().GetClient(clientId).Send(JsonParser.Serialize(gameJoinString));
                 Debug.WriteLine("Player added to the game");
@@ -42,6 +42,9 @@ namespace Server.Game
 
         public static void RemovePlayer(List<GameRoom> games, Guid clientId, Guid roomId)
         {
+            Debug.WriteLine("Disconnected from room: " + roomId);
+            Debug.WriteLine("Player: " + clientId);
+
             // TODO: Search by room.
             int? emptyRoomIndex = null;
 

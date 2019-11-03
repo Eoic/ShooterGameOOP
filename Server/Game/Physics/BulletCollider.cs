@@ -5,15 +5,15 @@ namespace Server.Game.Physics
 {
     public class BulletCollider : ICollider
     {
-        public bool IsColliding(GameObject subject, GameObject obstacle)
-        {
-            throw new NotImplementedException();
-        }
+        public bool IsColliding(GameObject subject, GameObject obstacle) =>
+            (Math.Pow(subject.Position.X - obstacle.Position.X, 2) +
+             Math.Pow(subject.Position.Y - obstacle.Position.Y, 2) <
+             Math.Pow(Constants.MapTileHalfSize, 2));   
 
-        public bool WillCollide(Vector nextPosition, GameObject obstacle)
-        {
-            throw new NotImplementedException();
-        }
+        public bool WillCollide(Vector nextPosition, GameObject obstacle) => 
+            (Math.Pow(nextPosition.X - obstacle.Position.X, 2) + 
+             Math.Pow(nextPosition.Y - obstacle.Position.Y, 2) < 
+             Math.Pow(Constants.MapTileHalfSize, 2));  
 
         public bool IsPositionValid(Vector nextPosition)
         {

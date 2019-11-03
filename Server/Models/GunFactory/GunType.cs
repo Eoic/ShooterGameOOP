@@ -2,9 +2,10 @@
 {
     public class GunType
     {
-        public static int 
-            Pistol = 1,
-            Shotgun = 2,
-            SniperRifle = 3;
+        public static int
+            Prop = -1,
+            Pistol = 0,
+            Shotgun = 1,
+            SniperRifle = 2;
     }
 }

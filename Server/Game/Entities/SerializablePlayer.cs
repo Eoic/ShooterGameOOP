@@ -12,9 +12,10 @@ namespace Server.Game.Entities
         [DataMember] public Vector Direction { get; set; }
         [DataMember] public int Type { get; set; }
         [DataMember] public int Team { get; set; }
+        [DataMember] public int Health { get; set; }
         [DataMember] public List<Bullet.SerializableBullet> Bullets { get; set; }
 
-        public SerializablePlayer(Vector position, Vector direction, int type, string playerId, int team, List<Bullet.SerializableBullet> bullets)
+        public SerializablePlayer(Vector position, Vector direction, int type, string playerId, int team, int health, List<Bullet.SerializableBullet> bullets)
         {
             Position = position;
             Direction = direction;
@@ -22,6 +23,7 @@ namespace Server.Game.Entities
             PlayerId = playerId;
             Team = team;
             Bullets = bullets;
+            Health = health;
         }
     }
 }

@@ -22,6 +22,9 @@ public class SerializablePlayer {
     @JsonProperty("Team")
     private int team;
 
+    @JsonProperty("Health")
+    private int health;
+
     @JsonProperty("Bullets")
     private ArrayList<SerializableBullet> bullets;
 
@@ -31,13 +34,15 @@ public class SerializablePlayer {
                               @JsonProperty("Type") int type,
                               @JsonProperty("PlayerId") String playerId,
                               @JsonProperty("Team") int team,
-                              @JsonProperty("Bullets") ArrayList<SerializableBullet> bullets) {
+                              @JsonProperty("Bullets") ArrayList<SerializableBullet> bullets,
+                              @JsonProperty("Health") int health) {
         this.position = position;
         this.direction = direction;
         this.type = type;
         this.playerId = playerId;
         this.team = team;
         this.bullets = bullets;
+        this.health = health;
     }
 
     public Point getPosition() {
@@ -62,5 +67,9 @@ public class SerializablePlayer {
 
     public ArrayList<SerializableBullet> getBullets() {
         return bullets;
+    }
+
+    public int getHealth() {
+        return health;
     }
 }

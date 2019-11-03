@@ -1,9 +1,9 @@
 ﻿using Server.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Server.Game.Physics;
+using Server.Models.GunFactory;
 
 namespace Server.Game.Entities
 {
@@ -12,9 +12,11 @@ namespace Server.Game.Entities
         public Guid RoomId { get; set; }
         public int Health { get; private set; }
         public int Speed { get; set; }
+        public Weapon Weapon { get; set; }
         public int Team { get; private set; }
         public List<Bullet> Bullets { get; set; }
         public CollisionsManager PlayerCollisionsManager { get; }
+
         public Player(Guid id, Guid roomId)
         {
             Id = id;
@@ -49,37 +51,31 @@ namespace Server.Game.Entities
         }
 
         // Allocate new bullet from bullet pool
-        public void AddBullet(Vector position, Vector direction)
+        public void AddBullet(Vector position, Vector direction, Network.IObserver<string> hitsObserver)
         {
-            for (var i = 0; i < Bullets.Count; i++)
+            foreach (var bullet in Bullets.Where(bullet => bullet.IsActive == false))
             {
-                if (Bullets[i].IsActive == false)
-                {
-                    Bullets[i].SetPosition(position);
-                    Bullets[i].SetDirection(direction);
-                    Bullets[i].IsActive = true;
-                    break;
-                }
+                bullet.SetPosition(position);
+                bullet.SetDirection(direction);
+                bullet.IsActive = true;
+                bullet.Attach(hitsObserver);
+                break;
             }
         }
 
+        // Create bullet pool with primary weapon
         private void CreateBulletPool()
         {
+            var pistolFactory = new PistolFactory();
+            Weapon = pistolFactory.CreateWeapon();
+
             for (var i = 0; i < Constants.DefaultBulletPoolSize; i++)
-                Bullets.Add(new Bullet(1, "where"));
+                Bullets.Add(pistolFactory.CreateBullet());
         }
 
         // Return all active bullets for serialization
-        public List<Bullet.SerializableBullet> GetBullets()
-        {
-            var bullets = new List<Bullet.SerializableBullet>();
-
-            foreach (var activeBullet in Bullets)
-                if (activeBullet.IsActive)
-                    bullets.Add(activeBullet.GetSerializable());
-
-            return bullets;
-        }
+        public List<Bullet.SerializableBullet> GetBullets() =>
+            (from activeBullet in Bullets where activeBullet.IsActive select activeBullet.GetSerializable()).ToList();
 
         public override void Update(long delta)
         {

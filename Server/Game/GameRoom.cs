@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Server.Game.Bonuses;
+using Server.Network;
 
 namespace Server.Game
 {
@@ -30,16 +31,38 @@ namespace Server.Game
         public bool IsFull() =>
             Players.Count >= Constants.MaxPlayerCount;
 
-        public void ForceUpdate()
-        {
+        public void ForceUpdate() =>
             TimeTillRoomUpdate = 1;
-        }
 
         // Update all players.
         public void Update(long delta)
         {
-            foreach (var keyValuePair in Players)
-                keyValuePair.Value.Update(delta);
+            var confirmedHits = 0;
+
+            foreach (var keyValuePair in Players.ToList())
+            {
+                var player = keyValuePair.Value;
+                player.Update(delta);
+
+                foreach (var bullet in player.Bullets.Where(bullet => bullet.IsActive))
+                {
+                    foreach (var otherPlayer in Players.Where(otherPlayer => otherPlayer.Key != keyValuePair.Key))
+                    {
+                        if (otherPlayer.Value.Team == player.Team)
+                            continue;
+
+                        if (!bullet.Collider.IsColliding(bullet, otherPlayer.Value)) 
+                            continue;
+                        
+                        bullet.IsActive = false;
+                        otherPlayer.Value.TakeDamage(bullet.Damage);
+                        confirmedHits++;
+                    }
+                }
+            }
+
+            if (confirmedHits > 0)
+                ForceUpdate();
 
             if (TimeTillRoomUpdate == 0)
                 TimeTillRoomUpdate = Constants.RoomUpdateInterval;

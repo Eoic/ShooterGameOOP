@@ -189,6 +189,7 @@ public class Loop implements Observer {
                     // Update this player.
                     if (serializablePlayer.getType() == 10) {
                         gameRoom.getPlayers().get(0).position.set(Vector.fromPoint(serializablePlayer.getPosition()));
+                        gameManager.getWindow().getClientHealthBar().setCurrentValue(serializablePlayer.getHealth());
                     }
 
                     // Update other player in the game room.

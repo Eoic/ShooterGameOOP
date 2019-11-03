@@ -1,26 +1,32 @@
-﻿using Server.Game;
+﻿using System.Collections.Generic;
+using Server.Game;
 using Server.Game.Entities;
 using System.Runtime.Serialization;
 using System.Text;
 using Server.Game.Physics;
+using Server.Network;
 
 namespace Server.Models
 {
-    public class Bullet : GameObject
+    public class Bullet : GameObject, ISubject<string>
     {
         public int Id { get; set; }
-        public double Damage { get; set; }
+        public int Damage { get; set; }
         public string GunType { get; set; }
         public bool IsActive { get; set; }
+        public BulletCollider Collider { get; }
+        public List<IObserver<string>> Observers { get; }
         private readonly CollisionsManager _collisionsManager;
 
-        public Bullet(double damage, string gunType)
+        public Bullet(int damage, string gunType)
         {
             Damage = damage;
             GunType = gunType;
             Position = new Vector(0, 0);
             Direction = new Vector(0, 0);
-            _collisionsManager = new CollisionsManager(new BulletCollider());
+            Collider = new BulletCollider();
+            _collisionsManager = new CollisionsManager(Collider);
+            Observers = new List<IObserver<string>>();
         }
 
         public void SetPosition(Vector position)
@@ -68,5 +74,19 @@ namespace Server.Models
                 Direction = direction;
             }
         }
+
+        public void Attach(IObserver<string> observer)
+        {
+            if (Observers.Contains(observer))
+                return;
+
+            Observers.Add(observer);
+        }
+
+        public void Detach(IObserver<string> observer) =>
+            Observers.Remove(observer);
+
+        public void NotifyAllObservers(string data) =>
+            Observers.ForEach((observer) => observer.Update(data));
     }
 }
