@@ -171,8 +171,11 @@
     <Compile Include="Game\GameManagerWrapper.cs" />
     <Compile Include="Game\GameRoom.cs" />
     <Compile Include="Game\GameManager.cs" />
-    <Compile Include="Game\Physics\CollisionsDetector.cs" />
-    <Compile Include="Game\Physics\HitDetector.cs" />
+    <Compile Include="Game\Physics\BulletCollider.cs" />
+    <Compile Include="Game\Physics\CollisionsManager.cs" />
+    <Compile Include="Game\Physics\ICollider.cs" />
+    <Compile Include="Game\Physics\ICollisionsManager.cs" />
+    <Compile Include="Game\Physics\PlayerCollider.cs" />
     <Compile Include="Game\PlayerManager.cs" />
     <Compile Include="Game\SerializableGameRoom.cs" />
     <Compile Include="Game\Vector.cs" />

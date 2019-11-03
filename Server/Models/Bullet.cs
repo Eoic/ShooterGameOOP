@@ -2,6 +2,7 @@
 using Server.Game.Entities;
 using System.Runtime.Serialization;
 using System.Text;
+using Server.Game.Physics;
 
 namespace Server.Models
 {
@@ -10,8 +11,8 @@ namespace Server.Models
         public int Id { get; set; }
         public double Damage { get; set; }
         public string GunType { get; set; }
-        public Vector Direction { get; set; }
         public bool IsActive { get; set; }
+        private readonly CollisionsManager _collisionsManager;
 
         public Bullet(double damage, string gunType)
         {
@@ -19,6 +20,7 @@ namespace Server.Models
             GunType = gunType;
             Position = new Vector(0, 0);
             Direction = new Vector(0, 0);
+            _collisionsManager = new CollisionsManager(new BulletCollider());
         }
 
         public void SetPosition(Vector position)
@@ -33,8 +35,8 @@ namespace Server.Models
 
         public override void Update(long delta)
         {
-            var change = Direction * delta * Constants.DefaultBulletSpeed;
-            Position.Add(change);
+            if (!_collisionsManager.ProcessMotion(delta, this))
+                IsActive = false;
         }
 
         public override string ToString()

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Server.Game.Physics;
 
 namespace Server.Game.Entities
 {
@@ -9,11 +10,11 @@ namespace Server.Game.Entities
     {
         public Guid RoomId { get; set; }
         public int Health { get; private set; }
-        public Vector Direction { get; set; }
         public int Speed { get; set; }
         public int Team { get; private set; }
-        public List<Bullet> Bullets { get; set; } 
-
+        public List<Bullet> Bullets { get; set; }
+        public CollisionsManager PlayerCollisionsManager { get; }
+        public CollisionsManager BulletCollisionsManager { get; }
         public Player(Guid id, Guid roomId)
         {
             Id = id;
@@ -22,6 +23,8 @@ namespace Server.Game.Entities
             Direction = new Vector(0, 0);
             Health = Constants.MaxHealth;
             Bullets = new List<Bullet>();
+            PlayerCollisionsManager = new CollisionsManager(new PlayerCollider());
+            BulletCollisionsManager = new CollisionsManager(new BulletCollider());
             CreateBulletPool();
         }
 
@@ -81,31 +84,14 @@ namespace Server.Game.Entities
 
         public override void Update(long delta)
         {
-            var change = Direction * Speed * delta;
-            var newPosition = Position + change;
+            // Update player position.
+            PlayerCollisionsManager.ProcessMotion(delta, this);
 
-            // Update player position
-            if (newPosition.X <= Map.Width - Constants.MapTileSize && newPosition.X >= 0 && newPosition.Y <= Map.Height - Constants.MapTileSize && newPosition.Y >= 0)
-                Position.Add(change);
-
-            // Update its bullets
+            // Update bullets
             for (var i = 0; i < Bullets.Count; i++)
             {
                 if (Bullets[i].IsActive == false)
                     continue;
-
-                var position = Bullets[i].Position;
-                var xPos = position.X;
-                var yPos = position.Y;
-
-                if (xPos < -Constants.MapTileHalfSize ||
-                    xPos > Constants.MapWidth * Constants.MapTileSize - Constants.MapTileHalfSize ||
-                    yPos < -Constants.MapTileHalfSize ||
-                    yPos > Constants.MapHeight * Constants.MapTileSize - Constants.MapTileHalfSize)
-                {
-                    Bullets[i].IsActive = false;
-                    continue;
-                }
 
                 Bullets[i].Update(delta);
             }

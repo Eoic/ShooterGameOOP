@@ -8,10 +8,12 @@ namespace Server.Game.Entities
     {
         public Guid Id { get; protected set; }
         public Vector Position { get; set; }
+        public Vector Direction { get; set; }
 
         protected GameObject()
         {
             Position = new Vector();
+            Direction = new Vector();
         }
 
         public abstract void Update(long delta);
