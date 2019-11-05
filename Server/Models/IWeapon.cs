@@ -8,7 +8,6 @@ namespace Server.Models
 {
     public interface IWeapon
     {
-        //int Ammo { get; }
         int getAmmo();
     }
 }

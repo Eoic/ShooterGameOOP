@@ -9,10 +9,9 @@ namespace Server.Models
     {
         public ExtraAmmoDecorator(IWeapon w) : base(w)
         {
-            base._weapon = w;
+            
         }
-
-        public new int getAmmo()
+        public int getAmmo()
         {
             return base._weapon.getAmmo() + 50;
         }
