@@ -2,7 +2,7 @@
 
 namespace Server.Models
 {
-    public class Weapon : WeaponPrototype
+    public class Weapon : WeaponPrototype, IWeapon
     {
         public Weapon()
         {
@@ -22,9 +22,9 @@ namespace Server.Models
             return (Weapon)this.MemberwiseClone();
         }
 
-        public void UpdateRate(IRateStrategy s)
+        public int getAmmo()
         {
-            Rate = s.Rate();
+            return Ammo;
         }
 
         public class Builder

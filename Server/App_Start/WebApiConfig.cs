@@ -21,10 +21,11 @@ namespace Server
             );
         }
 
-        //[STAThread]
-        //static void Main()
-        //{
-        //    Console.ReadLine();
-        //}
+        [STAThread]
+        static void Main()
+        {
+            Console.WriteLine("Hi");
+            Console.ReadLine();
+        }
     }
 }

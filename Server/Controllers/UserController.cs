@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using Server.Models.GunFactory;
+using System.Diagnostics;
 
 namespace Server.Controllers
 {
@@ -17,8 +18,13 @@ namespace Server.Controllers
         [HttpGet]
         public Weapon GetPistol()
         {
-            Weapon weapon = new PistolFactory().CreateWeapon();
-            return weapon;
+            //Weapon weapon = new PistolFactory().CreateWeapon();
+
+            IWeapon weapon = new Weapon();
+            Debug.WriteLine(weapon.getAmmo());
+            weapon = new ExtraAmmoDecorator(weapon);
+            Debug.WriteLine(weapon.getAmmo());
+            return new Weapon();
         }
     }
 }

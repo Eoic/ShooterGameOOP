@@ -508,7 +508,6 @@ D:\Git\Objektinis programu projektavimas\DesignPatterns\Server\bin\System.Web.Ht
 D:\Git\Objektinis programu projektavimas\DesignPatterns\Server\bin\System.Web.Http.Cors.xml
 D:\Git\Objektinis programu projektavimas\DesignPatterns\Server\bin\System.Web.Http.WebHost.xml
 D:\Git\Objektinis programu projektavimas\DesignPatterns\Server\obj\Debug\Server.csprojAssemblyReference.cache
-D:\Git\Objektinis programu projektavimas\DesignPatterns\Server\obj\Debug\Server.csproj.CoreCompileInputs.cache
 D:\Git\Objektinis programu projektavimas\DesignPatterns\Server\obj\Debug\Server.csproj.CopyComplete
 D:\Git\Objektinis programu projektavimas\DesignPatterns\Server\obj\Debug\Server.dll
 D:\Git\Objektinis programu projektavimas\DesignPatterns\Server\obj\Debug\Server.pdb
