@@ -20,10 +20,20 @@ namespace Server.Controllers
         {
             //Weapon weapon = new PistolFactory().CreateWeapon();
 
+            // DECORATOR TEST
+
             IWeapon weapon = new Weapon();
-            Debug.WriteLine(weapon.getAmmo());
+            Debug.WriteLine(weapon.getInfo());
+            weapon = new ExtraRPSDecorator(weapon);
+            Debug.WriteLine(weapon.getInfo());
             weapon = new ExtraAmmoDecorator(weapon);
-            Debug.WriteLine(weapon.getAmmo());
+            Debug.WriteLine(weapon.getInfo());
+
+            IWeapon weapon2 = new ExtraRPSDecorator(new ExtraAmmoDecorator(new Weapon()));
+            Debug.WriteLine(weapon2.getInfo());
+
+            // --------------
+
             return new Weapon();
         }
     }

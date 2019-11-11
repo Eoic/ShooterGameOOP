@@ -7,13 +7,16 @@ namespace Server.Models
 {
     public class ExtraAmmoDecorator : WeaponDecorator
     {
-        public ExtraAmmoDecorator(IWeapon w) : base(w)
+        public ExtraAmmoDecorator(IWeapon w) : base(w) { }
+
+        public override string getInfo()
         {
-            
+            return weapon.getInfo() + " + added " + addAmmo().ToString() + " ammo";
         }
-        public int getAmmo()
+
+        private int addAmmo()
         {
-            return base._weapon.getAmmo() + 50;
+            return 50;
         }
     }
 }

@@ -8,6 +8,6 @@ namespace Server.Models
 {
     public interface IWeapon
     {
-        int getAmmo();
+        string getInfo();
     }
 }

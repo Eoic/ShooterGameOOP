@@ -7,6 +7,7 @@ namespace Server.Models
         public Weapon()
         {
             Ammo = 100;
+            Rate = 1.00;
         }
 
         public int Id { get; set; }
@@ -21,10 +22,9 @@ namespace Server.Models
         {
             return (Weapon)this.MemberwiseClone();
         }
-
-        public int getAmmo()
+        public string getInfo()
         {
-            return Ammo;
+            return "Basic";
         }
 
         public class Builder

@@ -5,18 +5,15 @@ using System.Web;
 
 namespace Server.Models
 {
-    public class WeaponDecorator : IWeapon
+    public abstract class WeaponDecorator : IWeapon
     {
-        protected IWeapon _weapon;
+        protected IWeapon weapon;
 
         public WeaponDecorator(IWeapon w)
         {
-            _weapon = w;
+            weapon = w;
         }
 
-        public int getAmmo()
-        {
-            return _weapon.getAmmo();
-        }
+        public abstract string getInfo();
     }
 }
