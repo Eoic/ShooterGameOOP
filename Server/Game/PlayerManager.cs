@@ -50,9 +50,9 @@ namespace Server.Game
 
             for (var i = 0; i < games.Count; i++)
             {
-                var playerInThisRoom = games[i].Players.ContainsKey(clientId);
+                var player = games[i].Players.ContainsKey(clientId);
 
-                if (!playerInThisRoom)
+                if (!player)
                     continue;
 
                 games[i].Players.Remove(clientId);

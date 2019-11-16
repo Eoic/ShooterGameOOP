@@ -221,11 +221,9 @@ public class Loop implements Observer {
                 createBonuses(serializableBonuses);
             });
         }
-        // # Host player is quitting the game
+        // # Player is quitting the game
         else if (message.getType() == ResponseCode.GameQuit) {
-            // TODO: Remove player from the game room by id.
-            // System.out.println(message.getPayload());
-            // gameRoom.getPlayers().remove(0);
+            roomPlayers.remove(message.getPayload());
         }
     }
 

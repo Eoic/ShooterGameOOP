@@ -25,7 +25,7 @@ public class JsonParser {
         try {
             return objectMapper.readValue(value, valueType);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            System.out.println("Received corrupted message.");
             return null;
         }
     }

@@ -33,6 +33,7 @@ public class Window extends JFrame implements ComponentListener {
         this.height = height;
         this.setSize(width, height);
         this.setVisible(true);
+        this.setFocusable(true);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.getContentPane().addComponentListener(this);

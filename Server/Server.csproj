@@ -180,6 +180,7 @@
     <Compile Include="Game\Physics\ICollisionsManager.cs" />
     <Compile Include="Game\Physics\PlayerCollider.cs" />
     <Compile Include="Game\PlayerManager.cs" />
+    <Compile Include="Game\RequestsHandler.cs" />
     <Compile Include="Game\SerializableGameRoom.cs" />
     <Compile Include="Game\Vector.cs" />
     <Compile Include="Global.asax.cs">

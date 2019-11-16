@@ -32,6 +32,7 @@ public class HealthBar implements CanvasElement {
         var foregroundWidth = ((maxValue - currentValue) * this.width) / maxValue;
         this.foreground.setBounds((int)startPoint.getX() + this.xOffset, (int)startPoint.getY() + this.yOffset, this.width - foregroundWidth, this.height);
         this.background.setBounds((int)startPoint.getX() + this.xOffset + this.width - foregroundWidth, (int)startPoint.getY() + this.yOffset, foregroundWidth, this.height);
+        window.revalidate();
     }
 
     @Override

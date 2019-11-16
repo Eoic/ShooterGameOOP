@@ -21,7 +21,7 @@ public class Constants {
     public static final int
             WIDTH = 800,
             HEIGHT = 600,
-            BUFFER_COUNT = 2,
+            BUFFER_COUNT = 3,
             SPRITE_WIDTH = 128,
             SPRITE_HEIGHT = 128,
             SPRITE_WIDTH_HALF = 64,
@@ -33,7 +33,6 @@ public class Constants {
             DEFAULT_PLAYER_SPEED = 1,
             DEFAULT_PLAYER_BULLET_COUNT = 100,
             DEFAULT_BULLET_SPEED = 1,
-            DEFUALT_PANEL_BORDER_WIDTH = 3,
             TEAM_COUNT = 2;
 
     public static final int
