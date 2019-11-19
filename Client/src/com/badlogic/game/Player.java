@@ -12,6 +12,7 @@ import com.badlogic.util.Vector;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 public class Player extends GameObject {
     private MessageEmitter messageEmitter;
@@ -19,6 +20,7 @@ public class Player extends GameObject {
     private JsonParser jsonParser;
     private BufferedImage sprite;
     private Vector direction;
+    private String name;
     private int speed;
     private int team;
 
@@ -26,6 +28,7 @@ public class Player extends GameObject {
         this.bulletPool = new BulletPool(Constants.DEFAULT_PLAYER_BULLET_COUNT, gameManager, SpriteKeys.BULLET_TYPE_TWO);
         this.sprite = Assets.getSprite(SpriteKeys.PLAYER);
         this.speed = Constants.DEFAULT_PLAYER_SPEED;
+        this.name = "PLAYER_" + id.substring(0, 5);
         this.messageEmitter = messageEmitter;
         this.jsonParser = new JsonParser();
         this.direction = new Vector();
@@ -90,6 +93,8 @@ public class Player extends GameObject {
         var offset = gameManager.getCamera().getOffset();
         int posX = (int) (this.position.getX() - offset.getX()) - Constants.SPRITE_WIDTH_HALF;
         int posY = (int) (this.position.getY() - offset.getY()) - Constants.SPRITE_HEIGHT_HALF;
+        var nameOffset = Constants.SPRITE_WIDTH / name.length();
+        graphics.drawString(name, posX + (int)(nameOffset - name.length() / 2.0f), posY - 5);
         graphics.drawImage(sprite, posX, posY, null);
         bulletPool.getBullets().forEach(bullet -> bullet.render(graphics));
     }
@@ -100,5 +105,9 @@ public class Player extends GameObject {
 
     public void setTeam(int team) {
         this.team = team;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

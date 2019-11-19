@@ -7,6 +7,7 @@
             Fps = 60,
             PlayerUpdateInterval = 30,
             RoomUpdateInterval = 60,
+            GameStartCountdown = 2000,
 
             //Players
             MaxPlayerCount = 10,

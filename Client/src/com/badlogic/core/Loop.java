@@ -8,6 +8,7 @@ import com.badlogic.game.GameManager;
 import com.badlogic.game.Player;
 import com.badlogic.game.RemotePlayer;
 import com.badlogic.gfx.Assets;
+import com.badlogic.gfx.HeadUpDisplay;
 import com.badlogic.gfx.Map;
 import com.badlogic.network.GameRoom;
 import com.badlogic.network.Message;
@@ -21,6 +22,7 @@ import com.badlogic.util.*;
 import com.badlogic.util.Point;
 import com.badlogic.util.Vector;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
@@ -30,6 +32,7 @@ import java.util.concurrent.*;
 public class Loop implements Observer {
     // Status
     private boolean clientInGame = false;
+    private HeadUpDisplay hud;
 
     // Game loop
     private static final long timeStep = 1000 / Constants.FPS;
@@ -62,6 +65,7 @@ public class Loop implements Observer {
         player = new Player(gameManager, messageEmitter);
         bonuses = new ArrayList<>();
         roomPlayers = new HashMap<>();
+        hud = new HeadUpDisplay(gameManager.getWindow());
         this.initialize();
     }
 
@@ -139,6 +143,9 @@ public class Loop implements Observer {
         }
 
         var graphics = bufferStrategy.getDrawGraphics();
+        graphics.setColor(Color.WHITE);
+        graphics.setFont(new Font("TimesRoman", Font.PLAIN, 24));
+        ((Graphics2D)graphics).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         graphics.clearRect(0, 0, gameManager.getWindow().getWidth(), gameManager.getWindow().getHeight());
 
         if (clientInGame) {
@@ -146,6 +153,7 @@ public class Loop implements Observer {
             bonuses.forEach(bonus -> bonus.render(graphics));
             roomPlayers.forEach((key, value) -> value.render(graphics));
             player.render(graphics);
+            hud.render(graphics, roomPlayers, gameRoom.getPlayers().get(0).getTeam());
         }
 
         bufferStrategy.show();
@@ -201,6 +209,9 @@ public class Loop implements Observer {
                             roomPlayer.setPosition(Vector.fromPoint(serializablePlayer.getPosition()));
                             roomPlayer.setDirection(Vector.fromPoint(serializablePlayer.getDirection()));
                             roomPlayer.parseBullets(serializablePlayer.getBullets());
+                            roomPlayer.setHealth(serializablePlayer.getHealth());
+                            roomPlayer.setId(serializablePlayer.getPlayerId());
+                            roomPlayer.setTeam(serializablePlayer.getTeam());
                             roomPlayers.put(serializablePlayer.getPlayerId(), roomPlayer);
                         }
                         // Old player
@@ -209,6 +220,7 @@ public class Loop implements Observer {
                             roomPlayer.setPosition(Vector.fromPoint(serializablePlayer.getPosition()));
                             roomPlayer.setDirection(Vector.fromPoint(serializablePlayer.getDirection()));
                             roomPlayer.parseBullets(serializablePlayer.getBullets());
+                            roomPlayer.setHealth(serializablePlayer.getHealth());
                         }
                     }
                 });

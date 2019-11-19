@@ -16,7 +16,8 @@ public class Constants {
             TITLE = "BadLogic",
             SPRITE_SHEET_INFO = "/textures/spritesheet.txt",
             SPRITE_SHEET_PATH = "/textures/spritesheet.png",
-            SOCKET_CONNECTION_STRING = "ws://localhost:44327/api/messages";
+            SOCKET_CONNECTION_STRING = "ws://localhost:44327/api/messages",
+            DEFAULT_PLAYER_NAME = "UNNAMED_PLAYER";
 
     public static final int
             WIDTH = 800,
@@ -40,5 +41,6 @@ public class Constants {
             MAP_HEIGHT = 15,
             MAP_TILE_SIZE = 128,
             MAP_PIXEL_WIDTH = MAP_WIDTH * MAP_TILE_SIZE,
-            MAP_PIXEL_HEIGHT = MAP_HEIGHT * MAP_TILE_SIZE;
+            MAP_PIXEL_HEIGHT = MAP_HEIGHT * MAP_TILE_SIZE,
+            HEALTH_MAX = 100;
 }

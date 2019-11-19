@@ -12,7 +12,8 @@ namespace Server.Game
     public class GameRoom
     {
         public Guid RoomId { get; } = Guid.NewGuid();
-        public int TimeTillRoomUpdate { get; set; } = Constants.RoomUpdateInterval;
+        public int TimeTillRoomUpdate { get; private set; } = Constants.RoomUpdateInterval;
+        public int TimeTillGameStart { get; private set; } = Constants.GameStartCountdown;
         public Dictionary<Guid, Player> Players { get; } = new Dictionary<Guid, Player>();
         public List<Bonus> Bonuses { get; private set; } = new List<Bonus>();
 
@@ -42,6 +43,12 @@ namespace Server.Game
             foreach (var keyValuePair in Players.ToList())
             {
                 var player = keyValuePair.Value;
+
+
+                if (player == null)
+                    continue;
+
+                
                 player.Update(delta);
 
                 foreach (var bullet in player.Bullets.Where(bullet => bullet.IsActive))
@@ -68,6 +75,9 @@ namespace Server.Game
                 TimeTillRoomUpdate = Constants.RoomUpdateInterval;
 
             TimeTillRoomUpdate--;
+
+            if (TimeTillGameStart > 0)
+                TimeTillGameStart--;
         }
 
         public void SetBonuses(List<Bonus> bonuses) => Bonuses = bonuses;

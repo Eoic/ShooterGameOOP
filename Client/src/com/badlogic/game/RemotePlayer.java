@@ -12,17 +12,23 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class RemotePlayer extends GameObject {
+    private ArrayList<RemoteBullet> bullets;
+    private Vector direction;
     private Window window;
     private Camera camera;
-    private Vector direction;
+    private String name;
+    private String id;
+    private int team;
+    private int health;
     private int speed;
-    private ArrayList<RemoteBullet> bullets;
 
     public RemotePlayer(Window window, Camera camera, boolean isFriendly) {
         this.window = window;
         this.camera = camera;
         this.direction = new Vector(0, 0);
         this.speed = Constants.DEFAULT_PLAYER_SPEED;
+        this.name = Constants.DEFAULT_PLAYER_NAME;
+        this.health = Constants.HEALTH_MAX;
 
         if (!isFriendly) {
             this.sprite = Assets.getSprite(SpriteKeys.ENEMY_PLAYER);
@@ -78,5 +84,39 @@ public class RemotePlayer extends GameObject {
 
     public void setPosition(Vector position) {
         this.position = position;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+        this.name = "PLAYER_" + id.substring(0, 5);
+    }
+
+    public int getTeam() {
+        return team;
+    }
+
+    public void setTeam(int team) {
+        this.team = team;
     }
 }
