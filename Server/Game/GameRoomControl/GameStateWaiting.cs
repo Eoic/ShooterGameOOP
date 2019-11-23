@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Server.Game.GameRoom
+namespace Server.Game.GameRoomControl
 {
-    // Game ended
-    public class GameStateEnded : IGameState
+    // Waiting for players to join.
+    public class GameStateWaiting : IGameState
     {
         public IGameContext Context { get; }
 
-        public GameStateEnded(IGameContext context) =>
+        public GameStateWaiting(IGameContext context) =>
             Context = context;
 
         public void WaitForPlayers()

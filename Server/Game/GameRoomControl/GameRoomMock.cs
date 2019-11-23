@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Server.Game.GameRoom
+namespace Server.Game.GameRoomControl
 {
     public class GameRoomMock : IGameContext
     {

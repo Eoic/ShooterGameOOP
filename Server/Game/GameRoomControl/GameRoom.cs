@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Server.Game.Bonuses;
 
-namespace Server.Game.GameRoom
+namespace Server.Game.GameRoomControl
 {
     public class GameRoom : IGameContext
     {
@@ -45,7 +45,7 @@ namespace Server.Game.GameRoom
 
             foreach (var keyValuePair in Players.ToList())
             {
-                var player = keyValuePair.Value
+                var player = keyValuePair.Value;
 
                 if (player == null)
                     continue;
