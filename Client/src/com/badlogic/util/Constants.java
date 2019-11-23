@@ -20,8 +20,8 @@ public class Constants {
             DEFAULT_PLAYER_NAME = "UNNAMED_PLAYER";
 
     public static final int
-            WIDTH = 800,
-            HEIGHT = 600,
+            WIDTH = 1000,
+            HEIGHT = 800,
             BUFFER_COUNT = 3,
             SPRITE_WIDTH = 128,
             SPRITE_HEIGHT = 128,

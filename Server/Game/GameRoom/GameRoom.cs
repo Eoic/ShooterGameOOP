@@ -6,15 +6,19 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Server.Game.Bonuses;
 
-namespace Server.Game
+namespace Server.Game.GameRoom
 {
-    public class GameRoom
+    public class GameRoom : IGameContext
     {
+        public IGameState State;
         public Guid RoomId { get; } = Guid.NewGuid();
         public int TimeTillRoomUpdate { get; private set; } = Constants.RoomUpdateInterval;
         public int TimeTillGameStart { get; private set; } = Constants.GameStartCountdown;
         public Dictionary<Guid, Player> Players { get; } = new Dictionary<Guid, Player>();
         public List<Bonus> Bonuses { get; private set; } = new List<Bonus>();
+
+        public GameRoom() =>
+            State = new GameStateWaiting(this);
 
         public void AddPlayer(Player player)
         {
@@ -41,12 +45,10 @@ namespace Server.Game
 
             foreach (var keyValuePair in Players.ToList())
             {
-                var player = keyValuePair.Value;
-
+                var player = keyValuePair.Value
 
                 if (player == null)
                     continue;
-
                 
                 player.Update(delta);
 
