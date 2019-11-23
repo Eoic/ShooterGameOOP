@@ -43,6 +43,8 @@ public class RemotePlayer extends GameObject {
     public void render(Graphics graphics) {
         int posX = (int)position.getX() - (int)camera.getOffset().getX() - Constants.SPRITE_WIDTH_HALF;
         int posY = (int)position.getY() - (int)camera.getOffset().getY() - Constants.SPRITE_WIDTH_HALF;
+        var nameOffset = Constants.SPRITE_WIDTH / name.length();
+        graphics.drawString(name, posX + (int)(nameOffset - name.length() / 2.0f), posY - 5);
         graphics.drawImage(this.sprite, posX, posY, null);
         this.renderBullets(graphics, camera);
     }

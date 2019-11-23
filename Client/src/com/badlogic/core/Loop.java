@@ -54,6 +54,7 @@ public class Loop implements Observer {
     private Map map;
 
     public Loop() {
+        Assets.load();
         messageExecutor = Executors.newSingleThreadExecutor();
         messageEmitter = new MessageEmitter();
         executor = Executors.newSingleThreadScheduledExecutor();
@@ -95,9 +96,6 @@ public class Loop implements Observer {
 
         // Set event listener
         messageEmitter.addListener(this);
-
-        // Load graphics.
-        Assets.load();
 
         // SET UI EVENTS
         // # Create game
