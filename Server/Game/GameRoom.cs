@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Server.Game.Bonuses;
-using Server.Network;
 
 namespace Server.Game
 {
@@ -55,15 +54,16 @@ namespace Server.Game
                 {
                     foreach (var otherPlayer in Players.Where(otherPlayer => otherPlayer.Key != keyValuePair.Key))
                     {
-                        if (otherPlayer.Value.Team == player.Team)
+                        if (!bullet.Collider.IsColliding(bullet, otherPlayer.Value))
                             continue;
 
-                        if (!bullet.Collider.IsColliding(bullet, otherPlayer.Value)) 
-                            continue;
-                        
                         bullet.IsActive = false;
-                        otherPlayer.Value.TakeDamage(bullet.Damage);
                         confirmedHits++;
+
+                        if (otherPlayer.Value.Team == player.Team)
+                            continue;
+      
+                        otherPlayer.Value.TakeDamage(bullet.Damage);
                     }
                 }
             }

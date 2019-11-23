@@ -21,6 +21,7 @@ public class Player extends GameObject {
     private BufferedImage sprite;
     private Vector direction;
     private String name;
+    private int ammo;
     private int speed;
     private int team;
 
@@ -33,6 +34,7 @@ public class Player extends GameObject {
         this.jsonParser = new JsonParser();
         this.direction = new Vector();
         this.gameManager = gameManager;
+        this.ammo = Constants.DEFAULT_AMMO;
     }
 
     @Override
@@ -77,10 +79,11 @@ public class Player extends GameObject {
         gameManager.getCamera().follow(this, gameManager.getWindow().getSize());
 
         // Launch bullet on mouse click.
-        if (gameManager.getInputManager().lmb) {
+        if (gameManager.getInputManager().lmb && ammo > 0) {
             Vector direction = bulletPool.launch(gameManager.getInputManager().getMouseClickPoint(), this.position);
             messageEmitter.send(jsonParser.serialize(new Message(RequestCode.Shoot, jsonParser.serialize(direction.getSerializable()))));
             gameManager.getInputManager().lmb = false;
+            ammo--;
         }
 
         // Update bullets.
@@ -94,6 +97,8 @@ public class Player extends GameObject {
         int posX = (int) (this.position.getX() - offset.getX()) - Constants.SPRITE_WIDTH_HALF;
         int posY = (int) (this.position.getY() - offset.getY()) - Constants.SPRITE_HEIGHT_HALF;
         var nameOffset = Constants.SPRITE_WIDTH / name.length();
+        var window = gameManager.getWindow();
+        graphics.drawString("AMMO: " + ammo, window.getWidth() / 2 - 375, window.getHeight() - 80);
         graphics.drawString(name, posX + (int)(nameOffset - name.length() / 2.0f), posY - 5);
         graphics.drawImage(sprite, posX, posY, null);
         bulletPool.getBullets().forEach(bullet -> bullet.render(graphics));
@@ -109,5 +114,13 @@ public class Player extends GameObject {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getAmmo() {
+        return ammo;
+    }
+
+    public void setAmmo(int ammo) {
+        this.ammo = ammo;
     }
 }

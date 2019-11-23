@@ -27,6 +27,12 @@ namespace Server.Models
             return "Basic";
         }
 
+        public void DepleteAmmo()
+        {
+            if (Ammo > 0)
+                Ammo--;
+        }
+
         public class Builder
         {
             private static volatile Builder _instance;

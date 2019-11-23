@@ -34,7 +34,8 @@ public class Constants {
             DEFAULT_PLAYER_SPEED = 1,
             DEFAULT_PLAYER_BULLET_COUNT = 100,
             DEFAULT_BULLET_SPEED = 1,
-            TEAM_COUNT = 2;
+            TEAM_COUNT = 2,
+            DEFAULT_AMMO = 100;
 
     public static final int
             MAP_WIDTH = 20,

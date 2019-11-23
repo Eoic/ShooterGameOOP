@@ -16,6 +16,7 @@ namespace Server.Game.Entities
         public int Team { get; private set; }
         public List<Bullet> Bullets { get; set; }
         public CollisionsManager PlayerCollisionsManager { get; }
+        public bool IsAlive { get => (Health > 0); }
 
         public Player(Guid id, Guid roomId)
         {
@@ -53,13 +54,18 @@ namespace Server.Game.Entities
         // Allocate new bullet from bullet pool
         public void AddBullet(Vector position, Vector direction, Network.IObserver<string> hitsObserver)
         {
-            foreach (var bullet in Bullets.Where(bullet => bullet.IsActive == false))
+            if (Weapon.Ammo > 0)
             {
-                bullet.SetPosition(position);
-                bullet.SetDirection(direction);
-                bullet.IsActive = true;
-                bullet.Attach(hitsObserver);
-                break;
+                Weapon.DepleteAmmo();
+
+                foreach (var bullet in Bullets.Where(bullet => bullet.IsActive == false))
+                {
+                    bullet.SetPosition(position);
+                    bullet.SetDirection(direction);
+                    bullet.IsActive = true;
+                    bullet.Attach(hitsObserver);
+                    break;
+                }
             }
         }
 
