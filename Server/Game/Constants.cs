@@ -7,7 +7,7 @@
             Fps = 60,
             PlayerUpdateInterval = 30,
             RoomUpdateInterval = 60,
-            GameStartCountdown = 2000,
+            GameStartCountdown = 1875, // Approx. 30 seconds.
 
             //Players
             MaxPlayerCount = 10,
@@ -40,6 +40,19 @@
             // Guns
             PistolDamage = 10,
             ShotgunDamage = 20,
-            SniperRifleDamage = 50;
+            SniperRifleDamage = 50,
+
+            // Game time (seconds)
+            GameWaitTime = 30,
+            GameReadyTime = 5,
+            GameDurationTime = 90,
+
+            // Team types
+            TeamA = 0,
+            TeamB = 1;
+
+        public static string
+            WaitingForPlayers = "Waiting for players to connect",
+            GameStarting = "Game starting in";
     }
 }

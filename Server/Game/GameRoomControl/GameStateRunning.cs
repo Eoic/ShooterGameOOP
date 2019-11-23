@@ -30,7 +30,7 @@ namespace Server.Game.GameRoomControl
 
         public void EndGame()
         {
-            throw new NotImplementedException();
+            // TODO: 
         }
     }
 }

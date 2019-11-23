@@ -54,6 +54,7 @@ namespace Server.Game
         public static void OnGameJoin(Message data, List<GameRoom> games)
         {
             // Add player to game room
+            var client = ConnectionsPool.GetInstance().GetClient(data.ClientId);
             var joinInfo = JsonParser.Deserialize<GameRoom.SerializableGameRoomId>(data.Payload);
             new AddPlayerCommand(data.ClientId, joinInfo.RoomId, joinInfo.Team, games).Execute();
 
@@ -63,9 +64,11 @@ namespace Server.Game
 
             // Get other game room info and sent to client
             var bonusesMsg = new Message(ResponseCode.BonusesCreated, JsonParser.Serialize(roomToUpdate.GetSerializableBonuses()));
-            var clientConnection = ConnectionsPool.GetInstance().GetClient(data.ClientId);
-            clientConnection.RoomId = roomToUpdate.RoomId;
-            ConnectionsPool.GetInstance().GetClient(data.ClientId).Send(JsonParser.Serialize(bonusesMsg));
+            var timerObj = new SerializableTimer(roomToUpdate.CurrentTimerLabel, roomToUpdate.TimeTillStateChange * 16 / 1000);
+            var timerMsg = new Message(ResponseCode.NewTimerValue, JsonParser.Serialize(timerObj));
+            client.RoomId = roomToUpdate.RoomId;
+            client.Send(JsonParser.Serialize(bonusesMsg));
+            client.Send(JsonParser.Serialize(timerMsg));
         }
 
         // When player wants to create new game
@@ -93,10 +96,13 @@ namespace Server.Game
             var serializablePlayer = new SerializablePlayer(initialPosition, new Vector(0, 0), 0, player.Id.ToString(), team, player.Health, new List<Bullet.SerializableBullet>());
             var gameCreationMessage = new Message(ResponseCode.GameCreated, JsonParser.Serialize(serializablePlayer));
             var bonusesMessage = new Message(ResponseCode.BonusesCreated, JsonParser.Serialize(gameRoom.GetSerializableBonuses()));
+            var timerMessage = new Message(ResponseCode.NewTimerValue, JsonParser.Serialize(new SerializableTimer(gameRoom.CurrentTimerLabel, gameRoom.TimeTillStateChange * 16 / 1000)));
             var gameCreationString = JsonParser.Serialize(gameCreationMessage);
             var bonusesString = JsonParser.Serialize(bonusesMessage);
+            var timerString = JsonParser.Serialize(timerMessage);
             client.Send(gameCreationString);
             client.Send(bonusesString);
+            client.Send(timerString);
         }
 
         // When player quits the game

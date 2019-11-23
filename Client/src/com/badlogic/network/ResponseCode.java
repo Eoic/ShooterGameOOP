@@ -27,5 +27,8 @@ public class ResponseCode {
         GameListFormed = 6,
 
         // Player joined client's room
-        NewPlayerJoined  = 7;
+        NewPlayerJoined = 7,
+
+        // Timer updated.
+        NewTimerValue = 8;
 }

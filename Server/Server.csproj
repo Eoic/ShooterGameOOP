@@ -170,8 +170,8 @@
     <Compile Include="Game\Entities\Player.cs" />
     <Compile Include="Game\Entities\GameObject.cs" />
     <Compile Include="Game\Entities\SerializablePlayer.cs" />
+    <Compile Include="Game\Entities\SerializableTimer.cs" />
     <Compile Include="Game\GameManagerWrapper.cs" />
-    <Compile Include="Game\GameRoomControl\GameRoomMock.cs" />
     <Compile Include="Game\GameRoomControl\IGameContext.cs" />
     <Compile Include="Game\GameRoomControl\GameRoom.cs" />
     <Compile Include="Game\GameManager.cs" />

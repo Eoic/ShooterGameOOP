@@ -3,7 +3,6 @@ package com.badlogic.gfx;
 import com.badlogic.gfx.ui.*;
 import com.badlogic.gfx.ui.panels.HealthBar;
 import com.badlogic.gfx.ui.panels.TeamSelection;
-import com.badlogic.network.Message;
 import com.badlogic.network.MessageEmitter;
 import com.badlogic.serializables.SerializableGame;
 import com.badlogic.ui.GameList;
@@ -15,7 +14,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
-import java.util.function.Supplier;
 
 public class Window extends JFrame implements ComponentListener {
     private int width;
@@ -26,6 +24,7 @@ public class Window extends JFrame implements ComponentListener {
     private JButton quitGameBtn;
     private HealthBar clientHealthBar;
     private TeamSelection teamSelectionPanel;
+    private Timer timer;
     private CanvasElementCollection canvasElementCollection;
 
     private Window(int width, int height) {
@@ -45,8 +44,8 @@ public class Window extends JFrame implements ComponentListener {
         this.canvasElementCollection = new CanvasElementCollection();
         this.canvas.setFocusable(false);
         this.clientHealthBar = (HealthBar) CanvasFactory.createPanel(CanvasElementType.HealthBar, this, Position.CENTER, Position.END, 750, 35);
-        this.teamSelectionPanel = new TeamSelection(this, new String[]{"BLUE", "RED" });
-        teamSelectionPanel.setVisible(false);
+        this.teamSelectionPanel = new TeamSelection(this, new String[]{"A", "B" });
+        this.teamSelectionPanel.setVisible(false);
         assert clientHealthBar != null;
         this.clientHealthBar.setOffset(0, -31);
         this.canvasElementCollection.attach(clientHealthBar);
@@ -121,6 +120,7 @@ public class Window extends JFrame implements ComponentListener {
         this.gameList.setSize(width, height);
         this.gameList.revalidate();
         this.canvasElementCollection.refresh();
+        this.quitGameBtn.setBounds(this.width - 160, 10, 150, 35);
         this.revalidate();
     }
 

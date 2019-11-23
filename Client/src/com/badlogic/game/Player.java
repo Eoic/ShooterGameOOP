@@ -99,7 +99,7 @@ public class Player extends GameObject {
         var nameOffset = Constants.SPRITE_WIDTH / name.length();
         var window = gameManager.getWindow();
         graphics.drawString("AMMO: " + ammo, window.getWidth() / 2 - 375, window.getHeight() - 80);
-        graphics.drawString(name, posX + (int)(nameOffset - name.length() / 2.0f), posY - 5);
+        graphics.drawString(name, posX + (int)(nameOffset - (name.length() + 20) / 2.0f), posY - 5);
         graphics.drawImage(sprite, posX, posY, null);
         bulletPool.getBullets().forEach(bullet -> bullet.render(graphics));
     }

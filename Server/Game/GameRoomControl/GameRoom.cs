@@ -5,17 +5,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Server.Game.Bonuses;
+using Server.Utilities;
+using Server.Network;
 
 namespace Server.Game.GameRoomControl
 {
     public class GameRoom : IGameContext
     {
-        public IGameState State;
+        public IGameState State { get; set; }
         public Guid RoomId { get; } = Guid.NewGuid();
         public int TimeTillRoomUpdate { get; private set; } = Constants.RoomUpdateInterval;
-        public int TimeTillGameStart { get; private set; } = Constants.GameStartCountdown;
         public Dictionary<Guid, Player> Players { get; } = new Dictionary<Guid, Player>();
         public List<Bonus> Bonuses { get; private set; } = new List<Bonus>();
+        public int TimeTillStateChange { get; set; } = Constants.GameWaitTime * 1000 / 16;
+        public string CurrentTimerLabel { get; private set; } = Constants.WaitingForPlayers;
 
         public GameRoom() =>
             State = new GameStateWaiting(this);
@@ -78,10 +81,19 @@ namespace Server.Game.GameRoomControl
 
             TimeTillRoomUpdate--;
 
-            if (TimeTillGameStart > 0)
-                TimeTillGameStart--;
+            if (TimeTillStateChange > 0)
+                TimeTillStateChange--;
+            else
+            {
+                if (typeof(GameStateWaiting) == State.GetType())
+                    State.SetGameReady();
+                else if (typeof(GameStateReady) == State.GetType())
+                    State.StartGame();
+                else if (typeof(GameStateRunning) == State.GetType())
+                    State.EndGame();
+            }
         }
-
+        
         public void SetBonuses(List<Bonus> bonuses) => Bonuses = bonuses;
 
         public List<SerializableBonus> GetSerializableBonuses() => 
@@ -122,6 +134,17 @@ namespace Server.Game.GameRoomControl
         public SerializableGameRoom GetSerializable()
         {
             return new SerializableGameRoom(RoomId.ToString(), Players.Count, Constants.MaxPlayerCount);
+        }
+
+        public void UpdateTimer(string label, int value)
+        {
+            var timerMessage = new Message(ResponseCode.NewTimerValue, JsonParser.Serialize(new SerializableTimer(label, value)));
+            var timerString = JsonParser.Serialize(timerMessage);
+
+            foreach (var player in Players)
+                ConnectionsPool.GetInstance().GetClient(player.Key).Send(timerString);
+
+            CurrentTimerLabel = label;
         }
 
         [DataContract]

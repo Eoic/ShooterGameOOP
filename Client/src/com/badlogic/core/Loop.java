@@ -18,6 +18,7 @@ import com.badlogic.network.ResponseCode;
 import com.badlogic.serializables.SerializableBonus;
 import com.badlogic.serializables.SerializableGame;
 import com.badlogic.serializables.SerializablePlayer;
+import com.badlogic.serializables.SerializableTimer;
 import com.badlogic.util.*;
 import com.badlogic.util.Point;
 import com.badlogic.util.Vector;
@@ -234,6 +235,9 @@ public class Loop implements Observer {
         // # Player is quitting the game
         else if (message.getType() == ResponseCode.GameQuit) {
             roomPlayers.remove(message.getPayload());
+        }
+        else if (message.getType() == ResponseCode.NewTimerValue) {
+            hud.updateTimer(jsonParser.deserialize(message.getPayload(), SerializableTimer.class));
         }
     }
 

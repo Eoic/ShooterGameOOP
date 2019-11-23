@@ -33,6 +33,9 @@ namespace Server.Network
             GameListFormed = 6,
 
             // Player joined client's room
-            NewPlayerJoined = 7;
+            NewPlayerJoined = 7,
+
+            // New timer value.
+            NewTimerValue = 8;
     }
 }
