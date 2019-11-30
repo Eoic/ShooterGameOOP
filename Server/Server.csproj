@@ -195,6 +195,7 @@
     </Compile>
     <Compile Include="Models\Decorator\ExtraAmmoDecorator.cs" />
     <Compile Include="Models\Decorator\ExtraRPSDecorator.cs" />
+    <Compile Include="Models\FlyWeight\PlayerFactory.cs" />
     <Compile Include="Models\GunFactory\AbstractFactory.cs" />
     <Compile Include="Models\Bullet.cs" />
     <Compile Include="Models\GunFactory\GunType.cs" />

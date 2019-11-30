@@ -18,6 +18,8 @@ namespace Server.Game.Entities
         public CollisionsManager PlayerCollisionsManager { get; }
         public bool IsAlive { get => (Health > 0); }
 
+        public Player() { }
+
         public Player(Guid id, Guid roomId)
         {
             Id = id;
