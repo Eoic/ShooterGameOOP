@@ -91,6 +91,7 @@ namespace Server.Game
             {
                 _now = _timer.ElapsedMilliseconds * 1_000_000;
                 UpdateGameState(_delta);
+                Debug.WriteLine(_delta);
                 _updateTime = _timer.ElapsedMilliseconds * 1_000_000 - _now;
                 _waitTime = (_frameTime - _updateTime) / 1_000_000;
 

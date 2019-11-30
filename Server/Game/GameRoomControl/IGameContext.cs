@@ -12,9 +12,6 @@ namespace Server.Game.GameRoomControl
         public Dictionary<Guid, Player> Players { get; }
         public IGameState State { get; set; }
         public int TimeTillStateChange { get; set; }
-        //int TimeTillGameReady { get; set; }
-        //int TimeTillGameStarted { get; set; }
-        //int TimeTillGameEnded { get; set; }
         void UpdateTimer(string label, int value);
     }
 }

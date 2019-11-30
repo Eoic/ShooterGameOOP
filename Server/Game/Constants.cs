@@ -4,10 +4,10 @@
     {
         public static readonly int
             //Game
-            Fps = 60,
-            PlayerUpdateInterval = 30,
-            RoomUpdateInterval = 60,
-            GameStartCountdown = 1875, // Approx. 30 seconds.
+            Fps = 120,
+            PlayerUpdateInterval = 60,
+            RoomUpdateInterval = 120,
+            // GameStartCountdown = 1875, // Approx. 30 seconds.
 
             //Players
             MaxPlayerCount = 10,
@@ -53,6 +53,7 @@
 
         public static string
             WaitingForPlayers = "Waiting for players to connect",
-            GameStarting = "Game starting in";
+            GameStarting = "Game starting in",
+            GameEnding = "Game ends in";
     }
 }

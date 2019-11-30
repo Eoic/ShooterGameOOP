@@ -25,7 +25,8 @@ namespace Server.Game.GameRoomControl
 
         public void StartGame()
         {
-            throw new NotImplementedException();
+            Context.TimeTillStateChange = Constants.GameDurationTime * 1000 / (1000 / 60);
+            Context.UpdateTimer(Constants.GameEnding, Constants.GameDurationTime);
         }
 
         public void EndGame()
