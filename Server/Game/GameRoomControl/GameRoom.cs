@@ -17,7 +17,7 @@ namespace Server.Game.GameRoomControl
         public int TimeTillRoomUpdate { get; private set; } = Constants.RoomUpdateInterval;
         public Dictionary<Guid, Player> Players { get; } = new Dictionary<Guid, Player>();
         public List<Bonus> Bonuses { get; private set; } = new List<Bonus>();
-        public int TimeTillStateChange { get; set; } = Constants.GameWaitTime * 1000 / 16;
+        public int TimeTillStateChange { get; set; } = Constants.GameWaitTime * 1000 / (1000 / 60);
         public string CurrentTimerLabel { get; private set; } = Constants.WaitingForPlayers;
 
         public GameRoom() =>
@@ -82,7 +82,9 @@ namespace Server.Game.GameRoomControl
             TimeTillRoomUpdate--;
 
             if (TimeTillStateChange > 0)
+            {
                 TimeTillStateChange--;
+            }
             else
             {
                 if (typeof(GameStateWaiting) == State.GetType())
