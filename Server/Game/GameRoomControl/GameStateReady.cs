@@ -11,31 +11,6 @@ namespace Server.Game.GameRoomControl
         public GameStateReady(GameContext context) =>
             Context = context;
 
-        #region Deprecated
-        /*
-        public void WaitForPlayers()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetGameReady()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void StartGame()
-        {
-            Context.TimeTillStateChange = Constants.GameDurationTime * 1000 / (1000 / 60);
-            Context.UpdateTimer(Constants.GameEnding, Constants.GameDurationTime);
-        }
-
-        public void EndGame()
-        {
-            throw new NotImplementedException();
-        }
-        */
-        #endregion
-
         public void Tick()
         {
             if (Context.TimeTillStateChange > 0)
@@ -48,6 +23,11 @@ namespace Server.Game.GameRoomControl
             Context.TimeTillStateChange = TimeConverter.SecondsToTicks(Constants.GameDurationTime);
             Context.SetState(new GameStateRunning(Context));
             Context.UpdateTimer(Constants.GameEnding, Constants.GameDurationTime);
+        }
+
+        public void EndGame()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

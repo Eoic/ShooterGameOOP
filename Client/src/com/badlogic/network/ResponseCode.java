@@ -33,5 +33,8 @@ public class ResponseCode {
         NewTimerValue = 8,
 
         // After game match has ended
-        GameEnded = 9;
+        GameEnded = 9,
+
+        // When player reaches 0 HP
+        PlayerDied = 10;
 }

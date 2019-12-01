@@ -21,7 +21,7 @@ public class MessageHandler {
 
     public void OnGameCreated(Message message, Player player) {
         var position = jsonParser.deserialize(message.getPayload(), Point.class);
-        player = new Player(gameManager, messageEmitter);
+        player = new Player(gameManager, messageEmitter, "Undefined", -1);
         player.getPosition().set(new Vector(position.getX(), position.getY()));
         gameRoom.addPlayer(player);
     }

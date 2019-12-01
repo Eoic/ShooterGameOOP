@@ -15,30 +15,6 @@ namespace Server.Game.GameRoomControl
         public GameStateEnded(GameContext context) =>
             Context = context;
 
-        #region Deprecated
-        /*
-        public void WaitForPlayers()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetGameReady()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void StartGame()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void EndGame()
-        {
-            throw new NotImplementedException();
-        }
-        */
-        #endregion
-
         public void Tick()
         {
             if (!_wasInvoked)
@@ -61,5 +37,8 @@ namespace Server.Game.GameRoomControl
                 _wasInvoked = true;
             }
         }
+
+        public void EndGame() =>
+            throw new System.InvalidOperationException("Invalid state change [Ended -> Ended]");
     }
 }

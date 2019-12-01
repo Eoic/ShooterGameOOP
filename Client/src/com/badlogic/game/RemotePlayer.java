@@ -111,7 +111,7 @@ public class RemotePlayer extends GameObject {
 
     public void setId(String id) {
         this.id = id;
-        this.name = "PLAYER_" + id.substring(0, 5);
+        this.name = "[" + ((team == 0) ? "A" : "B") + "]PLAYER_" + id.substring(0, 5);
     }
 
     public int getTeam() {

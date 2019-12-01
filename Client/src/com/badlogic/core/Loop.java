@@ -61,7 +61,7 @@ public class Loop implements Observer {
         gameRoom = new GameRoom();
         gameManager = new GameManager();
         map = new Map(Constants.MAP_WIDTH, Constants.MAP_HEIGHT, gameManager);
-        player = new Player(gameManager, messageEmitter);
+        player = new Player(gameManager, messageEmitter, "Undefined", -1);
         bonuses = new ArrayList<>();
         roomPlayers = new HashMap<>();
         hud = new HeadUpDisplay(gameManager.getWindow());
@@ -178,7 +178,7 @@ public class Loop implements Observer {
         // # Create and place player on the map.
         else if (message.getType() == ResponseCode.GameCreated || message.getType() == ResponseCode.GameJoined) {
             var serializablePlayer = jsonParser.deserialize(message.getPayload(), SerializablePlayer.class);
-            player = new Player(gameManager, messageEmitter);
+            player = new Player(gameManager, messageEmitter, serializablePlayer.getPlayerId(), serializablePlayer.getTeam());
             player.setTeam(serializablePlayer.getTeam());
             player.getPosition().set(Vector.fromPoint(serializablePlayer.getPosition()));
             gameRoom.addPlayer(player);
@@ -190,33 +190,39 @@ public class Loop implements Observer {
                 var players = jsonParser.deserializeList(message.getPayload(), SerializablePlayer.class);
 
                 players.forEach(serializablePlayer -> {
-                    // Update this player.
-                    if (serializablePlayer.getType() == 10) {
-                        gameRoom.getPlayers().get(0).position.set(Vector.fromPoint(serializablePlayer.getPosition()));
-                        gameManager.getWindow().getClientHealthBar().setCurrentValue(serializablePlayer.getHealth());
-                    }
-
-                    // Update other player in the game room.
-                    else {
-                        // Player is new
-                        if (!roomPlayers.containsKey(serializablePlayer.getPlayerId())) {
-                            var isFriendly = gameRoom.getPlayers().get(0).getTeam() == serializablePlayer.getTeam();
-                            var roomPlayer = new RemotePlayer(gameManager.getWindow(), gameManager.getCamera(), isFriendly);
-                            roomPlayer.setPosition(Vector.fromPoint(serializablePlayer.getPosition()));
-                            roomPlayer.setDirection(Vector.fromPoint(serializablePlayer.getDirection()));
-                            roomPlayer.parseBullets(serializablePlayer.getBullets());
-                            roomPlayer.setHealth(serializablePlayer.getHealth());
-                            roomPlayer.setId(serializablePlayer.getPlayerId());
-                            roomPlayer.setTeam(serializablePlayer.getTeam());
-                            roomPlayers.put(serializablePlayer.getPlayerId(), roomPlayer);
+                    if (serializablePlayer.getHealth() > 0) {
+                        // Update this player.
+                        if (serializablePlayer.getType() == 10) {
+                            gameRoom.getPlayers().get(0).position.set(Vector.fromPoint(serializablePlayer.getPosition()));
+                            gameManager.getWindow().getClientHealthBar().setCurrentValue(serializablePlayer.getHealth());
                         }
-                        // Old player
+
+                        // Update other player in the game room.
                         else {
-                            var roomPlayer = roomPlayers.get(serializablePlayer.getPlayerId());
-                            roomPlayer.setPosition(Vector.fromPoint(serializablePlayer.getPosition()));
-                            roomPlayer.setDirection(Vector.fromPoint(serializablePlayer.getDirection()));
-                            roomPlayer.parseBullets(serializablePlayer.getBullets());
-                            roomPlayer.setHealth(serializablePlayer.getHealth());
+                            // Player is new
+                            if (!roomPlayers.containsKey(serializablePlayer.getPlayerId())) {
+                                var isFriendly = gameRoom.getPlayers().get(0).getTeam() == serializablePlayer.getTeam();
+                                var roomPlayer = new RemotePlayer(gameManager.getWindow(), gameManager.getCamera(), isFriendly);
+                                roomPlayer.setPosition(Vector.fromPoint(serializablePlayer.getPosition()));
+                                roomPlayer.setDirection(Vector.fromPoint(serializablePlayer.getDirection()));
+                                roomPlayer.parseBullets(serializablePlayer.getBullets());
+                                roomPlayer.setHealth(serializablePlayer.getHealth());
+                                roomPlayer.setTeam(serializablePlayer.getTeam());
+                                roomPlayer.setId(serializablePlayer.getPlayerId());
+                                roomPlayers.put(serializablePlayer.getPlayerId(), roomPlayer);
+                            }
+                            // Old player
+                            else {
+                                var roomPlayer = roomPlayers.get(serializablePlayer.getPlayerId());
+                                roomPlayer.setPosition(Vector.fromPoint(serializablePlayer.getPosition()));
+                                roomPlayer.setDirection(Vector.fromPoint(serializablePlayer.getDirection()));
+                                roomPlayer.parseBullets(serializablePlayer.getBullets());
+                                roomPlayer.setHealth(serializablePlayer.getHealth());
+                            }
+                        }
+                    } else {
+                        if (serializablePlayer.getType() == 10) {
+                            gameManager.getWindow().getClientHealthBar().setVisible(false);
                         }
                     }
                 });
@@ -239,6 +245,15 @@ public class Loop implements Observer {
         else if (message.getType() == ResponseCode.GameEnded) {
             var gameResults = jsonParser.deserializeList(message.getPayload(), SerializablePlayerState.class);
             gameManager.getWindow().setGameEndedMode(new ArrayList<SerializablePlayerState>(gameResults));
+        } else if (message.getType() == ResponseCode.PlayerDied) {
+            var serializablePlayer = jsonParser.deserialize(message.getPayload(), SerializablePlayer.class);
+            var id = serializablePlayer.getPlayerId();
+
+            if (roomPlayers.containsKey(id)) {
+                roomPlayers.remove(id);
+            } else {
+                player.setDead();
+            }
         }
     }
 

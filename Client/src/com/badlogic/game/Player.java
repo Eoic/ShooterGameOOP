@@ -16,6 +16,7 @@ import java.util.Random;
 
 public class Player extends GameObject {
     private MessageEmitter messageEmitter;
+    private boolean isDead = false;
     private BulletPool bulletPool;
     private JsonParser jsonParser;
     private BufferedImage sprite;
@@ -25,11 +26,11 @@ public class Player extends GameObject {
     private int speed;
     private int team;
 
-    public Player(GameManager gameManager, MessageEmitter messageEmitter) {
+    public Player(GameManager gameManager, MessageEmitter messageEmitter, String playerId, int teamId) {
         this.bulletPool = new BulletPool(Constants.DEFAULT_PLAYER_BULLET_COUNT, gameManager, SpriteKeys.BULLET_TYPE_TWO);
         this.sprite = Assets.getSprite(SpriteKeys.PLAYER);
         this.speed = Constants.DEFAULT_PLAYER_SPEED;
-        this.name = "PLAYER_" + id.substring(0, 5);
+        this.name = "[" + ((teamId == 0) ? "A" : "B") + "]PLAYER_" + playerId.substring(0, 5);
         this.messageEmitter = messageEmitter;
         this.jsonParser = new JsonParser();
         this.direction = new Vector();
@@ -44,6 +45,9 @@ public class Player extends GameObject {
 
     @Override
     public void update(int delta) {
+        if (isDead)
+            return;
+
         var newDirection = new Vector();
 
         if (gameManager.getInputManager().left)
@@ -93,6 +97,9 @@ public class Player extends GameObject {
 
     @Override
     public void render(Graphics graphics) {
+        if (isDead)
+            return;
+
         var offset = gameManager.getCamera().getOffset();
         int posX = (int) (this.position.getX() - offset.getX()) - Constants.SPRITE_WIDTH_HALF;
         int posY = (int) (this.position.getY() - offset.getY()) - Constants.SPRITE_HEIGHT_HALF;
@@ -122,5 +129,9 @@ public class Player extends GameObject {
 
     public void setAmmo(int ammo) {
         this.ammo = ammo;
+    }
+
+    public void setDead() {
+        this.isDead = true;
     }
 }

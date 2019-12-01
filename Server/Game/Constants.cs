@@ -42,9 +42,9 @@
             SniperRifleDamage = 50,
 
             // Game time (seconds)
-            GameWaitTime = 5, // 30
+            GameWaitTime = 10, // 30
             GameReadyTime = 5,
-            GameDurationTime = 5, //90
+            GameDurationTime = 20, //90
 
             // Team types
             TeamA = 0,

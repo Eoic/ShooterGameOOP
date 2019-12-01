@@ -10,30 +10,6 @@ namespace Server.Game.GameRoomControl
         public GameStateRunning(GameContext context) =>
             Context = context;
 
-        #region Deprecated
-        /*
-        public void WaitForPlayers()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetGameReady()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void StartGame()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void EndGame()
-        {
-            // TODO: 
-        }
-        */
-        #endregion
-
         public void Tick()
         {
             if (Context.TimeTillStateChange > 0)
@@ -44,6 +20,11 @@ namespace Server.Game.GameRoomControl
 
             Debug.WriteLine("[Running -> Ended]");
             Context.SetState(new GameStateEnded(Context));
+        }
+
+        public void EndGame()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -23,57 +23,52 @@ public class GameResults extends JPanel {
         int borderMarginBottom = 0;
         int borderMarginRight = 15;
         this.gridContainer = new JPanel(new GridLayout(gridLayoutRows, gridLayoutCols));
-        //this.gridContainer.setBorder(BorderFactory.createEmptyBorder(borderMarginTop, borderMarginLeft, borderMarginBottom, borderMarginRight));
         this.add(gridContainer);
         this.setBorder(BorderFactory.createEmptyBorder(borderMarginTop, borderMarginLeft, borderMarginBottom, borderMarginRight));
         this.setVisible(false);
         this.setBackground(Color.WHITE);
     }
 
-    // Yeah, whatever ...
     public void createDataList(ArrayList<SerializablePlayerState> data) {
         AtomicInteger aliveTeamA = new AtomicInteger();
         AtomicInteger aliveTeamB = new AtomicInteger();
 
         data.forEach((player) -> {
-            if (player.getHealth() > 0 && player.getTeam() == 0)
-                aliveTeamA.getAndIncrement();
-            else aliveTeamB.getAndIncrement();
+            if (player.getHealth() > 0) {
+                if (player.getTeam() == 0)
+                    aliveTeamA.getAndIncrement();
+                else aliveTeamB.getAndIncrement();
+            }
         });
 
         var matchResult = "DRAW";
 
-        if (aliveTeamA.get() > aliveTeamB.get())
+        if (aliveTeamA.get() > 0 && aliveTeamB.get() == 0)
             matchResult = "TEAM A WON THE GAME";
-        else if (aliveTeamA.get() < aliveTeamB.get())
+        else if (aliveTeamA.get() == 0 && aliveTeamB.get() > 0)
             matchResult = "TEAM B WON THE GAME";
 
         this.add(createLabel(matchResult), BorderLayout.PAGE_START);
-        createRow("TEAM A", "", "", "");
+        printTeamData("TEAM A", 0, data);
+        printTeamData("TEAM B", 1, data);
+        this.revalidate();
+    }
+
+    private void printTeamData(String teamName, int teamId, ArrayList<SerializablePlayerState> data) {
+        var counter = 0;
+        createRow(teamName, "", "", "");
         createRow("Nr.","Name", "Health", "Status");
 
         for (var i = 0; i < data.size(); i++) {
             var player = data.get(i);
-            if (player.getTeam() == 0) {
+            if (player.getTeam() == teamId) {
                 var health = player.getHealth() + " / " + Constants.HEALTH_MAX;
                 var status = (player.getHealth() > 0) ? "Alive" : "Dead";
-                createRow(Integer.toString(i + 1), player.getName(), health, status);
+                createRow(Integer.toString(++counter), player.getName(), health, status);
             }
         }
 
         createRow("", "", "", "");
-        createRow("TEAM B", "", "", "");
-
-        for (var i = 0; i < data.size(); i++) {
-            var player = data.get(i);
-            if (player.getTeam() == 1) {
-                var health = player.getHealth() + " / " + Constants.HEALTH_MAX;
-                var status = (player.getHealth() > 0) ? "Alive" : "Dead";
-                createRow(Integer.toString(i + 1), player.getName(), health, status);
-            }
-        }
-
-        this.revalidate();
     }
 
     private void createRow(String... text) {

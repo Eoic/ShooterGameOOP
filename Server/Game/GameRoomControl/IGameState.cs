@@ -18,5 +18,6 @@ namespace Server.Game.GameRoomControl
         */
         #endregion
         void Tick();
+        void EndGame();
     }
 }

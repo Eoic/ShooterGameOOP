@@ -83,6 +83,9 @@ namespace Server.Game.Entities
                 Bullets.Add(pistolFactory.CreateBullet());
         }
 
+        public SerializablePlayer GetSerializable() =>
+            new SerializablePlayer(Position, Direction, 0, Id.ToString(), Team, Health, new List<Bullet.SerializableBullet>());
+
         // Return all active bullets for serialization
         public List<Bullet.SerializableBullet> GetBullets() =>
             (from activeBullet in Bullets where activeBullet.IsActive select activeBullet.GetSerializable()).ToList();

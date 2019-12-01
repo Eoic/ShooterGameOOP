@@ -39,6 +39,9 @@ namespace Server.Network
             NewTimerValue = 8,
 
             // After game match ends.
-            GameEnded = 9;
+            GameEnded = 9,
+
+            // Player has 0 health left.
+            PlayerDied = 10;
     }
 }

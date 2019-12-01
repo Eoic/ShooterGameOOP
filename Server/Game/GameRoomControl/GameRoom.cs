@@ -51,9 +51,9 @@ namespace Server.Game.GameRoomControl
             {
                 var player = keyValuePair.Value;
 
-                if (player == null)
+                if (player == null || !player.IsAlive)
                     continue;
-                
+
                 player.Update(delta);
 
                 foreach (var bullet in player.Bullets.Where(bullet => bullet.IsActive))
@@ -70,6 +70,16 @@ namespace Server.Game.GameRoomControl
                             continue;
       
                         otherPlayer.Value.TakeDamage(bullet.Damage);
+
+                        // Send update to everyone in the room on player's death
+                        if (!otherPlayer.Value.IsAlive)
+                        {
+                            var serializablePlayer = otherPlayer.Value.GetSerializable();
+                            var deathEventMessage = JsonParser.Serialize(new Message(ResponseCode.PlayerDied, JsonParser.Serialize(serializablePlayer)));
+
+                            foreach (var client in Players)
+                                ConnectionsPool.GetInstance().GetClient(client.Key).Send(deathEventMessage);
+                        }
                     }
                 }
             }
@@ -81,24 +91,6 @@ namespace Server.Game.GameRoomControl
                 TimeTillRoomUpdate = Constants.RoomUpdateInterval;
 
             TimeTillRoomUpdate--;
-
-            #region Deprecated
-            /*
-            if (TimeTillStateChange > 0)
-            {
-                TimeTillStateChange--;
-            }
-            else
-            {
-                if (typeof(GameStateWaiting) == State.GetType())
-                    State.SetGameReady();
-                else if (typeof(GameStateReady) == State.GetType())
-                    State.StartGame();
-                else if (typeof(GameStateRunning) == State.GetType())
-                    State.EndGame();
-            }
-            */
-            #endregion
             State.Tick();
         }
 
