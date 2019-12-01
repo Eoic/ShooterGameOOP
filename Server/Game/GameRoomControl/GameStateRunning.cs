@@ -18,13 +18,13 @@ namespace Server.Game.GameRoomControl
                 return;
             }
 
-            Debug.WriteLine("[Running -> Ended]");
-            Context.SetState(new GameStateEnded(Context));
+            EndGame();
         }
 
         public void EndGame()
         {
-            throw new System.NotImplementedException();
+            Debug.WriteLine("[Running -> Ended]");
+            Context.SetState(new GameStateEnded(Context));
         }
     }
 }

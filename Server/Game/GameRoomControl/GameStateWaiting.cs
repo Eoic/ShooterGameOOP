@@ -43,6 +43,7 @@ namespace Server.Game.GameRoomControl
         public void EndGame()
         {
             Debug.WriteLine("[Waiting -> Ended]");
+            Context.SetState(new GameStateEnded(Context));
         }
     }
 }

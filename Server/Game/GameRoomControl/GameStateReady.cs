@@ -27,7 +27,8 @@ namespace Server.Game.GameRoomControl
 
         public void EndGame()
         {
-            throw new System.NotImplementedException();
+            Debug.WriteLine("[Ready -> Ended]");
+            Context.SetState(new GameStateEnded(Context));
         }
     }
 }
