@@ -1,10 +1,12 @@
 package com.badlogic.gfx;
 
 import com.badlogic.gfx.ui.*;
+import com.badlogic.ui.GameResults;
 import com.badlogic.gfx.ui.panels.HealthBar;
 import com.badlogic.gfx.ui.panels.TeamSelection;
 import com.badlogic.network.MessageEmitter;
 import com.badlogic.serializables.SerializableGame;
+import com.badlogic.serializables.SerializablePlayerState;
 import com.badlogic.ui.GameList;
 import com.badlogic.util.JsonParser;
 
@@ -19,7 +21,11 @@ public class Window extends JFrame implements ComponentListener {
     private int width;
     private int height;
     private Canvas canvas;
+
+    // Full windows
     private GameList gameList;
+    private GameResults gameResults;
+
     private JButton createGameBtn;
     private JButton quitGameBtn;
     private HealthBar clientHealthBar;
@@ -55,6 +61,7 @@ public class Window extends JFrame implements ComponentListener {
         this.clientHealthBar.setVisible(false);
         this.createInterface();
         this.createGameListWindow();
+        this.createGameResultsWindow();
         this.add(canvas);
         this.pack();
     }
@@ -109,6 +116,13 @@ public class Window extends JFrame implements ComponentListener {
         quitGameBtn.setVisible(true);
     }
 
+    public void setGameEndedMode(ArrayList<SerializablePlayerState> data) {
+        quitGameBtn.setVisible(false);
+        gameResults.createDataList(data);
+        gameResults.setVisible(true);
+        clientHealthBar.setVisible(false);
+    }
+
     public void setQuitGameBtnEvent(ActionListener actionListener) {
         quitGameBtn.addActionListener(actionListener);
     }
@@ -119,6 +133,8 @@ public class Window extends JFrame implements ComponentListener {
         this.height = componentEvent.getComponent().getHeight();
         this.gameList.setSize(width, height);
         this.gameList.revalidate();
+        this.gameResults.setSize(width, height);
+        this.gameResults.revalidate();
         this.canvasElementCollection.refresh();
         this.quitGameBtn.setBounds(this.width - 160, 10, 150, 35);
         this.revalidate();
@@ -145,6 +161,13 @@ public class Window extends JFrame implements ComponentListener {
         this.gameList = new GameList();
         this.gameList.setSize(this.width, this.height);
         this.add(this.gameList, BorderLayout.PAGE_START);
+    }
+
+    private void createGameResultsWindow() {
+        this.gameResults = new GameResults();
+        this.gameResults.setSize(this.width, this.height);
+        this.gameResults.setVisible(false);
+        this.add(this.gameResults, BorderLayout.CENTER);
     }
 
     public void updateGameList(ArrayList<SerializableGame> gameArrayList, MessageEmitter messageEmitter) {

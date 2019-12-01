@@ -172,7 +172,7 @@
     <Compile Include="Game\Entities\SerializablePlayer.cs" />
     <Compile Include="Game\Entities\SerializableTimer.cs" />
     <Compile Include="Game\GameManagerWrapper.cs" />
-    <Compile Include="Game\GameRoomControl\IGameContext.cs" />
+    <Compile Include="Game\GameRoomControl\GameContext.cs" />
     <Compile Include="Game\GameRoomControl\GameRoom.cs" />
     <Compile Include="Game\GameManager.cs" />
     <Compile Include="Game\GameRoomControl\GameStateEnded.cs" />
@@ -216,6 +216,7 @@
     <Compile Include="Network\ResponseCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\JsonParser.cs" />
+    <Compile Include="Utilities\TimeConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

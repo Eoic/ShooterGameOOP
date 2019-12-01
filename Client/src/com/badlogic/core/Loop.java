@@ -15,10 +15,7 @@ import com.badlogic.network.Message;
 import com.badlogic.network.MessageEmitter;
 import com.badlogic.network.RequestCode;
 import com.badlogic.network.ResponseCode;
-import com.badlogic.serializables.SerializableBonus;
-import com.badlogic.serializables.SerializableGame;
-import com.badlogic.serializables.SerializablePlayer;
-import com.badlogic.serializables.SerializableTimer;
+import com.badlogic.serializables.*;
 import com.badlogic.util.*;
 import com.badlogic.util.Point;
 import com.badlogic.util.Vector;
@@ -238,6 +235,10 @@ public class Loop implements Observer {
         }
         else if (message.getType() == ResponseCode.NewTimerValue) {
             hud.updateTimer(jsonParser.deserialize(message.getPayload(), SerializableTimer.class));
+        }
+        else if (message.getType() == ResponseCode.GameEnded) {
+            var gameResults = jsonParser.deserializeList(message.getPayload(), SerializablePlayerState.class);
+            gameManager.getWindow().setGameEndedMode(new ArrayList<SerializablePlayerState>(gameResults));
         }
     }
 

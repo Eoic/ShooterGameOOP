@@ -5,9 +5,8 @@
         public static readonly int
             //Game
             Fps = 120,
-            PlayerUpdateInterval = 60,
+            PlayerUpdateInterval = 120,
             RoomUpdateInterval = 120,
-            // GameStartCountdown = 1875, // Approx. 30 seconds.
 
             //Players
             MaxPlayerCount = 10,
@@ -43,9 +42,9 @@
             SniperRifleDamage = 50,
 
             // Game time (seconds)
-            GameWaitTime = 30,
+            GameWaitTime = 5, // 30
             GameReadyTime = 5,
-            GameDurationTime = 90,
+            GameDurationTime = 5, //90
 
             // Team types
             TeamA = 0,

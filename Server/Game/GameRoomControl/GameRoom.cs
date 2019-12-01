@@ -2,26 +2,27 @@
 using System.Text;
 using Server.Game.Entities;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
 using Server.Game.Bonuses;
 using Server.Utilities;
 using Server.Network;
+using System.Linq;
 
 namespace Server.Game.GameRoomControl
 {
-    public class GameRoom : IGameContext
+    public class GameRoom : GameContext
     {
-        public IGameState State { get; set; }
         public Guid RoomId { get; } = Guid.NewGuid();
         public int TimeTillRoomUpdate { get; private set; } = Constants.RoomUpdateInterval;
-        public Dictionary<Guid, Player> Players { get; } = new Dictionary<Guid, Player>();
         public List<Bonus> Bonuses { get; private set; } = new List<Bonus>();
-        public int TimeTillStateChange { get; set; } = Constants.GameWaitTime * 1000 / (1000 / 60);
         public string CurrentTimerLabel { get; private set; } = Constants.WaitingForPlayers;
 
-        public GameRoom() =>
+        public GameRoom()
+        {
             State = new GameStateWaiting(this);
+            Players = new Dictionary<Guid, Player>();
+            TimeTillStateChange = TimeConverter.SecondsToTicks(Constants.GameWaitTime);
+        }
 
         public void AddPlayer(Player player)
         {
@@ -81,6 +82,8 @@ namespace Server.Game.GameRoomControl
 
             TimeTillRoomUpdate--;
 
+            #region Deprecated
+            /*
             if (TimeTillStateChange > 0)
             {
                 TimeTillStateChange--;
@@ -94,8 +97,11 @@ namespace Server.Game.GameRoomControl
                 else if (typeof(GameStateRunning) == State.GetType())
                     State.EndGame();
             }
+            */
+            #endregion
+            State.Tick();
         }
-        
+
         public void SetBonuses(List<Bonus> bonuses) => Bonuses = bonuses;
 
         public List<SerializableBonus> GetSerializableBonuses() => 
@@ -133,12 +139,10 @@ namespace Server.Game.GameRoomControl
             return builder.ToString();
         }
         
-        public SerializableGameRoom GetSerializable()
-        {
-            return new SerializableGameRoom(RoomId.ToString(), Players.Count, Constants.MaxPlayerCount);
-        }
+        public SerializableGameRoom GetSerializable() =>
+            new SerializableGameRoom(RoomId.ToString(), Players.Count, Constants.MaxPlayerCount);
 
-        public void UpdateTimer(string label, int value)
+        public override void UpdateTimer(string label, int value)
         {
             var timerMessage = new Message(ResponseCode.NewTimerValue, JsonParser.Serialize(new SerializableTimer(label, value)));
             var timerString = JsonParser.Serialize(timerMessage);
@@ -147,6 +151,15 @@ namespace Server.Game.GameRoomControl
                 ConnectionsPool.GetInstance().GetClient(player.Key).Send(timerString);
 
             CurrentTimerLabel = label;
+        }
+
+        public override void UpdateStateChangeTime() =>
+            TimeTillStateChange--;
+
+        public override void SetState(IGameState state)
+        {
+            if (state != null)
+                State = state;
         }
 
         [DataContract]

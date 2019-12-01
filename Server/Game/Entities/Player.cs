@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Server.Game.Physics;
 using Server.Models.GunFactory;
+using System.Runtime.Serialization;
 
 namespace Server.Game.Entities
 {
@@ -17,6 +18,7 @@ namespace Server.Game.Entities
         public List<Bullet> Bullets { get; set; }
         public CollisionsManager PlayerCollisionsManager { get; }
         public bool IsAlive { get => (Health > 0); }
+        public string Name { get => "PLAYER_" + Id.ToString().Substring(0, 5); }
 
         public Player(Guid id, Guid roomId)
         {
@@ -91,6 +93,33 @@ namespace Server.Game.Entities
             // Update bullets
             foreach (var bullet in Bullets.Where(bullet => bullet.IsActive))
                 bullet.Update(delta);
+        }
+
+
+        public PlayerState GetState()
+        {
+            var name = "PLAYER_" + Id.ToString().Substring(0, 5);
+            return new PlayerState(name, Team, Health);
+        }
+
+        [DataContract]
+        public class PlayerState
+        {
+            [DataMember]
+            public string Name { get; set; }
+            
+            [DataMember]
+            public int Team { get; set; }
+            
+            [DataMember]
+            public int Health { get; set; }
+
+            public PlayerState(string name, int team, int health)
+            {
+                Name = name;
+                Team = team;
+                Health = health;
+            }
         }
     }
 }

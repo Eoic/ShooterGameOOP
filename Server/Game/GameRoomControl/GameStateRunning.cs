@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Diagnostics;
 
 namespace Server.Game.GameRoomControl
 {
     // Game started
     public class GameStateRunning : IGameState
     {
-        public IGameContext Context { get; }
+        public GameContext Context { get; }
 
-        public GameStateRunning(IGameContext context) =>
+        public GameStateRunning(GameContext context) =>
             Context = context;
 
+        #region Deprecated
+        /*
         public void WaitForPlayers()
         {
             throw new NotImplementedException();
@@ -31,6 +30,20 @@ namespace Server.Game.GameRoomControl
         public void EndGame()
         {
             // TODO: 
+        }
+        */
+        #endregion
+
+        public void Tick()
+        {
+            if (Context.TimeTillStateChange > 0)
+            {
+                Context.TimeTillStateChange--;
+                return;
+            }
+
+            Debug.WriteLine("[Running -> Ended]");
+            Context.SetState(new GameStateEnded(Context));
         }
     }
 }

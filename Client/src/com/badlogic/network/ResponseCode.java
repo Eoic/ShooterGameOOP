@@ -29,6 +29,9 @@ public class ResponseCode {
         // Player joined client's room
         NewPlayerJoined = 7,
 
-        // Timer updated.
-        NewTimerValue = 8;
+        // Timer updated
+        NewTimerValue = 8,
+
+        // After game match has ended
+        GameEnded = 9;
 }

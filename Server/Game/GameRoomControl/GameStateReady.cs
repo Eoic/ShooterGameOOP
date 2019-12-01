@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Server.Utilities;
+using System.Diagnostics;
 
 namespace Server.Game.GameRoomControl
 {
     // Brief cooldown before starting
     public class GameStateReady : IGameState
     {
-        public IGameContext Context { get; }
+        public GameContext Context { get; }
 
-        public GameStateReady(IGameContext context) =>
+        public GameStateReady(GameContext context) =>
             Context = context;
 
+        #region Deprecated
+        /*
         public void WaitForPlayers()
         {
             throw new NotImplementedException();
@@ -32,6 +32,22 @@ namespace Server.Game.GameRoomControl
         public void EndGame()
         {
             throw new NotImplementedException();
+        }
+        */
+        #endregion
+
+        public void Tick()
+        {
+            if (Context.TimeTillStateChange > 0)
+            {
+                Context.UpdateStateChangeTime();
+                return;
+            }
+
+            Debug.WriteLine("[Ready -> Running]");
+            Context.TimeTillStateChange = TimeConverter.SecondsToTicks(Constants.GameDurationTime);
+            Context.SetState(new GameStateRunning(Context));
+            Context.UpdateTimer(Constants.GameEnding, Constants.GameDurationTime);
         }
     }
 }

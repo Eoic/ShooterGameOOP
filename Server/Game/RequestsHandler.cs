@@ -111,7 +111,7 @@ namespace Server.Game
             var game = games.Find(game => game.Players.ContainsKey(data.ClientId));
             var message = new Message(ResponseCode.GameQuit, data.ClientId.ToString());
             
-            // Send update to remainng room players
+            // Send update to remaining room players
             foreach (var player in game.Players)
                 ConnectionsPool.GetInstance().GetClient(player.Key).Send(JsonParser.Serialize(message));
 

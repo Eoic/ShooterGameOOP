@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Server.Utilities;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Server.Game.GameRoomControl
@@ -6,11 +7,13 @@ namespace Server.Game.GameRoomControl
     // Waiting for players to join.
     public class GameStateWaiting : IGameState
     {
-        public IGameContext Context { get; }
+        public GameContext Context { get; }
 
-        public GameStateWaiting(IGameContext context) =>
+        public GameStateWaiting(GameContext context) =>
             Context = context;
 
+        #region Deprecated
+        /*
         public void WaitForPlayers() =>
             Debug.WriteLine("Already waiting for players...");
 
@@ -42,6 +45,35 @@ namespace Server.Game.GameRoomControl
         {
             Debug.WriteLine("[Waiting -> Ended]");
             Context.State = new GameStateEnded(Context);
+        }
+        */
+        #endregion Deprecated
+
+        public void Tick()
+        {
+            if (Context.TimeTillStateChange > 0)
+            {
+                Context.UpdateStateChangeTime();
+                return;
+            }
+
+            var teamACount = Context.Players.Count((kvp) => kvp.Value.Team == Constants.TeamA);
+            var teamBCount = Context.Players.Count((kvp) => kvp.Value.Team == Constants.TeamB);
+
+            if (teamACount > 0 && teamBCount > 0)
+            {
+                // TODO: Position players and forbid to move on cooldown.
+                Debug.WriteLine("[Waiting -> Ready]");
+                Context.TimeTillStateChange = TimeConverter.SecondsToTicks(Constants.GameReadyTime);
+                Context.SetState(new GameStateReady(Context));
+                Context.UpdateTimer(Constants.GameStarting, Constants.GameReadyTime);
+            }
+            else
+            {
+                Debug.WriteLine("[Waiting -> Waiting]");
+                Context.TimeTillStateChange = TimeConverter.SecondsToTicks(Constants.GameWaitTime);
+                Context.UpdateTimer(Constants.WaitingForPlayers, Constants.GameWaitTime);
+            }
         }
     }
 }

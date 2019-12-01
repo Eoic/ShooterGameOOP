@@ -36,6 +36,9 @@ namespace Server.Network
             NewPlayerJoined = 7,
 
             // New timer value.
-            NewTimerValue = 8;
+            NewTimerValue = 8,
+
+            // After game match ends.
+            GameEnded = 9;
     }
 }
