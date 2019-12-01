@@ -29,6 +29,7 @@ namespace Server.Game.GameRoomControl
                 Debug.WriteLine("[Waiting -> Ready]");
                 Context.TimeTillStateChange = TimeConverter.SecondsToTicks(Constants.GameReadyTime);
                 Context.SetState(new GameStateReady(Context));
+                Context.SetPlayersReady();
                 Context.UpdateTimer(Constants.GameStarting, Constants.GameReadyTime);
             }
             else
@@ -42,7 +43,6 @@ namespace Server.Game.GameRoomControl
         public void EndGame()
         {
             Debug.WriteLine("[Waiting -> Ended]");
-            throw new System.NotImplementedException();
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Server.Game.GameRoomControl
         public Dictionary<Guid, Player> Players { get; protected set; }
         public abstract void UpdateTimer(string label, int value);
         public abstract void UpdateStateChangeTime();
+        public abstract void SetPlayersReady();
         public abstract void SetState(IGameState state);
     }
 }

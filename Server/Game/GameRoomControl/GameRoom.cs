@@ -68,8 +68,10 @@ namespace Server.Game.GameRoomControl
 
                         if (otherPlayer.Value.Team == player.Team)
                             continue;
-      
-                        otherPlayer.Value.TakeDamage(bullet.Damage);
+
+                        // Take damage only when game is running.
+                        if (typeof(GameStateRunning) == State.GetType())
+                            otherPlayer.Value.TakeDamage(bullet.Damage);
 
                         // Send update to everyone in the room on player's death
                         if (!otherPlayer.Value.IsAlive)
@@ -79,6 +81,11 @@ namespace Server.Game.GameRoomControl
 
                             foreach (var client in Players)
                                 ConnectionsPool.GetInstance().GetClient(client.Key).Send(deathEventMessage);
+
+                            // End game if at least one team has no more players
+                            if (Players.Count((player) => player.Value.IsAlive && player.Value.Team == 0) == 0 ||
+                                Players.Count((player) => player.Value.IsAlive && player.Value.Team == 1) == 0)
+                                TimeTillStateChange = 0;
                         }
                     }
                 }
@@ -152,6 +159,25 @@ namespace Server.Game.GameRoomControl
         {
             if (state != null)
                 State = state;
+        }
+
+        public override void SetPlayersReady()
+        {
+            var offset = 150;
+
+            void PositionPlayers(int xOffset, int yOffset, int team)
+            {
+                var multiplier = 1;
+
+                foreach (var player in Players.Where((player) => player.Value.Team == team))
+                {
+                    player.Value.Position = new Vector(xOffset, yOffset * multiplier);
+                    multiplier++;
+                }
+            }
+
+            PositionPlayers(offset, offset, 0);
+            PositionPlayers(Constants.MapWidth * Constants.MapTileSize - offset * 2, offset, 1);
         }
 
         [DataContract]
