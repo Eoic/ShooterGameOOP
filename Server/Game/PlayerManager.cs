@@ -58,9 +58,9 @@ namespace Server.Game
 
                 games[i].Players.Remove(clientId);
 
-                if (games[i].Players.Count == 0)
+                if (games[i].Players.Count == 0 || games[i].GameEnded)
                 {
-                    Debug.WriteLine("Room has no more players...");
+                    Debug.WriteLine("Room has no more players. Disposing.");
                     emptyRoomIndex = i;
                 }
 

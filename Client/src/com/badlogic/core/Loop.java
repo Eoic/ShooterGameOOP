@@ -140,7 +140,7 @@ public class Loop implements Observer {
 
         var graphics = bufferStrategy.getDrawGraphics();
         graphics.setColor(Color.WHITE);
-        graphics.setFont(new Font("TimesRoman", Font.PLAIN, 24));
+        graphics.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 24));
         ((Graphics2D)graphics).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         graphics.clearRect(0, 0, gameManager.getWindow().getWidth(), gameManager.getWindow().getHeight());
 

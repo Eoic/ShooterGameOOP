@@ -35,6 +35,7 @@ namespace Server.Game.GameRoomControl
                 }
 
                 _wasInvoked = true;
+                Context.GameEnded = true;
             }
         }
 

@@ -7,6 +7,7 @@ using Server.Game.Bonuses;
 using Server.Utilities;
 using Server.Network;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Server.Game.GameRoomControl
 {
@@ -16,12 +17,14 @@ namespace Server.Game.GameRoomControl
         public int TimeTillRoomUpdate { get; private set; } = Constants.RoomUpdateInterval;
         public List<Bonus> Bonuses { get; private set; } = new List<Bonus>();
         public string CurrentTimerLabel { get; private set; } = Constants.WaitingForPlayers;
+        public bool PlayerCanJoin { get => !(typeof(GameStateRunning) == State.GetType()) && !(typeof(GameStateReady) == State.GetType()); }
 
         public GameRoom()
         {
             State = new GameStateWaiting(this);
             Players = new Dictionary<Guid, Player>();
             TimeTillStateChange = TimeConverter.SecondsToTicks(Constants.GameWaitTime);
+            Debug.WriteLine("Game room initialized wait time: {0} ticks., {1} s.", TimeTillStateChange, Constants.GameWaitTime);
         }
 
         public void AddPlayer(Player player)
@@ -143,6 +146,7 @@ namespace Server.Game.GameRoomControl
 
         public override void UpdateTimer(string label, int value)
         {
+            Debug.WriteLine("Sending wait time to client: " + value);
             var timerMessage = new Message(ResponseCode.NewTimerValue, JsonParser.Serialize(new SerializableTimer(label, value)));
             var timerString = JsonParser.Serialize(timerMessage);
 

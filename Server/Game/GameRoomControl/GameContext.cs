@@ -6,6 +6,7 @@ namespace Server.Game.GameRoomControl
 {
     public abstract class GameContext
     {
+        public bool GameEnded { get; set; }
         public IGameState State { get; protected set; }
         public int TimeTillStateChange { get; set; }
         public Dictionary<Guid, Player> Players { get; protected set; }

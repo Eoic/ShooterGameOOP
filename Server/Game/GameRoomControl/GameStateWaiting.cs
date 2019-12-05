@@ -25,7 +25,6 @@ namespace Server.Game.GameRoomControl
 
             if (teamACount > 0 && teamBCount > 0)
             {
-                // TODO: Position players and forbid to move on cooldown.
                 Debug.WriteLine("[Waiting -> Ready]");
                 Context.TimeTillStateChange = TimeConverter.SecondsToTicks(Constants.GameReadyTime);
                 Context.SetState(new GameStateReady(Context));
@@ -36,6 +35,7 @@ namespace Server.Game.GameRoomControl
             {
                 Debug.WriteLine("[Waiting -> Waiting]");
                 Context.TimeTillStateChange = TimeConverter.SecondsToTicks(Constants.GameWaitTime);
+                Debug.WriteLine("New timer value: {0} ticks, {1} s.", Context.TimeTillStateChange, Constants.GameWaitTime);
                 Context.UpdateTimer(Constants.WaitingForPlayers, Constants.GameWaitTime);
             }
         }

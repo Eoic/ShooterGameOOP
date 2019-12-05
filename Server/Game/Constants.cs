@@ -7,6 +7,7 @@
             Fps = 120,
             PlayerUpdateInterval = 120,
             RoomUpdateInterval = 120,
+            AverageDeltaTime = 1000 / Fps,
 
             //Players
             MaxPlayerCount = 10,
@@ -42,9 +43,9 @@
             SniperRifleDamage = 50,
 
             // Game time (seconds)
-            GameWaitTime = 10, // 30
+            GameWaitTime = 30, // 30
             GameReadyTime = 5,
-            GameDurationTime = 20, //90
+            GameDurationTime = 25, //90
 
             // Team types
             TeamA = 0,

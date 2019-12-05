@@ -30,8 +30,9 @@ namespace Server.Game
                 var message = new Message(ResponseCode.GameQuit, data.ClientId.ToString());
 
                 // Send update to remaing room players
-                foreach (var player in game.Players)
-                    ConnectionsPool.GetInstance().GetClient(player.Key).Send(JsonParser.Serialize(message));
+                if (game != null)
+                    foreach (var player in game.Players)
+                        ConnectionsPool.GetInstance().GetClient(player.Key).Send(JsonParser.Serialize(message));
 
                 new RemovePlayerCommand(data.ClientId, client.RoomId, 0, games).Execute();
             }
@@ -64,7 +65,7 @@ namespace Server.Game
 
             // Get other game room info and sent to client
             var bonusesMsg = new Message(ResponseCode.BonusesCreated, JsonParser.Serialize(roomToUpdate.GetSerializableBonuses()));
-            var timerObj = new SerializableTimer(roomToUpdate.CurrentTimerLabel, roomToUpdate.TimeTillStateChange * 16 / 1000);
+            var timerObj = new SerializableTimer(roomToUpdate.CurrentTimerLabel, TimeConverter.TicksToSeconds(roomToUpdate.TimeTillStateChange));
             var timerMsg = new Message(ResponseCode.NewTimerValue, JsonParser.Serialize(timerObj));
             client.RoomId = roomToUpdate.RoomId;
             client.Send(JsonParser.Serialize(bonusesMsg));
@@ -96,7 +97,7 @@ namespace Server.Game
             var serializablePlayer = new SerializablePlayer(initialPosition, new Vector(0, 0), 0, player.Id.ToString(), team, player.Health, new List<Bullet.SerializableBullet>());
             var gameCreationMessage = new Message(ResponseCode.GameCreated, JsonParser.Serialize(serializablePlayer));
             var bonusesMessage = new Message(ResponseCode.BonusesCreated, JsonParser.Serialize(gameRoom.GetSerializableBonuses()));
-            var timerMessage = new Message(ResponseCode.NewTimerValue, JsonParser.Serialize(new SerializableTimer(gameRoom.CurrentTimerLabel, gameRoom.TimeTillStateChange * 16 / 1000)));
+            var timerMessage = new Message(ResponseCode.NewTimerValue, JsonParser.Serialize(new SerializableTimer(gameRoom.CurrentTimerLabel, TimeConverter.TicksToSeconds(gameRoom.TimeTillStateChange))));
             var gameCreationString = JsonParser.Serialize(gameCreationMessage);
             var bonusesString = JsonParser.Serialize(bonusesMessage);
             var timerString = JsonParser.Serialize(timerMessage);
@@ -121,7 +122,7 @@ namespace Server.Game
         // Forms and sends list of available games
         public static void OnGetGameList(Message payload, List<GameRoom> games)
         {
-            var gameList = JsonParser.Serialize((from game in games select game.GetSerializable()).ToList());
+            var gameList = JsonParser.Serialize((from game in games where game.PlayerCanJoin select game.GetSerializable()).ToList());
             var gameListMessage = new Message(ResponseCode.GameListFormed, gameList);
             ConnectionsPool.GetInstance().GetClient(payload.ClientId).Send(JsonParser.Serialize(gameListMessage));
         }
