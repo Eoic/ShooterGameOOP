@@ -2,23 +2,22 @@
 
 namespace Server.Game.Physics
 {
-    public class PlayerCollider : ICollider
+    public class PlayerCollider : Collider
     {
-        public bool IsColliding(GameObject subject, GameObject obstacle)
-        {
-            return false;
-        }
+        public override sealed bool ProcessMotion(long delta, GameObject subject) =>
+            base.ProcessMotion(delta, subject);
 
-        public bool WillCollide(Vector nextPosition, GameObject obstacle)
-        {
-            return false;
-        }
-
-        public bool IsPositionValid(Vector nextPosition) => 
+        public override bool IsNextPositionValid(Vector nextPosition) => 
             (nextPosition.X <= Map.Width - Constants.MapTileSize && nextPosition.X >= 0 && 
              nextPosition.Y <= Map.Height - Constants.MapTileSize && nextPosition.Y >= 0);
 
-        public void Move(Vector change, GameObject subject) =>
+        public override void Move(Vector change, GameObject subject) =>
             subject.Position.Add(change);
+
+        public override Vector GetNextPosition(GameObject subject, Vector change) =>
+            subject.Position + change;
+
+        public override Vector GetPositionChange(GameObject subject, long delta) =>
+            subject.Direction * Constants.DefaultSpeed * delta;
     }
 }

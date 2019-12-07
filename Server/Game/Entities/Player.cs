@@ -16,7 +16,7 @@ namespace Server.Game.Entities
         public Weapon Weapon { get; set; }
         public int Team { get; private set; }
         public List<Bullet> Bullets { get; set; }
-        public CollisionsManager PlayerCollisionsManager { get; }
+        public PlayerCollider Collider { get; }
         public bool IsAlive { get => (Health > 0); }
         public string Name { get => "PLAYER_" + Id.ToString().Substring(0, 5); }
 
@@ -30,7 +30,7 @@ namespace Server.Game.Entities
             Direction = new Vector(0, 0);
             Health = Constants.MaxHealth;
             Bullets = new List<Bullet>();
-            PlayerCollisionsManager = new CollisionsManager(new PlayerCollider());
+            Collider = new PlayerCollider();
             CreateBulletPool();
         }
 
@@ -93,13 +93,12 @@ namespace Server.Game.Entities
         public override void Update(long delta)
         {
             // Update player position.
-            PlayerCollisionsManager.ProcessMotion(delta, this);
+            Collider.ProcessMotion(delta, this);
 
             // Update bullets
             foreach (var bullet in Bullets.Where(bullet => bullet.IsActive))
                 bullet.Update(delta);
         }
-
 
         public PlayerState GetState()
         {

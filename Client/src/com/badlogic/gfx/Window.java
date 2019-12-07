@@ -113,7 +113,7 @@ public class Window extends JFrame implements ComponentListener {
         gameList.setVisible(false);
         teamSelectionPanel.setVisible(false);
         createGameBtn.setVisible(false);
-        quitGameBtn.setVisible(true);
+        quitGameBtn.setVisible(false); // true
     }
 
     public void setGameEndedMode(ArrayList<SerializablePlayerState> data) {

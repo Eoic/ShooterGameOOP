@@ -16,7 +16,6 @@ namespace Server.Models
         public bool IsActive { get; set; }
         public BulletCollider Collider { get; }
         public List<IObserver<string>> Observers { get; }
-        private readonly CollisionsManager _collisionsManager;
 
         public Bullet(int damage, string gunType)
         {
@@ -25,7 +24,6 @@ namespace Server.Models
             Position = new Vector(0, 0);
             Direction = new Vector(0, 0);
             Collider = new BulletCollider();
-            _collisionsManager = new CollisionsManager(Collider);
             Observers = new List<IObserver<string>>();
         }
 
@@ -41,7 +39,7 @@ namespace Server.Models
 
         public override void Update(long delta)
         {
-            if (!_collisionsManager.ProcessMotion(delta, this))
+            if (!Collider.ProcessMotion(delta, this))
                 IsActive = false;
         }
 
@@ -52,10 +50,8 @@ namespace Server.Models
             return builder.ToString();
         }
         
-        public SerializableBullet GetSerializable()
-        {
-            return new SerializableBullet(Id, Position, Direction);
-        }
+        public SerializableBullet GetSerializable() =>
+            new SerializableBullet(Id, Position, Direction);
 
         [DataContract]
         public class SerializableBullet
