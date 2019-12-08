@@ -106,7 +106,7 @@ namespace Server.Game.Entities
         {
             var name = "PLAYER_" + Id.ToString().Substring(0, 5);
 
-            var state = new State();
+            var state = new State(name,Team,Health);
             PlayerStateMemory memory = new PlayerStateMemory
             {
                 Memento = state.CreateMemento()

@@ -10,6 +10,12 @@ namespace ConsoleApp1.Memento
 
         public State() { }
 
+        public State(string name, int team, int health) {
+            this.name = name;
+            this.team = team;
+            this.health = health;
+        }
+
         public string Name
         {
             get { return name; }
