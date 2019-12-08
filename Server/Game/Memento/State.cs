@@ -2,13 +2,13 @@
 
 namespace ConsoleApp1.Memento
 {
-    class PlayerState
+    class State
     {
         private string name;
         private int team;
         private int health;
 
-        public PlayerState() { }
+        public State() { }
 
         public string Name
         {
@@ -16,7 +16,6 @@ namespace ConsoleApp1.Memento
             set
             {
                 name = value;
-                Console.WriteLine("Name = " + name);
             }
         }
         public int Team
@@ -25,7 +24,6 @@ namespace ConsoleApp1.Memento
             set
             {
                 team = value;
-                Console.WriteLine("Team = " + team);
             }
         }
         public int Health
@@ -34,21 +32,16 @@ namespace ConsoleApp1.Memento
             set
             {
                 health = value;
-                Console.WriteLine("Health = " + health);
             }
         }
 
         public Memento CreateMemento()
         {
-            Console.WriteLine();
-            Console.WriteLine("Save player object to memory");
             return new Memento(name, team, health);
         }
 
         public void SetMemento(Memento memento)
         {
-            Console.WriteLine();
-            Console.WriteLine("Restoring object...");
             Name = memento.Name;
             Team = memento.Team;
             Health = memento.Health;

@@ -199,7 +199,7 @@
     <Compile Include="Models\Iterator\IAbstractIterator.cs" />
     <Compile Include="Models\Iterator\Iterator.cs" />
     <Compile Include="Game\Memento\Memento.cs" />
-    <Compile Include="Game\Memento\PlayerState.cs" />
+    <Compile Include="Game\Memento\State.cs" />
     <Compile Include="Game\Memento\PlayerStateMemory.cs" />
     <Compile Include="Models\Decorator\ExtraAmmoDecorator.cs" />
     <Compile Include="Models\Decorator\ExtraRPSDecorator.cs" />

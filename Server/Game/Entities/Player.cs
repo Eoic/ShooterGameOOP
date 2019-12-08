@@ -6,6 +6,7 @@ using Server.Game.Physics;
 using Server.Models.GunFactory;
 using System.Runtime.Serialization;
 using Server.Models.Proxy;
+using ConsoleApp1.Memento;
 
 namespace Server.Game.Entities
 {
@@ -104,6 +105,15 @@ namespace Server.Game.Entities
         public PlayerState GetState()
         {
             var name = "PLAYER_" + Id.ToString().Substring(0, 5);
+
+            var state = new State();
+            PlayerStateMemory memory = new PlayerStateMemory
+            {
+                Memento = state.CreateMemento()
+            };
+
+            state.SetMemento(memory.Memento);
+
             return new PlayerState(name, Team, Health);
         }
 
