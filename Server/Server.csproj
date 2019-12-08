@@ -206,7 +206,9 @@
     <Compile Include="Models\GunFactory\ShotgunFactory.cs" />
     <Compile Include="Models\GunFactory\SniperRifleFactory.cs" />
     <Compile Include="Models\IWeapon.cs" />
+    <Compile Include="Models\Proxy\IWeaponFactoryProxy.cs" />
     <Compile Include="Models\Prototype\WeaponPrototype.cs" />
+    <Compile Include="Models\Proxy\LimitedWeaponFactory.cs" />
     <Compile Include="Models\Weapon.cs" />
     <Compile Include="Models\Decorator\WeaponDecorator.cs" />
     <Compile Include="Network\ConnectionsPool.cs" />

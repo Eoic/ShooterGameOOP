@@ -5,6 +5,7 @@ using System.Linq;
 using Server.Game.Physics;
 using Server.Models.GunFactory;
 using System.Runtime.Serialization;
+using Server.Models.Proxy;
 
 namespace Server.Game.Entities
 {
@@ -76,7 +77,7 @@ namespace Server.Game.Entities
         // Create bullet pool with primary weapon
         private void CreateBulletPool()
         {
-            var pistolFactory = new PistolFactory();
+            var pistolFactory = new LimitedWeaponFactory(new PistolFactory());
             Weapon = pistolFactory.CreateWeapon();
 
             for (var i = 0; i < Constants.DefaultBulletPoolSize; i++)

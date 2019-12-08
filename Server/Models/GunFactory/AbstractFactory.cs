@@ -1,6 +1,6 @@
 ﻿namespace Server.Models.GunFactory
 {
-    public abstract class AbstractFactory
+    public abstract class AbstractFactory : IWeaponFactoryProxy
     {
         public abstract Weapon CreateWeapon();
 
