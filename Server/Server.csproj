@@ -33,6 +33,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,6 +43,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -155,31 +157,58 @@
     <Compile Include="Game\Bonuses\AmmoBonus.cs" />
     <Compile Include="Game\Bonuses\Bonus.cs" />
     <Compile Include="Game\Bonuses\BonusFactory.cs" />
+    <Compile Include="Game\Bonuses\BonusGenerator.cs" />
     <Compile Include="Game\Bonuses\BonusType.cs" />
     <Compile Include="Game\Bonuses\HealthBonus.cs" />
     <Compile Include="Game\Bonuses\SerializableBonus.cs" />
     <Compile Include="Game\Bonuses\SpeedBonus.cs" />
+    <Compile Include="Game\Commands\AddPlayerCommand.cs" />
+    <Compile Include="Game\Commands\ICommand.cs" />
+    <Compile Include="Game\Commands\RemovePlayerCommand.cs" />
     <Compile Include="Game\Constants.cs" />
     <Compile Include="Game\Entities\Map.cs" />
     <Compile Include="Game\Entities\Player.cs" />
     <Compile Include="Game\Entities\GameObject.cs" />
     <Compile Include="Game\Entities\SerializablePlayer.cs" />
+    <Compile Include="Game\Entities\SerializableTimer.cs" />
     <Compile Include="Game\GameManagerWrapper.cs" />
-    <Compile Include="Game\GameRoom.cs" />
+    <Compile Include="Game\GameRoomControl\GameContext.cs" />
+    <Compile Include="Game\GameRoomControl\GameRoom.cs" />
     <Compile Include="Game\GameManager.cs" />
+    <Compile Include="Game\GameRoomControl\GameStateEnded.cs" />
+    <Compile Include="Game\GameRoomControl\GameStateRunning.cs" />
+    <Compile Include="Game\GameRoomControl\GameStateReady.cs" />
+    <Compile Include="Game\GameRoomControl\GameStateWaiting.cs" />
+    <Compile Include="Game\GameRoomControl\IGameState.cs" />
+    <Compile Include="Game\Physics\BulletCollider.cs" />
+    <Compile Include="Game\Physics\Collider.cs" />
+    <Compile Include="Game\Physics\CollisionsManager.cs" />
+    <Compile Include="Game\Physics\HitsObserver.cs" />
+    <Compile Include="Game\Physics\ICollider.cs" />
+    <Compile Include="Game\Physics\ICollisionsManager.cs" />
+    <Compile Include="Game\Physics\PlayerCollider.cs" />
+    <Compile Include="Game\PlayerManager.cs" />
+    <Compile Include="Game\RequestsHandler.cs" />
+    <Compile Include="Game\SerializableGameRoom.cs" />
     <Compile Include="Game\Vector.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\AbstractFactory.cs" />
+    <Compile Include="Models\Decorator\ExtraAmmoDecorator.cs" />
+    <Compile Include="Models\Decorator\ExtraRPSDecorator.cs" />
+    <Compile Include="Models\FlyWeight\PlayerFactory.cs" />
+    <Compile Include="Models\GunFactory\AbstractFactory.cs" />
     <Compile Include="Models\Bullet.cs" />
+    <Compile Include="Models\GunFactory\GunType.cs" />
     <Compile Include="Models\GunTypes.cs" />
     <Compile Include="Models\IRateStrategy.cs" />
-    <Compile Include="Models\PistolFactory.cs" />
-    <Compile Include="Models\ShotgunFactory.cs" />
-    <Compile Include="Models\SniperRifleFactory.cs" />
-    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\GunFactory\PistolFactory.cs" />
+    <Compile Include="Models\GunFactory\ShotgunFactory.cs" />
+    <Compile Include="Models\GunFactory\SniperRifleFactory.cs" />
+    <Compile Include="Models\IWeapon.cs" />
+    <Compile Include="Models\Prototype\WeaponPrototype.cs" />
     <Compile Include="Models\Weapon.cs" />
+    <Compile Include="Models\Decorator\WeaponDecorator.cs" />
     <Compile Include="Network\ConnectionsPool.cs" />
     <Compile Include="Network\Client.cs" />
     <Compile Include="Network\Message.cs" />
@@ -189,9 +218,12 @@
     <Compile Include="Network\ResponseCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\JsonParser.cs" />
+    <Compile Include="Utilities\TimeConverter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\PublishProfiles\bad-logic - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

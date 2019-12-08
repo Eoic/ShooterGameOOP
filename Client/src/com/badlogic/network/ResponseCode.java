@@ -21,5 +21,20 @@ public class ResponseCode {
         PositionUpdated = 4,
 
         // Message about created bonuses
-        BonusesCreated = 5;
+        BonusesCreated = 5,
+
+        // Message about game list
+        GameListFormed = 6,
+
+        // Player joined client's room
+        NewPlayerJoined = 7,
+
+        // Timer updated
+        NewTimerValue = 8,
+
+        // After game match has ended
+        GameEnded = 9,
+
+        // When player reaches 0 HP
+        PlayerDied = 10;
 }

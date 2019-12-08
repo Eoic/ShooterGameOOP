@@ -12,12 +12,12 @@ namespace Server.Models
     /// </summary>
     public interface IRateStrategy
     {
-        double rate();
+        double Rate();
     }
 
     class LowRate : IRateStrategy
     {
-        public double rate()
+        public double Rate()
         {
             return 1.50;
         }
@@ -25,7 +25,7 @@ namespace Server.Models
 
     class MediumRate : IRateStrategy
     {
-        public double rate()
+        public double Rate()
         {
             return 6.50;
         }
@@ -33,7 +33,7 @@ namespace Server.Models
 
     class HighRate : IRateStrategy
     {
-        public double rate()
+        public double Rate()
         {
             return 12.00;
         }
@@ -41,7 +41,7 @@ namespace Server.Models
 
     class UltraRate : IRateStrategy
     {
-        public double rate()
+        public double Rate()
         {
             return 16.00;
         }

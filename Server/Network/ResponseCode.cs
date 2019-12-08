@@ -27,6 +27,21 @@ namespace Server.Network
             PositionUpdated = 4,
 
             // Notify about created bonuses
-            BonusesCreated = 5;
+            BonusesCreated = 5,
+
+            // Sending game list
+            GameListFormed = 6,
+
+            // Player joined client's room
+            NewPlayerJoined = 7,
+
+            // New timer value.
+            NewTimerValue = 8,
+
+            // After game match ends.
+            GameEnded = 9,
+
+            // Player has 0 health left.
+            PlayerDied = 10;
     }
 }

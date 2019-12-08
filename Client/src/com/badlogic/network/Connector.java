@@ -32,21 +32,21 @@ public class Connector implements WebSocket.Listener {
 
     @Override
     public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
+        connectionSubject.notifyAllObservers(data);
         latch.countDown();
-        connectionSubject.notifyAllObservers(data); // Order?
         return WebSocket.Listener.super.onText(webSocket, data, last);
     }
 
     @Override
     public void onError(WebSocket webSocket, Throwable error) {
-        connectionSubject.notifyAllObservers("An error occurred: " + webSocket.toString());
+        System.out.println("An error occurred: " + webSocket.toString());
         error.printStackTrace();
         WebSocket.Listener.super.onError(webSocket, error);
     }
 
     @Override
     public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason) {
-        connectionSubject.notifyAllObservers("Connection closed with status code " + statusCode + ": " + reason);
+        System.out.println("Connection closed with status code " + statusCode + ": " + reason);
         return WebSocket.Listener.super.onClose(webSocket, statusCode, reason);
     }
 }

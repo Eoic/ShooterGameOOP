@@ -11,9 +11,7 @@ namespace Server.Game.Bonuses
     [DataContract]
     public class HealthBonus : Bonus
     {
-        public HealthBonus() { }
-
-        public HealthBonus(int lifespan, int bonusAmount, string bonusType) : base(lifespan, bonusAmount) { }
+        public HealthBonus(string bonusType, int lifespan, int bonusAmount) : base(bonusType, lifespan, bonusAmount) { }
 
         public override void ApplyBonus(Player player)
         {

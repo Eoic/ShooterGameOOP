@@ -8,40 +8,65 @@ import com.badlogic.game.GameManager;
 import com.badlogic.game.Player;
 import com.badlogic.game.RemotePlayer;
 import com.badlogic.gfx.Assets;
+import com.badlogic.gfx.HeadUpDisplay;
 import com.badlogic.gfx.Map;
 import com.badlogic.network.GameRoom;
 import com.badlogic.network.Message;
 import com.badlogic.network.MessageEmitter;
 import com.badlogic.network.RequestCode;
 import com.badlogic.network.ResponseCode;
-import com.badlogic.serializables.SerializableBonus;
-import com.badlogic.serializables.SerializablePlayer;
+import com.badlogic.serializables.*;
 import com.badlogic.util.*;
+import com.badlogic.util.Point;
+import com.badlogic.util.Vector;
 
-import java.util.ArrayList;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.*;
 
 public class Loop implements Observer {
+    // Status
+    private boolean clientInGame = false;
+    private HeadUpDisplay hud;
+
     // Game loop
-    private ExecutorService messageExecutor = Executors.newSingleThreadExecutor();
     private static final long timeStep = 1000 / Constants.FPS;
+    private ScheduledExecutorService backgroundEventsExecutor;
     private ScheduledExecutorService executor;
+    private ExecutorService messageExecutor;
     private MessageEmitter messageEmitter;
-    private boolean isRunning = false;
     private JsonParser jsonParser;
+    private boolean isRunning;
     private GameRoom gameRoom;
-    private long lastTime;
     private long delta = 0;
+    private long lastTime;
 
     // Game entities
+    private HashMap<String, RemotePlayer> roomPlayers;
     private ArrayList<Bonus> bonuses;
     private GameManager gameManager;
     private Player player;
     private Map map;
 
-    private RemotePlayer remotePlayer;
+    public Loop() {
+        Assets.load();
+        messageExecutor = Executors.newSingleThreadExecutor();
+        messageEmitter = new MessageEmitter();
+        executor = Executors.newSingleThreadScheduledExecutor();
+        backgroundEventsExecutor = Executors.newSingleThreadScheduledExecutor();
+        jsonParser = new JsonParser();
+        gameRoom = new GameRoom();
+        gameManager = new GameManager();
+        map = new Map(Constants.MAP_WIDTH, Constants.MAP_HEIGHT, gameManager);
+        player = new Player(gameManager, messageEmitter, "Undefined", -1);
+        bonuses = new ArrayList<>();
+        roomPlayers = new HashMap<>();
+        hud = new HeadUpDisplay(gameManager.getWindow());
+        this.initialize();
+    }
 
     // Starts game loop
     public void start() {
@@ -49,50 +74,48 @@ public class Loop implements Observer {
             return;
 
         isRunning = true;
-        initialize();
-        executor = Executors.newSingleThreadScheduledExecutor();
         lastTime = System.currentTimeMillis();
+
         executor.scheduleAtFixedRate(() -> {
             update();
             render();
         }, 0, timeStep, TimeUnit.MILLISECONDS);
-    }
 
-    // Stops game loop
-    public void stop() {
-        if (!isRunning)
-            return;
-
-        isRunning = false;
-        executor.shutdown();
+        backgroundEventsExecutor.scheduleAtFixedRate(() -> {
+            messageEmitter.send(jsonParser.serialize(new Message(RequestCode.FormGameList, "")));
+        }, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
     // Initializes game resources
     private void initialize() {
-        Assets.load();
-        gameRoom = new GameRoom();
-        messageEmitter = new MessageEmitter();
-        messageEmitter.addListener(this);
-        gameManager = new GameManager();
-        map = new Map(Constants.MAP_WIDTH, Constants.MAP_HEIGHT, gameManager);
-        jsonParser = new JsonParser();
-        player = new Player(gameManager, messageEmitter);
-        bonuses = new ArrayList<>();
-        remotePlayer = new RemotePlayer(gameManager.getWindow(), gameManager.getCamera(), Assets.getSprite("enemy"));
+        // Check if communication with server is possible.
+        if (messageEmitter.isConnectionFailed())
+            return;
 
-        // Set UI events
+        // Set event listener
+        messageEmitter.addListener(this);
+
+        // SET UI EVENTS
+        // # Create game
         gameManager.getWindow().setCreateGameBtnEvent(actionEvent -> {
-            var message = new Message(RequestCode.CreateGame, "Create game pls.");
-            messageEmitter.send(jsonParser.serialize(message));
+            ArrayList<ActionListener> listeners = new ArrayList<>();
+
+            // Bind game creation events to team selection buttons.
+            for (int i = 0; i < Constants.TEAM_COUNT; i++) {
+                int finalI = i;
+                listeners.add((action) -> {
+                    var message = new Message(RequestCode.CreateGame, Integer.toString(finalI));
+                    messageEmitter.send(jsonParser.serialize(message));
+                });
+            }
+
+            gameManager.getWindow().setTeamSelectionEvents(messageEmitter, listeners);
+            gameManager.getWindow().showTeamSelectionWindow();
         });
 
+        // # Exit game
         gameManager.getWindow().setQuitGameBtnEvent(actionEvent -> {
             var message = new Message(RequestCode.QuitGame, "Exiting.");
-            messageEmitter.send(jsonParser.serialize(message));
-        });
-
-        gameManager.getWindow().setJoinGameBtnEvent(actionEvent -> {
-            var message = new Message(RequestCode.JoinGame, "Joining game.");
             messageEmitter.send(jsonParser.serialize(message));
         });
     }
@@ -100,8 +123,8 @@ public class Loop implements Observer {
     // Updates game entities (e.g. position)
     private void update() {
         gameManager.getInputManager().tick();
+        roomPlayers.forEach((key, value) -> value.update((int) delta));
         player.update((int)delta);
-        // remotePlayer.update((int)delta);
     }
 
     // Renders game objects
@@ -116,14 +139,18 @@ public class Loop implements Observer {
         }
 
         var graphics = bufferStrategy.getDrawGraphics();
+        graphics.setColor(Color.WHITE);
+        graphics.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 24));
+        ((Graphics2D)graphics).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         graphics.clearRect(0, 0, gameManager.getWindow().getWidth(), gameManager.getWindow().getHeight());
 
-        // Start rendering
-        map.render(graphics); // TODO: Generate map
-        // bonuses.forEach(bonus -> bonus.render(graphics));
-        // remotePlayer.render(graphics);
-        gameRoom.getPlayers().forEach(player -> player.render(graphics));
-        // Stop rendering
+        if (clientInGame) {
+            map.render(graphics);
+            bonuses.forEach(bonus -> bonus.render(graphics));
+            roomPlayers.forEach((key, value) -> value.render(graphics));
+            player.render(graphics);
+            hud.render(graphics, roomPlayers, gameRoom.getPlayers().get(0).getTeam());
+        }
 
         bufferStrategy.show();
         graphics.dispose();
@@ -131,49 +158,108 @@ public class Loop implements Observer {
     }
 
     // Handle messages received from server.
-    // TODO: Split message handling to separate methods
     @Override
     public void update(Object data) {
+        if (data == null)
+            return;
+
+        // Deserialize received message.
         var message = jsonParser.deserialize(data.toString(), Message.class);
 
-        if (message.getType() == ResponseCode.GameCreated) {
-            var position = jsonParser.deserialize(message.getPayload(), Point.class);
-            player = new Player(gameManager, messageEmitter);
-            player.getPosition().set(new Vector(position.getX(), position.getY()));
-            // gameManager.getCamera().getOffset().set(new Vector(position.getX(), position.getY()));
+        if (message == null)
+            return;
+
+        // Take action according to event type.
+        // # List all available games in the UI
+        if (message.getType() == ResponseCode.GameListFormed) {
+            List<SerializableGame> gameList = jsonParser.deserializeList(message.getPayload(), SerializableGame.class);
+            gameManager.getWindow().updateGameList(new ArrayList<>(gameList), messageEmitter);
+        }
+        // # Create and place player on the map.
+        else if (message.getType() == ResponseCode.GameCreated || message.getType() == ResponseCode.GameJoined) {
+            var serializablePlayer = jsonParser.deserialize(message.getPayload(), SerializablePlayer.class);
+            player = new Player(gameManager, messageEmitter, serializablePlayer.getPlayerId(), serializablePlayer.getTeam());
+            player.setTeam(serializablePlayer.getTeam());
+            player.getPosition().set(Vector.fromPoint(serializablePlayer.getPosition()));
             gameRoom.addPlayer(player);
-        } else if (message.getType() == ResponseCode.PositionUpdated) {
+            this.setActiveGameMode();
+        }
+        // # Update positions af all players in the room.
+        else if (message.getType() == ResponseCode.PositionUpdated) {
             messageExecutor.submit(() -> {
                 var players = jsonParser.deserializeList(message.getPayload(), SerializablePlayer.class);
+
                 players.forEach(serializablePlayer -> {
-                    if (serializablePlayer.getType() == 10) {
-                        var position = serializablePlayer.getPosition();
-                        gameRoom.getPlayers().get(0).position.set(new Vector(position.getX(), position.getY()));
+                    if (serializablePlayer.getHealth() > 0) {
+                        // Update this player.
+                        if (serializablePlayer.getType() == 10) {
+                            gameRoom.getPlayers().get(0).position.set(Vector.fromPoint(serializablePlayer.getPosition()));
+                            gameManager.getWindow().getClientHealthBar().setCurrentValue(serializablePlayer.getHealth());
+                        }
+
+                        // Update other player in the game room.
+                        else {
+                            // Player is new
+                            if (!roomPlayers.containsKey(serializablePlayer.getPlayerId())) {
+                                var isFriendly = gameRoom.getPlayers().get(0).getTeam() == serializablePlayer.getTeam();
+                                var roomPlayer = new RemotePlayer(gameManager.getWindow(), gameManager.getCamera(), isFriendly);
+                                roomPlayer.setPosition(Vector.fromPoint(serializablePlayer.getPosition()));
+                                roomPlayer.setDirection(Vector.fromPoint(serializablePlayer.getDirection()));
+                                roomPlayer.parseBullets(serializablePlayer.getBullets());
+                                roomPlayer.setHealth(serializablePlayer.getHealth());
+                                roomPlayer.setTeam(serializablePlayer.getTeam());
+                                roomPlayer.setId(serializablePlayer.getPlayerId());
+                                roomPlayers.put(serializablePlayer.getPlayerId(), roomPlayer);
+                            }
+                            // Old player
+                            else {
+                                var roomPlayer = roomPlayers.get(serializablePlayer.getPlayerId());
+                                roomPlayer.setPosition(Vector.fromPoint(serializablePlayer.getPosition()));
+                                roomPlayer.setDirection(Vector.fromPoint(serializablePlayer.getDirection()));
+                                roomPlayer.parseBullets(serializablePlayer.getBullets());
+                                roomPlayer.setHealth(serializablePlayer.getHealth());
+                            }
+                        }
                     } else {
-                        // var p = serializablePlayer.getPosition();
-                        // remotePlayer.position = new Vector(p.getX(), p.getY());
+                        if (serializablePlayer.getType() == 10) {
+                            gameManager.getWindow().getClientHealthBar().setVisible(false);
+                        }
                     }
                 });
             });
-        } else if (message.getType() == ResponseCode.BonusesCreated) {
+        }
+        // # Show bonuses in the map
+        else if (message.getType() == ResponseCode.BonusesCreated) {
             messageExecutor.submit(() -> {
                 var serializableBonuses = jsonParser.deserializeList(message.getPayload(), SerializableBonus.class);
                 createBonuses(serializableBonuses);
             });
-        } else if (message.getType() == ResponseCode.GameQuit) {
-            System.out.println(message.getPayload());
-            gameRoom.getPlayers().remove(0); // For now....
-        } else if (message.getType() == ResponseCode.GameJoined) {
-            // Temporary
-            System.out.println("Game joined");
-            var position = jsonParser.deserialize(message.getPayload(), Point.class);
-            player = new Player(gameManager, messageEmitter);
-            player.getPosition().set(new Vector(position.getX(), position.getY()));
-            gameRoom.addPlayer(player);
+        }
+        // # Player is quitting the game
+        else if (message.getType() == ResponseCode.GameQuit) {
+            roomPlayers.remove(message.getPayload());
+        }
+        else if (message.getType() == ResponseCode.NewTimerValue) {
+            hud.updateTimer(jsonParser.deserialize(message.getPayload(), SerializableTimer.class));
+        }
+        else if (message.getType() == ResponseCode.GameEnded) {
+            var gameResults = jsonParser.deserializeList(message.getPayload(), SerializablePlayerState.class);
+            gameManager.getWindow().setGameEndedMode(new ArrayList<SerializablePlayerState>(gameResults));
+        } else if (message.getType() == ResponseCode.PlayerDied) {
+            var serializablePlayer = jsonParser.deserialize(message.getPayload(), SerializablePlayer.class);
+            var id = serializablePlayer.getPlayerId();
+
+            if (roomPlayers.containsKey(id)) {
+                roomPlayers.remove(id);
+            } else {
+                player.setDead();
+            }
         }
     }
 
     private void createBonuses(List<SerializableBonus> serializableBonuses) {
+        bonuses = new ArrayList<>();
+
         serializableBonuses.forEach(serializableBonus -> {
             Bonus bonus = null;
 
@@ -191,5 +277,13 @@ public class Loop implements Observer {
                 bonuses.add(bonus);
             }
         });
+    }
+
+    private void setActiveGameMode() {
+        clientInGame = true;
+        backgroundEventsExecutor.shutdown();
+        gameManager.getWindow().getClientHealthBar().setVisible(true);
+        gameManager.getWindow().setCanvasColor(Constants.CANVAS_COLOR);
+        this.gameManager.getWindow().setActiveGameMode();
     }
 }

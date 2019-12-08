@@ -1,7 +1,5 @@
 package com.badlogic.gfx.ui;
 
-import com.badlogic.gfx.Window;
-
 import java.util.ArrayList;
 
 public class CanvasElementCollection {

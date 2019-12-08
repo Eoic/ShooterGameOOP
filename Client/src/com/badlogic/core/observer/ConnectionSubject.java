@@ -7,7 +7,6 @@ public class ConnectionSubject<T> implements Subject<T> {
 
     @Override
     public void attach(Observer observer) {
-        // TODO: Fix unchecked assignment warning.
         observers.add(observer);
     }
 

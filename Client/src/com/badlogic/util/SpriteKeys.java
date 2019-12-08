@@ -3,7 +3,7 @@ package com.badlogic.util;
 public class SpriteKeys {
     public static String
             PLAYER = "player",
-            FRIENDLY_TEAMMATE = "friendly",
+            FRIENDLY_PLAYER = "friendly",
             ENEMY_PLAYER = "enemy",
             DARK_TILE = "darkTile",
             NEUTRAL_TILE = "normalTile",

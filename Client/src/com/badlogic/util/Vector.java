@@ -99,6 +99,10 @@ public class Vector {
         return this.x == pos.getX() && this.y == pos.getY();
     }
 
+    public static Vector fromPoint(Point point) {
+        return new Vector(point.getX(), point.getY());
+    }
+
     public Point getSerializable() {
         return new Point(this.x, this.y);
     }

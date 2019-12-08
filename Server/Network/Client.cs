@@ -19,8 +19,8 @@ namespace Server.Network
         public override void OnOpen()
         {
             ConnectionsPool.GetInstance().Clients.Add(this);
-            var count = ConnectionsPool.GetInstance().Clients.Count;
-            NotifyAllObservers(new Message(RequestCode.Connect, $"New client connected. Current count: {count}."));
+            var messageObj = new Message(RequestCode.Connect, "New client connected") { ClientId = Id };
+            NotifyAllObservers(messageObj);
         }
 
         /// <summary>
@@ -47,9 +47,8 @@ namespace Server.Network
         /// </summary>
         public override void OnClose()
         {
-            ConnectionsPool.GetInstance().Clients.Remove(this);
-            var count = ConnectionsPool.GetInstance().Clients.Count;
-            NotifyAllObservers(new Message(RequestCode.Disconnect, $"Client has disconnected. Current count: {count}."));
+            var message = new Message(RequestCode.Disconnect, "Client has disconnected.") { ClientId = Id };
+            NotifyAllObservers(message);
         }
 
         /// <summary>
@@ -58,8 +57,8 @@ namespace Server.Network
         /// </summary>
         public override void OnError()
         {
-            ConnectionsPool.GetInstance().Clients.Remove(this);
-            NotifyAllObservers(new Message(RequestCode.RaiseError, "Connection with client lost."));
+            var message = new Message(RequestCode.Disconnect, "Connection with client lost.") { ClientId = Id };
+            NotifyAllObservers(message);
         }
 
         /// <summary>

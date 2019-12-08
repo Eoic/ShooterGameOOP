@@ -13,6 +13,7 @@ public class MessageEmitter {
     private CountDownLatch latch;
     private Connector connector;
     private WebSocket webSocket;
+    private boolean connectionFailed;
 
     public MessageEmitter() {
         latch = new CountDownLatch(Constants.COUNTDOWN_LATCH_COUNT);
@@ -24,12 +25,11 @@ public class MessageEmitter {
                     .buildAsync(URI.create(Constants.SOCKET_CONNECTION_STRING), connector)
                     .join();
         } catch (CompletionException ex) {
-            ex.printStackTrace();
+            this.connectionFailed = true;
+            System.out.println("Server is offline.");
         }
     }
 
-    // TODO: Make async?
-    // TODO: Check if connection was made before sending
     public void send(String message) {
         webSocket.sendText(message, true);
         try {
@@ -41,5 +41,9 @@ public class MessageEmitter {
 
     public void addListener(Observer observer) {
         connector.addListener(observer);
+    }
+
+    public boolean isConnectionFailed() {
+        return connectionFailed;
     }
 }
