@@ -5,6 +5,7 @@ public class SpriteKeys {
             PLAYER = "player",
             FRIENDLY_PLAYER = "friendly",
             ENEMY_PLAYER = "enemy",
+            OBSTACLE = "obstacle",
             DARK_TILE = "darkTile",
             NEUTRAL_TILE = "normalTile",
             LIGHT_TILE = "lightTile",

@@ -33,6 +33,7 @@ namespace Server.Game
         /// </summary>
         public void Start()
         {
+            Debug.WriteLine(_frameTime);
             if (_isRunning)
                 return;
 

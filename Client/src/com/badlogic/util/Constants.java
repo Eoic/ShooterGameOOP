@@ -27,7 +27,7 @@ public class Constants {
             SPRITE_HEIGHT = 128,
             SPRITE_WIDTH_HALF = 64,
             SPRITE_HEIGHT_HALF = 64,
-            SHEET_ROWS = 4,
+            SHEET_ROWS = 5,
             SHEET_COLUMNS = 3,
             FPS = 60,
             COUNTDOWN_LATCH_COUNT = 1,

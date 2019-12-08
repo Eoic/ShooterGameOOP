@@ -10,3 +10,6 @@ speedBonus
 bulletVarOne
 bulletVarTwo
 bulletVarThree
+obstacle
+none
+none

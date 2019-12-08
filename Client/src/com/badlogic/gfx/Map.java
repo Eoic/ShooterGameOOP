@@ -1,9 +1,11 @@
 package com.badlogic.gfx;
 
+import com.badlogic.core.GameObject;
 import com.badlogic.game.GameManager;
 import com.badlogic.util.Constants;
 import com.badlogic.util.ImageLoader;
 import com.badlogic.util.SpriteKeys;
+import com.badlogic.util.Vector;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -15,6 +17,7 @@ public class Map {
     private GameManager gameManager;
     private int[][] mapTemplate;
     private Tile[][] map;
+    private ArrayList<Vector> obstacles;
 
     public Map(int width, int height, GameManager gameManager) {
         this.width = width;
@@ -23,6 +26,7 @@ public class Map {
         this.mapTemplate = new int[width][height];
         this.map = new Tile[width][height];
         this.loadFromTemplate("template_one.png");
+        this.obstacles = new ArrayList<>();
         this.buildMapImage();
     }
 
@@ -30,6 +34,7 @@ public class Map {
         var darkTile = Assets.getSprite(SpriteKeys.DARK_TILE);
         var neutralTile = Assets.getSprite(SpriteKeys.NEUTRAL_TILE);
         var lightTile = Assets.getSprite(SpriteKeys.LIGHT_TILE);
+        var obstacle = Assets.getSprite(SpriteKeys.OBSTACLE);
 
         for (int i = 0; i < this.width; i++) {
             for (int j = 0; j < this.height; j++) {
@@ -42,8 +47,12 @@ public class Map {
                     image = darkTile;
                 else if (color == Color.green.getRGB())
                     image = neutralTile;
-                else
+                else if (color == Color.red.getRGB())
                     image = lightTile;
+                else {
+                    image = obstacle;
+                    obstacles.add(new Vector(i, j));
+                }
 
                 map[i][j] = new Tile(image, basePosX, basePosY);
             }
