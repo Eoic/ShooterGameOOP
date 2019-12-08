@@ -152,6 +152,8 @@
   <ItemGroup>
     <Compile Include="AdvertService\AmazonAdProvider.cs" />
     <Compile Include="AdvertService\AmazonProviderAdapter.cs" />
+    <Compile Include="AdvertService\AdAvailabilityChecker.cs" />
+    <Compile Include="AdvertService\CachedAdProvider.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BonusController.cs" />
     <Compile Include="Controllers\MessageController.cs" />
