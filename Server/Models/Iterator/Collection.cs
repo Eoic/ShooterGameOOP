@@ -21,5 +21,18 @@ namespace ConsoleApp1
         {
             get{ return items.Count; }
         }
+
+        public void AddToCollection(dynamic item)
+        {
+            items.Add(item);
+        }
+
+        public void AddRangeToCollection(dynamic list)
+        {
+            foreach (var item in list)
+            {
+                items.Add(item);
+            }
+        }
     }
 }
