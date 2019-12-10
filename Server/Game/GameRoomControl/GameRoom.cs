@@ -8,11 +8,15 @@ using Server.Utilities;
 using Server.Network;
 using System.Linq;
 using System.Diagnostics;
+using Server.AdvertSerivce;
+using Server.AdvertService;
 
 namespace Server.Game.GameRoomControl
 {
     public class GameRoom : GameContext
     {
+        private IAdProvider AdProvider;
+
         public Guid RoomId { get; } = Guid.NewGuid();
         public int TimeTillRoomUpdate { get; private set; } = Constants.RoomUpdateInterval;
         public List<Bonus> Bonuses { get; private set; } = new List<Bonus>();

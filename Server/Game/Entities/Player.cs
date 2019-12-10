@@ -7,6 +7,8 @@ using Server.Models.GunFactory;
 using System.Runtime.Serialization;
 using Server.Models.Proxy;
 using ConsoleApp1.Memento;
+using Server.AdvertSerivce;
+using Server.AdvertService;
 
 namespace Server.Game.Entities
 {
@@ -21,6 +23,7 @@ namespace Server.Game.Entities
         public PlayerCollider Collider { get; }
         public bool IsAlive { get => (Health > 0); }
         public string Name { get => "PLAYER_" + Id.ToString().Substring(0, 5); }
+        private IAdProvider AdProvider;
 
         public Player() 
         {
@@ -37,6 +40,12 @@ namespace Server.Game.Entities
             Bullets = new List<Bullet>();
             Collider = new PlayerCollider();
             CreateBulletPool();
+            AdProvider = new AdAvailabilityChecker(new CachedAdProvider(new AmazonProviderAdapter(new CachedAdProvider(new GoogleAdProviderAdapter()))), 20);
+        }
+
+        public string GetAd()
+        {
+            return AdProvider.GetAd();
         }
 
         public void TakeDamage(int damage)

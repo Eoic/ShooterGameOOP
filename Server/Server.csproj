@@ -150,6 +150,10 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdvertService\AmazonAdProvider.cs" />
+    <Compile Include="AdvertService\AmazonProviderAdapter.cs" />
+    <Compile Include="AdvertService\AdAvailabilityChecker.cs" />
+    <Compile Include="AdvertService\CachedAdProvider.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BonusController.cs" />
     <Compile Include="Controllers\MessageController.cs" />
@@ -191,6 +195,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="AdvertService\GoogleAdProvider.cs" />
+    <Compile Include="AdvertService\GoogleAdProviderAdapter.cs" />
+    <Compile Include="AdvertService\IAdProvider.cs" />
     <Compile Include="Models\Iterator\Collection.cs" />
     <Compile Include="Models\Iterator\IAbstractCollection.cs" />
     <Compile Include="Models\Iterator\IAbstractIterator.cs" />

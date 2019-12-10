@@ -12,6 +12,7 @@ namespace Server.Models
     {
         public int Id { get; set; }
         public int Damage { get; set; }
+        public int Speed { get; set; }
         public string GunType { get; set; }
         public bool IsActive { get; set; }
         public BulletCollider Collider { get; }

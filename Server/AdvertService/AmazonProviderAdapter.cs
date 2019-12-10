@@ -8,13 +8,21 @@ namespace Server.AdvertSerivce
     public class AmazonProviderAdapter : IAdProvider
     {
         AmazonAdProvider provider;
-        public AmazonProviderAdapter()
+        IAdProvider FallbackAdProvider;
+
+        public AmazonProviderAdapter(IAdProvider fallbackAdProvider)
         {
             provider = new AmazonAdProvider();
+            FallbackAdProvider = fallbackAdProvider;
         }
 
         public string GetAd()
         {
+            if (!provider.IsAdAvailable())
+            {
+                return FallbackAdProvider.GetAd();
+            }
+
             string result = "";
             foreach(string item in provider.RequestAmazonAd())
             {

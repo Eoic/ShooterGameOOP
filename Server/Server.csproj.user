@@ -29,6 +29,7 @@
     <GoogleComputeEnginePublishLaunchRemoteDebugger>False</GoogleComputeEnginePublishLaunchRemoteDebugger>
     <GoogleComputeEnginePublishSiteName>Default Web Site</GoogleComputeEnginePublishSiteName>
     <ProjectView>ShowAllFiles</ProjectView>
+    <WebStackScaffolding_AreaDialogWidth>600</WebStackScaffolding_AreaDialogWidth>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>

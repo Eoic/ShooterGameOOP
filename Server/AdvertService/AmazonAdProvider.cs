@@ -11,5 +11,10 @@ namespace Server.AdvertSerivce
         {
             return new List<string>(new string[]{ "Title", "Subtitle", "Content asdasdasdasdasdasd" });
         }
+
+        public bool IsAdAvailable()
+        {
+            return false;
+        }
     }
 }
