@@ -11,10 +11,10 @@ namespace Server.Models.FlyWeight
     /// </summary>
     public class PlayerFactory : Player
     {
-        private static Dictionary<String, Player> dict =
-                         new Dictionary<String, Player>();
+        private static Dictionary<string, Player> dict =
+                         new Dictionary<string, Player>();
 
-        public static Player getPlayer(String type)
+        public static Player getPlayer(string type)
         {
             Player p = null;
 
@@ -25,17 +25,17 @@ namespace Server.Models.FlyWeight
                 switch (type)
                 {
                     case "teamA":
-                        Console.WriteLine("teamA Player Created");
+                        //Console.WriteLine("teamA Player Created");
                         p = new Player();
                         p.JoinTeam(0);
                         break;
                     case "teamB":
-                        Console.WriteLine("teamB Player Created");
+                        //Console.WriteLine("teamB Player Created");
                         p = new Player();
                         p.JoinTeam(1);
                         break;
                     default:
-                        Console.WriteLine("Unreachable code!");
+                        Console.WriteLine("Unreachable code.");
                         break;
                 }
 

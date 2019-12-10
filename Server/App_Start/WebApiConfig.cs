@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Web.Http;
+//using ConsoleApp;
 
 namespace Server
 {
@@ -19,13 +21,22 @@ namespace Server
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            
+            Main();
         }
+
+        [DllImport("kernel32.dll", EntryPoint = "AllocConsole", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        static extern int AllocConsole();
 
         [STAThread]
         static void Main()
         {
-            Console.WriteLine("Hi");
-            Console.ReadLine();
+            AllocConsole();
+            //Program program = new Program();
+            Console.WriteLine("Hi 2");
+            //Console.ReadLine();
+            //Console.ReadKey();
         }
     }
 }

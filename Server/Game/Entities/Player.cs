@@ -22,7 +22,10 @@ namespace Server.Game.Entities
         public bool IsAlive { get => (Health > 0); }
         public string Name { get => "PLAYER_" + Id.ToString().Substring(0, 5); }
 
-        public Player() { }
+        public Player() 
+        {
+            Health = Constants.MaxHealth;
+        }
 
         public Player(Guid id, Guid roomId)
         {

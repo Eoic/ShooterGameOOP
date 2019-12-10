@@ -182,10 +182,7 @@
     <Compile Include="Game\GameRoomControl\IGameState.cs" />
     <Compile Include="Game\Physics\BulletCollider.cs" />
     <Compile Include="Game\Physics\Collider.cs" />
-    <Compile Include="Game\Physics\CollisionsManager.cs" />
     <Compile Include="Game\Physics\HitsObserver.cs" />
-    <Compile Include="Game\Physics\ICollider.cs" />
-    <Compile Include="Game\Physics\ICollisionsManager.cs" />
     <Compile Include="Game\Physics\PlayerCollider.cs" />
     <Compile Include="Game\PlayerManager.cs" />
     <Compile Include="Game\RequestsHandler.cs" />
