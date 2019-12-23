@@ -2,7 +2,6 @@
 # DesignPatterns
 T120B516 Objektinis programų projektavimas
 
-### WebSocket
-#### Connection string
+## Web Socket connection
 `ws://localhost:{port}/api/messages`<br>
 `{port}` - server port (e.g. 44327)
